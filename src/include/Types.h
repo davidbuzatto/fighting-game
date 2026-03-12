@@ -8,6 +8,14 @@ typedef enum PlayerState {
     PLAYER_STATE_WALKING_BACKWARD
 } PlayerState;
 
+typedef struct PlayerAnimation {
+    Rectangle *sources;
+    int frameCount;
+    int currentFrame;
+    float frameTime;
+    float frameTimeCounter;
+} PlayerAnimation;
+
 typedef struct Player {
 
     Texture2D *texture;
@@ -16,31 +24,18 @@ typedef struct Player {
 
     Vector2 vel;
 
-    Rectangle idleSources[5];
-    int idleFrameCount;
-    int idleCurrentFrame;
-    float idleFrameTime;
-    float idleFrameTimeCounter;
-
-    Rectangle forwardSources[6];
-    int forwardFrameCount;
-    int forwardCurrentFrame;
-    float forwardFrameTime;
-    float forwardFrameTimeCounter;
-    
-    Rectangle backwardSources[6];
-    int backwardFrameCount;
-    int backwardCurrentFrame;
-    float backwardFrameTime;
-    float backwardFrameTimeCounter;
+    PlayerAnimation idleAnim;
+    PlayerAnimation forwardAnim;
+    PlayerAnimation backwardAnim;
 
     PlayerState state;
+    PlayerState lastState;
     bool jumping;
 
 } Player;
 
 typedef struct GameWorld {
     Rectangle floor;
-    Player player;
+    Player *player;
     float gravity;
 } GameWorld;
