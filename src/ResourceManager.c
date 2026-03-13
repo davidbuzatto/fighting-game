@@ -30,10 +30,17 @@ void loadResourcesResourceManager( void ) {
         BLANK
     );
 
+    rm.stageTexture = loadTextureReplacingColor( 
+        "resources/images/guile-stage.png", 
+        (Color) { 48, 48, 88, 255 }, 
+        BLANK
+    );
+
 }
 
 void unloadResourcesResourceManager( void ) {
     UnloadTexture( rm.playerTexture );
+    UnloadTexture( rm.stageTexture );
     //UnloadSound( rm.soundExample );
     //UnloadMusicStream( rm.musicExample );
 }

@@ -14,23 +14,33 @@ typedef struct PlayerAnimation {
     int currentFrame;
     float frameTime;
     float frameTimeCounter;
+    bool stopAtLastFrame;
 } PlayerAnimation;
 
 typedef struct Player {
 
     Texture2D *texture;
     Vector2 pos;
-    float scale;
+    Vector2 dim;
+    Vector2 scale;
 
     Vector2 vel;
+    float walkingSpeed;
+    float jumpSpeed;
 
     PlayerAnimation idleAnim;
     PlayerAnimation forwardAnim;
     PlayerAnimation backwardAnim;
+    PlayerAnimation straightJumpAnim;
+    PlayerAnimation forwardJumpAnim;
+    PlayerAnimation backwardJumpAnim;
+    PlayerAnimation *animations[10];
+    int animationCount;
 
     PlayerState state;
     PlayerState lastState;
     bool jumping;
+    bool lookingRight;
 
 } Player;
 
