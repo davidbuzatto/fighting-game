@@ -1,4 +1,5 @@
 Ajustar animações -> posição dos desenhos dos frames
 Implementar animação de pulo;
 Implementar animação de agachamento;
+Implementar mudança de direção;
 Implementar hitboxes e temporização frame a frame.

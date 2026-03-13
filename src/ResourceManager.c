@@ -13,10 +13,23 @@
 
 ResourceManager rm = { 0 };
 
+static Texture2D loadTextureReplacingColor( const char *path, Color sourceColor, Color targetColor ) {
+    Image img = LoadImage( path );
+    ImageFormat( &img, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 );
+    ImageColorReplace( &img, sourceColor, targetColor );
+    Texture2D texture = LoadTextureFromImage( img );
+    UnloadImage( img );
+    return texture;
+}
+
 void loadResourcesResourceManager( void ) {
-    rm.playerTexture = LoadTexture( "resources/images/RyuCE.png" );
-    //rm.soundExample = LoadSound( "resources/sfx/powerUp.wav" );
-    //rm.musicExample = LoadMusicStream( "resources/musics/overworld1.ogg" );
+
+    rm.playerTexture = loadTextureReplacingColor( 
+        "resources/images/ryu.png", 
+        (Color) { 85, 170, 255, 255 }, 
+        BLANK
+    );
+
 }
 
 void unloadResourcesResourceManager( void ) {

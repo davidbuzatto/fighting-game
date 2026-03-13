@@ -21,40 +21,42 @@ Player *createPlayer( float x, float y, float scale ) {
     p->lastState = PLAYER_STATE_IDLE;
     p->jumping = false;
 
-    p->idleAnim.frameCount = 5;
+    //p->idleAnim.frameCount = 5;
+    p->idleAnim.frameCount = 6;
     p->idleAnim.currentFrame = 0;
-    p->idleAnim.frameTime = 0.1f;
+    p->idleAnim.frameTime = 0.075f;
     p->idleAnim.frameTimeCounter = 0.0f;
     createPlayerAnimationSources( &p->idleAnim, p->idleAnim.frameCount );
-    p->idleAnim.sources[0] = (Rectangle) { 7, 14, 59, 90 };
-    p->idleAnim.sources[1] = (Rectangle) { 94, 15, 60, 89 };
-    p->idleAnim.sources[2] = (Rectangle) { 184, 14, 59, 90 };
-    p->idleAnim.sources[3] = (Rectangle) { 280, 11, 55, 93 };
-    p->idleAnim.sources[4] = (Rectangle) { 367, 12, 58, 92 };
+    p->idleAnim.sources[0] = (Rectangle) { 1, 904, -64, 96 };
+    p->idleAnim.sources[1] = (Rectangle) { 66, 904, -64, 96 };
+    p->idleAnim.sources[2] = (Rectangle) { 131, 904, -64, 96 };
+    p->idleAnim.sources[3] = (Rectangle) { 196, 904, -64, 96 };
+    p->idleAnim.sources[4] = (Rectangle) { 131, 904, -64, 96 };
+    p->idleAnim.sources[5] = (Rectangle) { 66, 904, -64, 96 };
 
-    p->forwardAnim.frameCount = 6;
+    //p->forwardAnim.frameCount = 6;
+    p->forwardAnim.frameCount = 5;
     p->forwardAnim.currentFrame = 0;
     p->forwardAnim.frameTime = 0.1f;
     p->forwardAnim.frameTimeCounter = 0.0f;
     createPlayerAnimationSources( &p->forwardAnim, p->forwardAnim.frameCount );
-    p->forwardAnim.sources[0] = (Rectangle) { 9, 136, 53, 83 };
-    p->forwardAnim.sources[1] = (Rectangle) { 78, 131, 60, 87 };
-    p->forwardAnim.sources[2] = (Rectangle) { 162, 128, 64, 92 };
-    p->forwardAnim.sources[3] = (Rectangle) { 259, 128, 63, 90 };
-    p->forwardAnim.sources[4] = (Rectangle) { 352, 128, 54, 91 };
-    p->forwardAnim.sources[5] = (Rectangle) { 432, 131, 50, 89 };
+    p->forwardAnim.sources[0] = (Rectangle) { 1, 1276, -80, 96 };
+    p->forwardAnim.sources[1] = (Rectangle) { 82, 1276, -80, 96 };
+    p->forwardAnim.sources[2] = (Rectangle) { 163, 1276, -80, 96 };
+    p->forwardAnim.sources[3] = (Rectangle) { 244, 1276, -80, 96 };
+    p->forwardAnim.sources[4] = (Rectangle) { 325, 1276, -80, 96 };
 
     p->backwardAnim.frameCount = 6;
     p->backwardAnim.currentFrame = 0;
     p->backwardAnim.frameTime = 0.1f;
     p->backwardAnim.frameTimeCounter = 0.0f;
     createPlayerAnimationSources( &p->backwardAnim, p->backwardAnim.frameCount );
-    p->backwardAnim.sources[0] = (Rectangle) { 542, 131, 61, 87 };
-    p->backwardAnim.sources[1] = (Rectangle) { 628, 129, 59, 90 };
-    p->backwardAnim.sources[2] = (Rectangle) { 713, 128, 57, 90 };
-    p->backwardAnim.sources[3] = (Rectangle) { 797, 127, 57, 90 };
-    p->backwardAnim.sources[4] = (Rectangle) { 883, 128, 58, 91 };
-    p->backwardAnim.sources[5] = (Rectangle) { 974, 129, 57, 89 };
+    p->backwardAnim.sources[0] = (Rectangle) { 1, 1373, -80, 96 };
+    p->backwardAnim.sources[1] = (Rectangle) { 82, 1373, -80, 96 };
+    p->backwardAnim.sources[2] = (Rectangle) { 163, 1373, -80, 96 };
+    p->backwardAnim.sources[3] = (Rectangle) { 244, 1373, -80, 96 };
+    p->backwardAnim.sources[4] = (Rectangle) { 325, 1373, -80, 96 };
+    p->backwardAnim.sources[5] = (Rectangle) { 406, 1373, -80, 96 };
 
     return p;
 
@@ -76,7 +78,7 @@ void drawPlayer( Player *player ) {
             *player->texture,
             *sourceRectangle,
             (Rectangle) { 
-                player->pos.x,
+                player->pos.x - ( sourceRectangle->width * player->scale ) / 2,
                 player->pos.y,
                 sourceRectangle->width * player->scale,
                 sourceRectangle->height * player->scale
@@ -103,7 +105,7 @@ void updatePlayer( Player *player, float delta ) {
         player->state = PLAYER_STATE_IDLE;
     }
 
-    if ( IsKeyPressed( KEY_UP ) && !player->jumping ) {
+    if ( IsKeyDown( KEY_UP ) && !player->jumping ) {
         player->vel.y = -500;
         player->jumping = true;
     }
