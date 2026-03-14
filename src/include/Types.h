@@ -22,10 +22,10 @@ typedef struct Player {
     Texture2D *texture;
     Vector2 pos;
     Vector2 dim;
-    Vector2 scale;
 
     Vector2 vel;
-    float walkingSpeed;
+    float forwardSpeed;
+    float backwardSpeed;
     float jumpSpeed;
 
     PlayerAnimation idleAnim;
@@ -45,7 +45,8 @@ typedef struct Player {
 } Player;
 
 typedef struct GameWorld {
-    Rectangle floor;
+    Camera2D camera;
     Player *player;
+    Rectangle floor;
     float gravity;
 } GameWorld;

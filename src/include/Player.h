@@ -2,10 +2,10 @@
 
 #include "Types.h"
 
-Player *createPlayer( float x, float y, float scaleX, float scaleY );
+Player *createPlayer( float x, float y );
 void destroyPlayer( Player *player );
 void drawPlayer( Player *player );
-void updatePlayer( Player *player, float delta );
+void updatePlayer( Player *player, float gravity, float delta );
 void flipPlayerSide( Player *player );
 
 void createPlayerAnimationSources( PlayerAnimation *pa, int frameCount );

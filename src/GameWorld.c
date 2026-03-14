@@ -15,11 +15,13 @@
 //#undef RAYGUI_IMPLEMENTATION     // raygui.h
 
 #include "GameWorld.h"
+#include "Macros.h"
 #include "ResourceManager.h"
 #include "Types.h"
 #include "Player.h"
 
-static void resolveCollisionPlayerFloor( GameWorld *gw );
+static void resolveCollisionPlayerStage( GameWorld *gw );
+static void updateCamera( GameWorld *gw );
 
 /**
  * @brief Creates a dinamically allocated GameWorld struct instance.
@@ -28,14 +30,23 @@ GameWorld* createGameWorld( void ) {
 
     GameWorld *gw = (GameWorld*) malloc( sizeof( GameWorld ) );
 
-    float scaleX = 2.5;
-    float scaleY = 3.0f;
-    float floorHeight = 58;
+    float floorHeight = 45;
 
+    gw->player = createPlayer( rm.stageTexture.width / 2 - 50, 326 );
     gw->floor = (Rectangle) {
         0, GetScreenHeight() - floorHeight, GetScreenWidth(), floorHeight
     };
-    gw->player = createPlayer( 70, 326, scaleX, scaleY );
+    gw->gravity = 1500;
+
+    gw->camera = (Camera2D) {
+        .offset = { GetScreenWidth() / 2, 0 },
+        .rotation = 0.0f,
+        .target = {
+            gw->player->pos.x,
+            425
+        },
+        .zoom = 2.75f
+    };
 
     return gw;
 
@@ -58,8 +69,11 @@ void updateGameWorld( GameWorld *gw, float delta ) {
         flipPlayerSide( gw->player );
     }
 
-    updatePlayer( gw->player, delta );
-    resolveCollisionPlayerFloor( gw );
+    updatePlayer( gw->player, gw->gravity, delta );
+    resolveCollisionPlayerStage( gw );
+
+
+    updateCamera( gw );
 
 }
 
@@ -71,56 +85,30 @@ void drawGameWorld( GameWorld *gw ) {
     BeginDrawing();
     ClearBackground( WHITE );
 
-    // TODO: refactor
-    float bgScaleX = 2.3f;
-    //float bgScaleY = 2.8f;
-    float bgSourceW = 1024;
-    float bgSourceH = 240;
 
-    DrawTexturePro(
-        rm.stageTexture,
-        (Rectangle) { 8, 296, 768, 184 },
-        (Rectangle) { 
-            GetScreenWidth() / 2 - ( 768 * 2.33 ) / 2, 
-            0,
-            768 * 2.33,
-            224 * 2.3
-        },
-        (Vector2) { 0 },
-        0.0f,
-        WHITE
-    );
+    BeginMode2D( gw->camera );
 
-    DrawTexturePro(
-        rm.stageTexture,
-        (Rectangle) { 8, 8, bgSourceW, bgSourceH },
-        (Rectangle) { 
-            GetScreenWidth() / 2 - ( bgSourceW * bgScaleX ) / 2, 
-            -90,
-            bgSourceW * bgScaleX,
-            GetScreenHeight() * 1.15
-        },
-        (Vector2) { 0 },
-        0.0f,
-        WHITE
-    );
-
-    //DrawRectangleRec( gw->floor, GREEN );
+    DrawTexture( rm.stageTexture, 0, GetScreenHeight() - rm.stageTexture.height, WHITE );
     drawPlayer( gw->player );
-    //DrawRectangle( 0, 0, GetScreenWidth(), 95, YELLOW );
+
+    EndMode2D();
 
     EndDrawing();
 
 }
 
-static void resolveCollisionPlayerFloor( GameWorld *gw ) {
+static void resolveCollisionPlayerStage( GameWorld *gw ) {
 
     Player *player = gw->player;
     Rectangle *sourceRectangle = getCurrentPlayerAnimationSource( player );
 
-    //if ( player->pos.y + sourceRectangle->height * player->scale.y > gw->floor.y ) {
+    if ( player->pos.x - player->dim.x / 2 < 0 ) {
+        player->pos.x = player->dim.x / 2;
+    } else if ( player->pos.x + player->dim.x / 2 > rm.stageTexture.width ) {
+        player->pos.x = rm.stageTexture.width - player->dim.x / 2;
+    }
+
     if ( player->pos.y + player->dim.y > gw->floor.y ) {
-        //player->pos.y = gw->floor.y - sourceRectangle->height * player->scale.y;
         player->pos.y = gw->floor.y - player->dim.y;
         player->vel.y = 0.0f;
         if ( player->jumping ) {
@@ -129,7 +117,24 @@ static void resolveCollisionPlayerFloor( GameWorld *gw ) {
         }
     }
 
-    /*DrawCircle( 50, player->pos.y + sourceRectangle->height * player->scale, 5, BLACK );
-    DrawText( TextFormat( "%d", (int) player->vel.y ), 10, 10, 30, BLACK );*/
+}
+
+static void updateCamera( GameWorld *gw ) {
+
+    gw->camera.target.x = gw->player->pos.x;
+
+    float worldWidth = rm.stageTexture.width;
+    float zoom = gw->camera.zoom;
+    float offsetX = gw->camera.offset.x;
+    float screenWidth = GetScreenWidth();
+
+    float minTargetX = offsetX / zoom;
+    float maxTargetX = worldWidth - ( screenWidth - offsetX ) / zoom;
+
+    if ( gw->camera.target.x < minTargetX ) {
+        gw->camera.target.x = minTargetX;
+    } else if ( gw->camera.target.x > maxTargetX ) {
+        gw->camera.target.x = maxTargetX;
+    }
 
 }

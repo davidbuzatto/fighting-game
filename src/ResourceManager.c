@@ -30,11 +30,7 @@ void loadResourcesResourceManager( void ) {
         BLANK
     );
 
-    rm.stageTexture = loadTextureReplacingColor( 
-        "resources/images/guile-stage.png", 
-        (Color) { 48, 48, 88, 255 }, 
-        BLANK
-    );
+    rm.stageTexture = LoadTexture( "resources/images/ken-stage.png" );
 
 }
 

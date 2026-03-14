@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <math.h>
 
 #include "raylib/raylib.h"
 
@@ -8,19 +9,19 @@
 #include "Player.h"
 #include "ResourceManager.h"
 
-Player *createPlayer( float x, float y, float scaleX, float scaleY ) {
+Player *createPlayer( float x, float y ) {
 
     Player *p = (Player*) malloc( sizeof( Player ) );
 
     p->pos.x = x;
     p->pos.y = y;
-    p->dim.x = 300;
-    p->dim.y = 300;
+    p->dim.x = 80;
+    p->dim.y = 100;
     p->texture = &rm.playerTexture;
-    p->scale = (Vector2) { scaleX, scaleY };
     p->vel = (Vector2) { 0 };
-    p->walkingSpeed = 450;
-    p->jumpSpeed = 980;
+    p->forwardSpeed = 150;
+    p->backwardSpeed = 120;
+    p->jumpSpeed = 350;
     p->state = PLAYER_STATE_IDLE;
     p->lastState = PLAYER_STATE_IDLE;
     p->jumping = false;
@@ -29,7 +30,7 @@ Player *createPlayer( float x, float y, float scaleX, float scaleY ) {
     //p->idleAnim.frameCount = 5;
     p->idleAnim.frameCount = 6;
     p->idleAnim.currentFrame = 0;
-    p->idleAnim.frameTime = 0.042f;
+    p->idleAnim.frameTime = 0.065f;
     p->idleAnim.frameTimeCounter = 0.0f;
     p->idleAnim.stopAtLastFrame = false;
     createPlayerAnimationSources( &p->idleAnim, p->idleAnim.frameCount );
@@ -43,7 +44,7 @@ Player *createPlayer( float x, float y, float scaleX, float scaleY ) {
     //p->forwardAnim.frameCount = 6;
     p->forwardAnim.frameCount = 5;
     p->forwardAnim.currentFrame = 0;
-    p->forwardAnim.frameTime = 0.06f;
+    p->forwardAnim.frameTime = 0.07f;
     p->forwardAnim.frameTimeCounter = 0.0f;
     p->forwardAnim.stopAtLastFrame = false;
     createPlayerAnimationSources( &p->forwardAnim, p->forwardAnim.frameCount );
@@ -55,7 +56,7 @@ Player *createPlayer( float x, float y, float scaleX, float scaleY ) {
 
     p->backwardAnim.frameCount = 6;
     p->backwardAnim.currentFrame = 0;
-    p->backwardAnim.frameTime = 0.07f;
+    p->backwardAnim.frameTime = 0.08f;
     p->backwardAnim.frameTimeCounter = 0.0f;
     p->backwardAnim.stopAtLastFrame = false;
     createPlayerAnimationSources( &p->backwardAnim, p->backwardAnim.frameCount );
@@ -120,9 +121,9 @@ Player *createPlayer( float x, float y, float scaleX, float scaleY ) {
 }
 
 void destroyPlayer( Player *player ) {
-    destroyPlayerAnimationSources( &player->idleAnim );
-    destroyPlayerAnimationSources( &player->forwardAnim );
-    destroyPlayerAnimationSources( &player->backwardAnim );
+    for ( int i = 0; i < player->animationCount; i++ ) {
+        destroyPlayerAnimationSources( player->animations[i] );
+    }
     free( player );
 }
 
@@ -135,10 +136,10 @@ void drawPlayer( Player *player ) {
             *player->texture,
             *sourceRectangle,
             (Rectangle) { 
-                player->pos.x - ( sourceRectangle->width * player->scale.x ) / 2,
-                player->pos.y + player->dim.y - ( sourceRectangle->height * player->scale.y ),
-                sourceRectangle->width * player->scale.x,
-                sourceRectangle->height * player->scale.y
+                player->pos.x - fabs( sourceRectangle->width ) / 2,
+                player->pos.y + player->dim.y - sourceRectangle->height,
+                sourceRectangle->width,
+                sourceRectangle->height
             },
             (Vector2) { 0 },
             0.0f,
@@ -146,21 +147,21 @@ void drawPlayer( Player *player ) {
         );
     }
 
-    DrawCircle( player->pos.x - ( sourceRectangle->width * player->scale.x ) / 2, player->pos.y, 10, BLUE );
-    DrawRectangleLines( player->pos.x, player->pos.y, player->dim.x, player->dim.y, BLUE );
+    //DrawCircle( player->pos.x, player->pos.y, 2, BLUE );
+    //DrawRectangleLines( player->pos.x - player->dim.x / 2, player->pos.y, player->dim.x, player->dim.y, BLUE );
 
 }
 
-void updatePlayer( Player *player, float delta ) {
+void updatePlayer( Player *player, float gravity, float delta ) {
 
     // state changes
     if ( !player->jumping ) {
-        if ( IsKeyDown( KEY_LEFT ) ) {
-            player->vel.x = -player->walkingSpeed;
-            player->state = PLAYER_STATE_WALKING_BACKWARD;
-        } else if ( IsKeyDown( KEY_RIGHT ) ) {
-            player->vel.x = player->walkingSpeed;
+        if ( IsKeyDown( KEY_RIGHT ) ) {
+            player->vel.x = player->forwardSpeed;
             player->state = PLAYER_STATE_WALKING_FORWARD;
+        } else if ( IsKeyDown( KEY_LEFT ) ) {
+            player->vel.x = -player->backwardSpeed;
+            player->state = PLAYER_STATE_WALKING_BACKWARD;
         } else {
             player->vel.x = 0.0f;
             player->state = PLAYER_STATE_IDLE;
@@ -174,10 +175,12 @@ void updatePlayer( Player *player, float delta ) {
         } else if ( player->vel.x > 0 ) {
             //trace( "jumping right" );
             player->vel.y = -player->jumpSpeed;
+            player->vel.x = player->forwardSpeed * 1.6f;
             player->jumping = true;
         } else {
             //trace( "jumping left" );
             player->vel.y = -player->jumpSpeed;
+            player->vel.x = -player->backwardSpeed * 2.0f;
             player->jumping = true;
         }
     }
@@ -209,10 +212,10 @@ void updatePlayer( Player *player, float delta ) {
     player->pos.x += player->vel.x * delta;
     player->pos.y += player->vel.y * delta;
 
-    player->vel.y += GRAVITY * delta;
+    player->vel.y += gravity * delta;
     
-    if ( player->vel.y > 900 ) {
-        player->vel.y = 900;
+    if ( player->vel.y > gravity ) {
+        player->vel.y = gravity;
     }
 
     player->lastState = player->state;
