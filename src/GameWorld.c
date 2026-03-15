@@ -7,6 +7,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "raylib/raylib.h"
 //#include "raylib/raymath.h"
@@ -22,6 +23,13 @@
 
 static void resolveCollisionPlayerStage( Player *player, GameWorld *gw );
 static void updateCamera( GameWorld *gw );
+static void flipPlayers( GameWorld *gw );
+
+static float playerDist = 0.0f;
+
+// flip players logic
+static bool player1RightPlayer2 = false;
+static bool needsToFlipPlayers = false;
 
 /**
  * @brief Creates a dinamically allocated GameWorld struct instance.
@@ -107,15 +115,37 @@ void updateGameWorld( GameWorld *gw, float delta ) {
         gw->stageTexture = &rm.guileStageTexture;
     }
 
-    if ( IsKeyPressed( KEY_F ) ) {
-        flipPlayerSide( gw->player1 );
+    processInputPlayer( gw->player1, gw->gravity, delta );
+    processInputPlayer( gw->player2, gw->gravity, delta );
+
+    // TODO: improve
+    playerDist = fabs( gw->player1->pos.x - gw->player2->pos.x ) * gw->camera.zoom;
+    float width = ( gw->player1->dim.x + gw->player2->dim.x ) / 2 * gw->camera.zoom;
+    bool adjust = false;
+    if ( playerDist > GetScreenWidth() - width ) {
+        gw->player1->vel.x = 0.0f;
+        gw->player2->vel.x = 0.0f;
+        adjust = true;
     }
 
     updatePlayer( gw->player1, gw->gravity, delta );
     updatePlayer( gw->player2, gw->gravity, delta );
 
+    // TODO: improve
+    if ( adjust ) {
+        if ( !player1RightPlayer2 ) {
+            gw->player1->pos.x += 0.1f;
+            gw->player2->pos.x -= 0.1f;
+        } else {
+            gw->player1->pos.x -= 0.1f;
+            gw->player2->pos.x += 0.1f;
+        }
+    }
+
     resolveCollisionPlayerStage( gw->player1, gw );
     resolveCollisionPlayerStage( gw->player2, gw );
+
+    flipPlayers( gw );
 
     updateCamera( gw );
 
@@ -132,10 +162,11 @@ void drawGameWorld( GameWorld *gw ) {
     BeginMode2D( gw->camera );
 
     DrawTexture( *gw->stageTexture, 0, GetScreenHeight() - gw->stageTexture->height, WHITE );
-    drawPlayer( gw->player1 );
     drawPlayer( gw->player2 );
+    drawPlayer( gw->player1 );
 
     EndMode2D();
+
     EndDrawing();
 
 }
@@ -161,7 +192,7 @@ static void resolveCollisionPlayerStage( Player *player, GameWorld *gw ) {
 
 static void updateCamera( GameWorld *gw ) {
 
-    gw->camera.target.x = gw->player1->pos.x;
+    gw->camera.target.x = fabs( ( gw->player1->pos.x + gw->player2->pos.x ) / 2 );
 
     float worldWidth = gw->stageTexture->width;
     float zoom = gw->camera.zoom;
@@ -175,6 +206,28 @@ static void updateCamera( GameWorld *gw ) {
         gw->camera.target.x = minTargetX;
     } else if ( gw->camera.target.x > maxTargetX ) {
         gw->camera.target.x = maxTargetX;
+    }
+
+}
+
+static void flipPlayers( GameWorld *gw ) {
+
+    if ( gw->player1->pos.x > gw->player2->pos.x ) {
+        if ( !player1RightPlayer2 ) {
+            needsToFlipPlayers = true;
+        }
+        player1RightPlayer2 = true;
+    } else {
+        if ( player1RightPlayer2 ) {
+            needsToFlipPlayers = true;
+        }
+        player1RightPlayer2 = false;
+    }
+
+    if ( needsToFlipPlayers ) {
+        flipPlayerSide( gw->player1 );
+        flipPlayerSide( gw->player2 );
+        needsToFlipPlayers = false;
     }
 
 }

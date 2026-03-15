@@ -26,7 +26,7 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->vel = (Vector2) { 0 };
     p->forwardSpeed = 150;
     p->backwardSpeed = 120;
-    p->jumpSpeed = 350;
+    p->jumpSpeed = 420;
     p->state = PLAYER_STATE_IDLE;
     p->lastState = PLAYER_STATE_IDLE;
     p->jumping = false;
@@ -72,19 +72,19 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->straightJumpAnim.frameTimeCounter = 0.0f;
     p->straightJumpAnim.stopAtLastFrame = true;
     createAnimationFrames( &p->straightJumpAnim, p->straightJumpAnim.frameCount );
-    p->straightJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 849, -64, 140 }, 70 };
-    p->straightJumpAnim.frames[1] = (AnimationFrame) { (Rectangle) {  66, 849, -64, 140 }, 70 };
-    p->straightJumpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 131, 849, -64, 140 }, 70 };
-    p->straightJumpAnim.frames[3] = (AnimationFrame) { (Rectangle) { 196, 849, -64, 140 }, 70 };
-    p->straightJumpAnim.frames[4] = (AnimationFrame) { (Rectangle) { 261, 849, -64, 140 }, 70 };
-    p->straightJumpAnim.frames[5] = (AnimationFrame) { (Rectangle) { 326, 849, -64, 140 }, 70 };
+    p->straightJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 849, -64, 140 }, 250 };
+    p->straightJumpAnim.frames[1] = (AnimationFrame) { (Rectangle) {  66, 849, -64, 140 }, 50 };
+    p->straightJumpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 131, 849, -64, 140 }, 50 };
+    p->straightJumpAnim.frames[3] = (AnimationFrame) { (Rectangle) { 196, 849, -64, 140 }, 50 };
+    p->straightJumpAnim.frames[4] = (AnimationFrame) { (Rectangle) { 261, 849, -64, 140 }, 50 };
+    p->straightJumpAnim.frames[5] = (AnimationFrame) { (Rectangle) { 326, 849, -64, 140 }, 50 };
 
     p->forwardJumpAnim.frameCount = 7;
     p->forwardJumpAnim.currentFrame = 0;
     p->forwardJumpAnim.frameTimeCounter = 0.0f;
     p->forwardJumpAnim.stopAtLastFrame = true;
     createAnimationFrames( &p->forwardJumpAnim, p->forwardJumpAnim.frameCount );
-    p->forwardJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 140 }, 50 };
+    p->forwardJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 140 }, 250 };
     p->forwardJumpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 130, 708, -128, 140 }, 50 };
     p->forwardJumpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 259, 708, -128, 140 }, 50 };
     p->forwardJumpAnim.frames[3] = (AnimationFrame) { (Rectangle) { 388, 708, -128, 140 }, 50 };
@@ -97,7 +97,7 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->backwardJumpAnim.frameTimeCounter = 0.0f;
     p->backwardJumpAnim.stopAtLastFrame = true;
     createAnimationFrames( &p->backwardJumpAnim, p->backwardJumpAnim.frameCount );
-    p->backwardJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 140 }, 50 };
+    p->backwardJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 140 }, 250 };
     p->backwardJumpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 646, 708, -128, 140 }, 50 };
     p->backwardJumpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 517, 708, -128, 140 }, 50 };
     p->backwardJumpAnim.frames[3] = (AnimationFrame) { (Rectangle) { 388, 708, -128, 140 }, 50 };
@@ -125,7 +125,7 @@ void initializePlayerKen( float x, float y, Player *p ) {
     p->vel = (Vector2) { 0 };
     p->forwardSpeed = 150;
     p->backwardSpeed = 120;
-    p->jumpSpeed = 350;
+    p->jumpSpeed = 420;
     p->state = PLAYER_STATE_IDLE;
     p->lastState = PLAYER_STATE_IDLE;
     p->jumping = false;
@@ -171,19 +171,19 @@ void initializePlayerKen( float x, float y, Player *p ) {
     p->straightJumpAnim.frameTimeCounter = 0.0f;
     p->straightJumpAnim.stopAtLastFrame = true;
     createAnimationFrames( &p->straightJumpAnim, p->straightJumpAnim.frameCount );
-    p->straightJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 849, -64, 140 }, 70 };
-    p->straightJumpAnim.frames[1] = (AnimationFrame) { (Rectangle) {  66, 849, -64, 140 }, 70 };
-    p->straightJumpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 131, 849, -64, 140 }, 70 };
-    p->straightJumpAnim.frames[3] = (AnimationFrame) { (Rectangle) { 196, 849, -64, 140 }, 70 };
-    p->straightJumpAnim.frames[4] = (AnimationFrame) { (Rectangle) { 261, 849, -64, 140 }, 70 };
-    p->straightJumpAnim.frames[5] = (AnimationFrame) { (Rectangle) { 326, 849, -64, 140 }, 70 };
+    p->straightJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 849, -64, 140 }, 250 };
+    p->straightJumpAnim.frames[1] = (AnimationFrame) { (Rectangle) {  66, 849, -64, 140 }, 50 };
+    p->straightJumpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 131, 849, -64, 140 }, 50 };
+    p->straightJumpAnim.frames[3] = (AnimationFrame) { (Rectangle) { 196, 849, -64, 140 }, 50 };
+    p->straightJumpAnim.frames[4] = (AnimationFrame) { (Rectangle) { 261, 849, -64, 140 }, 50 };
+    p->straightJumpAnim.frames[5] = (AnimationFrame) { (Rectangle) { 326, 849, -64, 140 }, 50 };
 
     p->forwardJumpAnim.frameCount = 7;
     p->forwardJumpAnim.currentFrame = 0;
     p->forwardJumpAnim.frameTimeCounter = 0.0f;
     p->forwardJumpAnim.stopAtLastFrame = true;
     createAnimationFrames( &p->forwardJumpAnim, p->forwardJumpAnim.frameCount );
-    p->forwardJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 140 }, 50 };
+    p->forwardJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 140 }, 250 };
     p->forwardJumpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 130, 708, -128, 140 }, 50 };
     p->forwardJumpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 259, 708, -128, 140 }, 50 };
     p->forwardJumpAnim.frames[3] = (AnimationFrame) { (Rectangle) { 388, 708, -128, 140 }, 50 };
@@ -196,7 +196,7 @@ void initializePlayerKen( float x, float y, Player *p ) {
     p->backwardJumpAnim.frameTimeCounter = 0.0f;
     p->backwardJumpAnim.stopAtLastFrame = true;
     createAnimationFrames( &p->backwardJumpAnim, p->backwardJumpAnim.frameCount );
-    p->backwardJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 140 }, 50 };
+    p->backwardJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 140 }, 250 };
     p->backwardJumpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 646, 708, -128, 140 }, 50 };
     p->backwardJumpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 517, 708, -128, 140 }, 50 };
     p->backwardJumpAnim.frames[3] = (AnimationFrame) { (Rectangle) { 388, 708, -128, 140 }, 50 };
@@ -251,7 +251,7 @@ void drawPlayer( Player *player ) {
 
 }
 
-void updatePlayer( Player *player, float gravity, float delta ) {
+void processInputPlayer( Player *player, float gravity, float delta ) {
 
     // state changes
     if ( !player->jumping ) {
@@ -322,6 +322,12 @@ void updatePlayer( Player *player, float gravity, float delta ) {
             }
         }
     }
+    
+    player->lastState = player->state;
+
+}
+
+void updatePlayer( Player *player, float gravity, float delta ) {
 
     // positioning and physics
     player->pos.x += player->vel.x * delta;
@@ -332,8 +338,6 @@ void updatePlayer( Player *player, float gravity, float delta ) {
     if ( player->vel.y > gravity ) {
         player->vel.y = gravity;
     }
-
-    player->lastState = player->state;
     
 }
 

@@ -13,10 +13,12 @@
 
 ResourceManager rm = { 0 };
 
-static Texture2D loadTextureReplacingColor( const char *path, Color sourceColor, Color targetColor ) {
+static Texture2D loadTextureReplacingColor( const char *path, Color *sourceColors, Color *targetColors, int colorCount ) {
     Image img = LoadImage( path );
     ImageFormat( &img, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 );
-    ImageColorReplace( &img, sourceColor, targetColor );
+    for ( int i = 0; i < colorCount; i++ ) {
+        ImageColorReplace( &img, sourceColors[i], targetColors[i] );
+    }
     Texture2D texture = LoadTextureFromImage( img );
     UnloadImage( img );
     return texture;
@@ -26,14 +28,28 @@ void loadResourcesResourceManager( void ) {
 
     rm.ryuTexture = loadTextureReplacingColor( 
         "resources/images/chars/ryu.png", 
-        (Color) { 85, 170, 255, 255 }, 
-        BLANK
+        (Color[]) { 
+            (Color) { 85, 170, 255, 255 },
+            (Color) { 0, 85, 127, 255 }
+        },
+        (Color[]) { 
+            BLANK,
+            BLANK
+        },
+        2
     );
 
     rm.kenTexture = loadTextureReplacingColor( 
         "resources/images/chars/ken.png", 
-        (Color) { 85, 170, 255, 255 }, 
-        BLANK
+        (Color[]) { 
+            (Color) { 85, 170, 255, 255 },
+            (Color) { 0, 85, 127, 255 }
+        }, 
+        (Color[]) { 
+            BLANK,
+            BLANK
+        },
+        2
     );
 
     rm.blankaStageTexture = LoadTexture( "resources/images/stages/blanka-stage.png" );
