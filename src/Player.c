@@ -34,12 +34,12 @@ Player *createPlayer( float x, float y ) {
     p->idleAnim.frameTimeCounter = 0.0f;
     p->idleAnim.stopAtLastFrame = false;
     createPlayerAnimationSources( &p->idleAnim, p->idleAnim.frameCount );
-    p->idleAnim.sources[0] = (Rectangle) { 1, 904, -64, 96 };
-    p->idleAnim.sources[1] = (Rectangle) { 66, 904, -64, 96 };
-    p->idleAnim.sources[2] = (Rectangle) { 131, 904, -64, 96 };
-    p->idleAnim.sources[3] = (Rectangle) { 196, 904, -64, 96 };
-    p->idleAnim.sources[4] = (Rectangle) { 131, 904, -64, 96 };
-    p->idleAnim.sources[5] = (Rectangle) { 66, 904, -64, 96 };
+    p->idleAnim.sources[0] = (Rectangle) {   1, 142, -64, 96 };
+    p->idleAnim.sources[1] = (Rectangle) {  66, 142, -64, 96 };
+    p->idleAnim.sources[2] = (Rectangle) { 131, 142, -64, 96 };
+    p->idleAnim.sources[3] = (Rectangle) { 196, 142, -64, 96 };
+    p->idleAnim.sources[4] = (Rectangle) { 131, 142, -64, 96 };
+    p->idleAnim.sources[5] = (Rectangle) {  66, 142, -64, 96 };
 
     //p->forwardAnim.frameCount = 6;
     p->forwardAnim.frameCount = 5;
@@ -48,11 +48,11 @@ Player *createPlayer( float x, float y ) {
     p->forwardAnim.frameTimeCounter = 0.0f;
     p->forwardAnim.stopAtLastFrame = false;
     createPlayerAnimationSources( &p->forwardAnim, p->forwardAnim.frameCount );
-    p->forwardAnim.sources[0] = (Rectangle) { 1, 1276, -80, 96 };
-    p->forwardAnim.sources[1] = (Rectangle) { 82, 1276, -80, 96 };
-    p->forwardAnim.sources[2] = (Rectangle) { 163, 1276, -80, 96 };
-    p->forwardAnim.sources[3] = (Rectangle) { 244, 1276, -80, 96 };
-    p->forwardAnim.sources[4] = (Rectangle) { 325, 1276, -80, 96 };
+    p->forwardAnim.sources[0] = (Rectangle) {   1, 514, -80, 96 };
+    p->forwardAnim.sources[1] = (Rectangle) {  82, 514, -80, 96 };
+    p->forwardAnim.sources[2] = (Rectangle) { 163, 514, -80, 96 };
+    p->forwardAnim.sources[3] = (Rectangle) { 244, 514, -80, 96 };
+    p->forwardAnim.sources[4] = (Rectangle) { 325, 514, -80, 96 };
 
     p->backwardAnim.frameCount = 6;
     p->backwardAnim.currentFrame = 0;
@@ -60,12 +60,12 @@ Player *createPlayer( float x, float y ) {
     p->backwardAnim.frameTimeCounter = 0.0f;
     p->backwardAnim.stopAtLastFrame = false;
     createPlayerAnimationSources( &p->backwardAnim, p->backwardAnim.frameCount );
-    p->backwardAnim.sources[0] = (Rectangle) { 1, 1373, -80, 96 };
-    p->backwardAnim.sources[1] = (Rectangle) { 82, 1373, -80, 96 };
-    p->backwardAnim.sources[2] = (Rectangle) { 163, 1373, -80, 96 };
-    p->backwardAnim.sources[3] = (Rectangle) { 244, 1373, -80, 96 };
-    p->backwardAnim.sources[4] = (Rectangle) { 325, 1373, -80, 96 };
-    p->backwardAnim.sources[5] = (Rectangle) { 406, 1373, -80, 96 };
+    p->backwardAnim.sources[0] = (Rectangle) {   1, 611, -80, 96 };
+    p->backwardAnim.sources[1] = (Rectangle) {  82, 611, -80, 96 };
+    p->backwardAnim.sources[2] = (Rectangle) { 163, 611, -80, 96 };
+    p->backwardAnim.sources[3] = (Rectangle) { 244, 611, -80, 96 };
+    p->backwardAnim.sources[4] = (Rectangle) { 325, 611, -80, 96 };
+    p->backwardAnim.sources[5] = (Rectangle) { 406, 611, -80, 96 };
 
     p->straightJumpAnim.frameCount = 6;
     p->straightJumpAnim.currentFrame = 0;
@@ -73,12 +73,12 @@ Player *createPlayer( float x, float y ) {
     p->straightJumpAnim.frameTimeCounter = 0.0f;
     p->straightJumpAnim.stopAtLastFrame = true;
     createPlayerAnimationSources( &p->straightJumpAnim, p->straightJumpAnim.frameCount );
-    p->straightJumpAnim.sources[0] = (Rectangle) { 1, 1611, -64, 140 };
-    p->straightJumpAnim.sources[1] = (Rectangle) { 66, 1611, -64, 140 };
-    p->straightJumpAnim.sources[2] = (Rectangle) { 131, 1611, -64, 140 };
-    p->straightJumpAnim.sources[3] = (Rectangle) { 196, 1611, -64, 140 };
-    p->straightJumpAnim.sources[4] = (Rectangle) { 261, 1611, -64, 140 };
-    p->straightJumpAnim.sources[5] = (Rectangle) { 326, 1611, -64, 140 };
+    p->straightJumpAnim.sources[0] = (Rectangle) {   1, 849, -64, 140 };
+    p->straightJumpAnim.sources[1] = (Rectangle) {  66, 849, -64, 140 };
+    p->straightJumpAnim.sources[2] = (Rectangle) { 131, 849, -64, 140 };
+    p->straightJumpAnim.sources[3] = (Rectangle) { 196, 849, -64, 140 };
+    p->straightJumpAnim.sources[4] = (Rectangle) { 261, 849, -64, 140 };
+    p->straightJumpAnim.sources[5] = (Rectangle) { 326, 849, -64, 140 };
 
     p->forwardJumpAnim.frameCount = 7;
     p->forwardJumpAnim.currentFrame = 0;
@@ -86,13 +86,13 @@ Player *createPlayer( float x, float y ) {
     p->forwardJumpAnim.frameTimeCounter = 0.0f;
     p->forwardJumpAnim.stopAtLastFrame = true;
     createPlayerAnimationSources( &p->forwardJumpAnim, p->forwardJumpAnim.frameCount );
-    p->forwardJumpAnim.sources[0] = (Rectangle) { 1, 1470, -128, 140 };
-    p->forwardJumpAnim.sources[1] = (Rectangle) { 130, 1470, -128, 140 };
-    p->forwardJumpAnim.sources[2] = (Rectangle) { 259, 1470, -128, 140 };
-    p->forwardJumpAnim.sources[3] = (Rectangle) { 388, 1470, -128, 140 };
-    p->forwardJumpAnim.sources[4] = (Rectangle) { 517, 1470, -128, 140 };
-    p->forwardJumpAnim.sources[5] = (Rectangle) { 646, 1470, -128, 140 };
-    p->forwardJumpAnim.sources[6] = (Rectangle) { 1, 1470, -128, 140 };
+    p->forwardJumpAnim.sources[0] = (Rectangle) {   1, 708, -128, 140 };
+    p->forwardJumpAnim.sources[1] = (Rectangle) { 130, 708, -128, 140 };
+    p->forwardJumpAnim.sources[2] = (Rectangle) { 259, 708, -128, 140 };
+    p->forwardJumpAnim.sources[3] = (Rectangle) { 388, 708, -128, 140 };
+    p->forwardJumpAnim.sources[4] = (Rectangle) { 517, 708, -128, 140 };
+    p->forwardJumpAnim.sources[5] = (Rectangle) { 646, 708, -128, 140 };
+    p->forwardJumpAnim.sources[6] = (Rectangle) {   1, 708, -128, 140 };
 
     p->backwardJumpAnim.frameCount = 7;
     p->backwardJumpAnim.currentFrame = 0;
@@ -100,13 +100,13 @@ Player *createPlayer( float x, float y ) {
     p->backwardJumpAnim.frameTimeCounter = 0.0f;
     p->backwardJumpAnim.stopAtLastFrame = true;
     createPlayerAnimationSources( &p->backwardJumpAnim, p->backwardJumpAnim.frameCount );
-    p->backwardJumpAnim.sources[0] = (Rectangle) { 1, 1470, -128, 140 };
-    p->backwardJumpAnim.sources[1] = (Rectangle) { 646, 1470, -128, 140 };
-    p->backwardJumpAnim.sources[2] = (Rectangle) { 517, 1470, -128, 140 };
-    p->backwardJumpAnim.sources[3] = (Rectangle) { 388, 1470, -128, 140 };
-    p->backwardJumpAnim.sources[4] = (Rectangle) { 259, 1470, -128, 140 };
-    p->backwardJumpAnim.sources[5] = (Rectangle) { 130, 1470, -128, 140 };
-    p->backwardJumpAnim.sources[6] = (Rectangle) { 1, 1470, -128, 140 };
+    p->backwardJumpAnim.sources[0] = (Rectangle) {   1, 708, -128, 140 };
+    p->backwardJumpAnim.sources[1] = (Rectangle) { 646, 708, -128, 140 };
+    p->backwardJumpAnim.sources[2] = (Rectangle) { 517, 708, -128, 140 };
+    p->backwardJumpAnim.sources[3] = (Rectangle) { 388, 708, -128, 140 };
+    p->backwardJumpAnim.sources[4] = (Rectangle) { 259, 708, -128, 140 };
+    p->backwardJumpAnim.sources[5] = (Rectangle) { 130, 708, -128, 140 };
+    p->backwardJumpAnim.sources[6] = (Rectangle) {   1, 708, -128, 140 };
 
     p->animations[0] = &p->idleAnim;
     p->animations[1] = &p->forwardAnim;

@@ -30,7 +30,7 @@ GameWorld* createGameWorld( void ) {
 
     GameWorld *gw = (GameWorld*) malloc( sizeof( GameWorld ) );
 
-    float floorHeight = 45;
+    float floorHeight = 30;
 
     gw->player = createPlayer( rm.stageTexture.width / 2 - 50, 326 );
     gw->floor = (Rectangle) {
@@ -84,15 +84,13 @@ void drawGameWorld( GameWorld *gw ) {
 
     BeginDrawing();
     ClearBackground( WHITE );
-
-
+    
     BeginMode2D( gw->camera );
 
     DrawTexture( rm.stageTexture, 0, GetScreenHeight() - rm.stageTexture.height, WHITE );
     drawPlayer( gw->player );
 
     EndMode2D();
-
     EndDrawing();
 
 }
@@ -100,7 +98,6 @@ void drawGameWorld( GameWorld *gw ) {
 static void resolveCollisionPlayerStage( GameWorld *gw ) {
 
     Player *player = gw->player;
-    Rectangle *sourceRectangle = getCurrentPlayerAnimationSource( player );
 
     if ( player->pos.x - player->dim.x / 2 < 0 ) {
         player->pos.x = player->dim.x / 2;
