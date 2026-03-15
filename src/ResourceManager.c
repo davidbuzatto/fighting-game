@@ -24,19 +24,37 @@ static Texture2D loadTextureReplacingColor( const char *path, Color sourceColor,
 
 void loadResourcesResourceManager( void ) {
 
-    rm.playerTexture = loadTextureReplacingColor( 
+    rm.ryuTexture = loadTextureReplacingColor( 
         "resources/images/chars/ryu.png", 
         (Color) { 85, 170, 255, 255 }, 
         BLANK
     );
 
-    rm.stageTexture = LoadTexture( "resources/images/stages/ken-stage.png" );
+    rm.kenTexture = loadTextureReplacingColor( 
+        "resources/images/chars/ken.png", 
+        (Color) { 85, 170, 255, 255 }, 
+        BLANK
+    );
+
+    rm.blankaStageTexture = LoadTexture( "resources/images/stages/blanka-stage.png" );
+    rm.chunliStageTexture = LoadTexture( "resources/images/stages/chunli-stage.png" );
+    rm.eHondaStageTexture = LoadTexture( "resources/images/stages/ehonda-stage.png" );
+    rm.guileStageTexture = LoadTexture( "resources/images/stages/guile-stage.png" );
+    rm.kenStageTexture = LoadTexture( "resources/images/stages/ken-stage.png" );
 
 }
 
 void unloadResourcesResourceManager( void ) {
-    UnloadTexture( rm.playerTexture );
-    UnloadTexture( rm.stageTexture );
+
+    UnloadTexture( rm.ryuTexture );
+    UnloadTexture( rm.kenTexture );
+
+    UnloadTexture( rm.blankaStageTexture );
+    UnloadTexture( rm.chunliStageTexture );
+    UnloadTexture( rm.eHondaStageTexture );
+    UnloadTexture( rm.guileStageTexture );
+    UnloadTexture( rm.kenStageTexture );
+
     //UnloadSound( rm.soundExample );
     //UnloadMusicStream( rm.musicExample );
 }

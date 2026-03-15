@@ -10,17 +10,23 @@ typedef enum PlayerState {
 
 typedef struct AnimationFrame {
     Rectangle source;
-    int duration;
+    int duration;      // milliseconds
 } AnimationFrame;
 
 typedef struct Animation {
-    Rectangle *sources;
+    AnimationFrame *frames;
     int frameCount;
     int currentFrame;
-    float frameTime;
-    float frameTimeCounter;
+    int frameTimeCounter;
     bool stopAtLastFrame;
 } Animation;
+
+typedef struct PlayerKeyBindings {
+    int left;
+    int right;
+    int up;
+    int down;
+} PlayerKeyBindings;
 
 typedef struct Player {
 
@@ -47,11 +53,20 @@ typedef struct Player {
     bool jumping;
     bool lookingRight;
 
+    PlayerKeyBindings kb;
+
 } Player;
 
 typedef struct GameWorld {
-    Camera2D camera;
-    Player *player;
+
     Rectangle floor;
+    Texture2D *stageTexture;
+
     float gravity;
+
+    Camera2D camera;
+
+    Player *player1;
+    Player *player2;
+
 } GameWorld;

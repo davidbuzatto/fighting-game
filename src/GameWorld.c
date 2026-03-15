@@ -20,7 +20,7 @@
 #include "Types.h"
 #include "Player.h"
 
-static void resolveCollisionPlayerStage( GameWorld *gw );
+static void resolveCollisionPlayerStage( Player *player, GameWorld *gw );
 static void updateCamera( GameWorld *gw );
 
 /**
@@ -32,21 +32,46 @@ GameWorld* createGameWorld( void ) {
 
     float floorHeight = 30;
 
-    gw->player = createPlayer( rm.stageTexture.width / 2 - 50, 326 );
     gw->floor = (Rectangle) {
         0, GetScreenHeight() - floorHeight, GetScreenWidth(), floorHeight
     };
+    gw->stageTexture = &rm.kenStageTexture;
+
     gw->gravity = 1500;
 
     gw->camera = (Camera2D) {
         .offset = { GetScreenWidth() / 2, 0 },
         .rotation = 0.0f,
         .target = {
-            gw->player->pos.x,
+            0,
             425
         },
         .zoom = 2.75f
     };
+
+    Player *player1 = createPlayer();
+    Player *player2 = createPlayer();
+
+    initializePlayerRyu( gw->stageTexture->width / 2 - 78, 326, player1 );
+    initializePlayerKen( gw->stageTexture->width / 2 + 50, 326, player2 );
+    flipPlayerSide( player2 );
+
+    player1->kb = (PlayerKeyBindings) {
+        .left = KEY_LEFT,
+        .right = KEY_RIGHT,
+        .up = KEY_UP,
+        .down = KEY_DOWN,
+    };
+
+    player2->kb = (PlayerKeyBindings) {
+        .left = KEY_A,
+        .right = KEY_D,
+        .up = KEY_W,
+        .down = KEY_S,
+    };
+
+    gw->player1 = player1;
+    gw->player2 = player2;
 
     return gw;
 
@@ -56,7 +81,8 @@ GameWorld* createGameWorld( void ) {
  * @brief Destroys a GameWindow object and its dependecies.
  */
 void destroyGameWorld( GameWorld *gw ) {
-    destroyPlayer( gw->player );
+    destroyPlayer( gw->player1 );
+    destroyPlayer( gw->player2 );
     free( gw );
 }
 
@@ -65,13 +91,31 @@ void destroyGameWorld( GameWorld *gw ) {
  */
 void updateGameWorld( GameWorld *gw, float delta ) {
 
-    if ( IsKeyPressed( KEY_F ) ) {
-        flipPlayerSide( gw->player );
+    if ( IsKeyPressed( KEY_ONE ) ) {
+        gw->stageTexture = &rm.kenStageTexture;
+    }
+    if ( IsKeyPressed( KEY_TWO ) ) {
+        gw->stageTexture = &rm.blankaStageTexture;
+    }
+    if ( IsKeyPressed( KEY_THREE ) ) {
+        gw->stageTexture = &rm.chunliStageTexture;
+    }
+    if ( IsKeyPressed( KEY_FOUR ) ) {
+        gw->stageTexture = &rm.eHondaStageTexture;
+    }
+    if ( IsKeyPressed( KEY_FIVE ) ) {
+        gw->stageTexture = &rm.guileStageTexture;
     }
 
-    updatePlayer( gw->player, gw->gravity, delta );
-    resolveCollisionPlayerStage( gw );
+    if ( IsKeyPressed( KEY_F ) ) {
+        flipPlayerSide( gw->player1 );
+    }
 
+    updatePlayer( gw->player1, gw->gravity, delta );
+    updatePlayer( gw->player2, gw->gravity, delta );
+
+    resolveCollisionPlayerStage( gw->player1, gw );
+    resolveCollisionPlayerStage( gw->player2, gw );
 
     updateCamera( gw );
 
@@ -87,22 +131,21 @@ void drawGameWorld( GameWorld *gw ) {
     
     BeginMode2D( gw->camera );
 
-    DrawTexture( rm.stageTexture, 0, GetScreenHeight() - rm.stageTexture.height, WHITE );
-    drawPlayer( gw->player );
+    DrawTexture( *gw->stageTexture, 0, GetScreenHeight() - gw->stageTexture->height, WHITE );
+    drawPlayer( gw->player1 );
+    drawPlayer( gw->player2 );
 
     EndMode2D();
     EndDrawing();
 
 }
 
-static void resolveCollisionPlayerStage( GameWorld *gw ) {
-
-    Player *player = gw->player;
+static void resolveCollisionPlayerStage( Player *player, GameWorld *gw ) {
 
     if ( player->pos.x - player->dim.x / 2 < 0 ) {
         player->pos.x = player->dim.x / 2;
-    } else if ( player->pos.x + player->dim.x / 2 > rm.stageTexture.width ) {
-        player->pos.x = rm.stageTexture.width - player->dim.x / 2;
+    } else if ( player->pos.x + player->dim.x / 2 > gw->stageTexture->width ) {
+        player->pos.x = gw->stageTexture->width - player->dim.x / 2;
     }
 
     if ( player->pos.y + player->dim.y > gw->floor.y ) {
@@ -118,9 +161,9 @@ static void resolveCollisionPlayerStage( GameWorld *gw ) {
 
 static void updateCamera( GameWorld *gw ) {
 
-    gw->camera.target.x = gw->player->pos.x;
+    gw->camera.target.x = gw->player1->pos.x;
 
-    float worldWidth = rm.stageTexture.width;
+    float worldWidth = gw->stageTexture->width;
     float zoom = gw->camera.zoom;
     float offsetX = gw->camera.offset.x;
     float screenWidth = GetScreenWidth();

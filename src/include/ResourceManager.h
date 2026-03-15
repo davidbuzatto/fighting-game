@@ -10,8 +10,16 @@
 #include "raylib/raylib.h"
 
 typedef struct ResourceManager {
-    Texture2D playerTexture;
-    Texture2D stageTexture;
+
+    Texture2D ryuTexture;
+    Texture2D kenTexture;
+
+    Texture2D blankaStageTexture;
+    Texture2D chunliStageTexture;
+    Texture2D eHondaStageTexture;
+    Texture2D guileStageTexture;
+    Texture2D kenStageTexture;
+
     //Sound soundExample;
     //Music musicExample;
 } ResourceManager;
