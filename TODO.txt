@@ -1,5 +1,16 @@
 Ajustar animações -> posição dos desenhos dos frames
 Criar temporização por frame;
+Duração em milisegundos.
 Implementar animação de agachamento;
 Implementar mudança de direção;
 Implementar hitboxes e temporização frame a frame.
+
+
+"Sprite-0001 0.aseprite": {
+    "frame": { "x": 0, "y": 0, "w": 200, "h": 200 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 200, "h": 200 },
+    "sourceSize": { "w": 200, "h": 200 },
+    "duration": 100
+   },
