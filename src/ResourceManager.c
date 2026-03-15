@@ -25,12 +25,12 @@ static Texture2D loadTextureReplacingColor( const char *path, Color sourceColor,
 void loadResourcesResourceManager( void ) {
 
     rm.playerTexture = loadTextureReplacingColor( 
-        "resources/images/chars/ken.png", 
+        "resources/images/chars/ryu.png", 
         (Color) { 85, 170, 255, 255 }, 
         BLANK
     );
 
-    rm.stageTexture = LoadTexture( "resources/images/stages/blanka-stage.png" );
+    rm.stageTexture = LoadTexture( "resources/images/stages/ken-stage.png" );
 
 }
 

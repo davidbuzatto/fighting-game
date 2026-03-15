@@ -8,14 +8,19 @@ typedef enum PlayerState {
     PLAYER_STATE_WALKING_BACKWARD
 } PlayerState;
 
-typedef struct PlayerAnimation {
+typedef struct AnimationFrame {
+    Rectangle source;
+    int duration;
+} AnimationFrame;
+
+typedef struct Animation {
     Rectangle *sources;
     int frameCount;
     int currentFrame;
     float frameTime;
     float frameTimeCounter;
     bool stopAtLastFrame;
-} PlayerAnimation;
+} Animation;
 
 typedef struct Player {
 
@@ -28,13 +33,13 @@ typedef struct Player {
     float backwardSpeed;
     float jumpSpeed;
 
-    PlayerAnimation idleAnim;
-    PlayerAnimation forwardAnim;
-    PlayerAnimation backwardAnim;
-    PlayerAnimation straightJumpAnim;
-    PlayerAnimation forwardJumpAnim;
-    PlayerAnimation backwardJumpAnim;
-    PlayerAnimation *animations[10];
+    Animation idleAnim;
+    Animation forwardAnim;
+    Animation backwardAnim;
+    Animation straightJumpAnim;
+    Animation forwardJumpAnim;
+    Animation backwardJumpAnim;
+    Animation *animations[10];
     int animationCount;
 
     PlayerState state;

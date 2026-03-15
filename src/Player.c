@@ -224,7 +224,7 @@ void updatePlayer( Player *player, float gravity, float delta ) {
 
 void flipPlayerSide( Player *player ) {
     for ( int i = 0; i < player->animationCount; i++ ) {
-        PlayerAnimation *a = player->animations[i];
+        Animation *a = player->animations[i];
         for ( int j = 0; j < a->frameCount; j++ ) {
             a->sources[j].width = -a->sources[j].width;
         }
@@ -232,15 +232,15 @@ void flipPlayerSide( Player *player ) {
     player->lookingRight = !player->lookingRight;
 }
 
-void createPlayerAnimationSources( PlayerAnimation *pa, int frameCount ) {
+void createPlayerAnimationSources( Animation *pa, int frameCount ) {
     pa->sources = (Rectangle*) malloc( sizeof( Rectangle ) * frameCount );
 }
 
-void destroyPlayerAnimationSources( PlayerAnimation *pa ) {
+void destroyPlayerAnimationSources( Animation *pa ) {
     free( pa->sources );
 }
 
-void updatePlayerAnimation( PlayerAnimation *pa, float delta ) {
+void updatePlayerAnimation( Animation *pa, float delta ) {
 
     if ( pa->stopAtLastFrame && pa->currentFrame % pa->frameCount == pa->frameCount - 1 ) {
         return;
@@ -255,7 +255,7 @@ void updatePlayerAnimation( PlayerAnimation *pa, float delta ) {
 
 }
 
-int getPlayerAnimationFrame( PlayerAnimation *pa ) {
+int getPlayerAnimationFrame( Animation *pa ) {
     return pa->currentFrame % pa->frameCount;
 }
 
@@ -284,7 +284,7 @@ int getCurrentPlayerAnimationFrame( Player *player ) {
 
 }
 
-Rectangle *getPlayerAnimationSource( PlayerAnimation *pa ) {
+Rectangle *getPlayerAnimationSource( Animation *pa ) {
     return &pa->sources[getPlayerAnimationFrame(pa)];
 }
 
@@ -313,7 +313,7 @@ Rectangle *getCurrentPlayerAnimationSource( Player *player ) {
 
 void resetPlayerAnimations( Player *player ) {
     for ( int i = 0; i < player->animationCount; i++ ) {
-        PlayerAnimation *a = player->animations[i];
+        Animation *a = player->animations[i];
         a->currentFrame = 0;
         a->frameTimeCounter = 0.0f;
         a->currentFrame = 0;
