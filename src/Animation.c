@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "Animation.h"
+#include "Macros.h"
 #include "Types.h"
 
 void createAnimationFrames( Animation *anim, int frameCount ) {

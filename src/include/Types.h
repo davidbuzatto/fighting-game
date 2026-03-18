@@ -5,7 +5,8 @@
 typedef enum PlayerState {
     PLAYER_STATE_IDLE,
     PLAYER_STATE_WALKING_FORWARD,
-    PLAYER_STATE_WALKING_BACKWARD
+    PLAYER_STATE_WALKING_BACKWARD,
+    PLAYER_STATE_CROUCHING
 } PlayerState;
 
 typedef struct AnimationFrame {
@@ -45,12 +46,14 @@ typedef struct Player {
     Animation straightJumpAnim;
     Animation forwardJumpAnim;
     Animation backwardJumpAnim;
-    Animation *animations[10];
+    Animation crouchingAnim;
+    Animation *animations[50];
     int animationCount;
 
     PlayerState state;
     PlayerState lastState;
     bool jumping;
+    //bool crouching;
     bool lookingRight;
 
     PlayerKeyBindings kb;
