@@ -9,9 +9,20 @@ typedef enum PlayerState {
     PLAYER_STATE_CROUCHING
 } PlayerState;
 
+typedef enum PlayerMoveState {
+    PLAYER_MOVE_STATE_NONE,
+    PLAYER_MOVE_STATE_LP,
+    PLAYER_MOVE_STATE_MP,
+    PLAYER_MOVE_STATE_HP,
+    PLAYER_MOVE_STATE_LK,
+    PLAYER_MOVE_STATE_MK,
+    PLAYER_MOVE_STATE_HK,
+} PlayerMoveState;
+
 typedef struct AnimationFrame {
     Rectangle source;
     int duration;      // milliseconds
+    Vector2 offset;
 } AnimationFrame;
 
 typedef struct Animation {
@@ -20,6 +31,9 @@ typedef struct Animation {
     int currentFrame;
     int frameTimeCounter;
     bool stopAtLastFrame;
+    bool runOnce;
+    bool runnedAtLastOneFrame;
+    bool finished;
 } Animation;
 
 typedef struct PlayerKeyBindings {
@@ -27,6 +41,12 @@ typedef struct PlayerKeyBindings {
     int right;
     int up;
     int down;
+    int lp;
+    int mp;
+    int hp;
+    int lk;
+    int mk;
+    int hk;
 } PlayerKeyBindings;
 
 typedef struct Player {
@@ -47,13 +67,23 @@ typedef struct Player {
     Animation forwardJumpAnim;
     Animation backwardJumpAnim;
     Animation crouchingAnim;
+
+    Animation lpAnim;
+    Animation mpAnim;
+    Animation hpAnim;
+    Animation lkAnim;
+    Animation mkAnim;
+    Animation hkAnim;
+
     Animation *animations[50];
     int animationCount;
 
     PlayerState state;
     PlayerState lastState;
+    PlayerMoveState moveState;
+    PlayerMoveState lastMoveState;
+
     bool jumping;
-    //bool crouching;
     bool lookingRight;
 
     PlayerKeyBindings kb;

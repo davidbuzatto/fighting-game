@@ -69,6 +69,12 @@ GameWorld* createGameWorld( void ) {
         .right = KEY_RIGHT,
         .up = KEY_UP,
         .down = KEY_DOWN,
+        .lp = KEY_KP_4,
+        .mp = KEY_KP_5,
+        .hp = KEY_KP_6,
+        .lk = KEY_KP_1,
+        .mk = KEY_KP_2,
+        .hk = KEY_KP_3,
     };
 
     player2->kb = (PlayerKeyBindings) {
@@ -76,6 +82,12 @@ GameWorld* createGameWorld( void ) {
         .right = KEY_D,
         .up = KEY_W,
         .down = KEY_S,
+        .lp = KEY_T,
+        .mp = KEY_Y,
+        .hp = KEY_U,
+        .lk = KEY_G,
+        .mk = KEY_H,
+        .hk = KEY_J,
     };
 
     gw->player1 = player1;

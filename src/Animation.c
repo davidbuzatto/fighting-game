@@ -15,6 +15,12 @@ void destroyAnimationFrames( Animation *anim ) {
 void updateAnimation( Animation *anim, float delta ) {
 
     if ( anim->stopAtLastFrame && getAnimationCurrentFrameNumber( anim ) == anim->frameCount - 1 ) {
+        anim->finished = true;
+        return;
+    }
+
+    if ( anim->runOnce && anim->runnedAtLastOneFrame && getAnimationCurrentFrameNumber( anim ) == 0 ) {
+        anim->finished = true;
         return;
     }
 
@@ -25,6 +31,7 @@ void updateAnimation( Animation *anim, float delta ) {
     if ( anim->frameTimeCounter >= frame->duration ) {
         anim->frameTimeCounter = 0;
         anim->currentFrame++;
+        anim->runnedAtLastOneFrame = true;
     }
 
 }
@@ -41,4 +48,6 @@ void resetAnimation( Animation *anim ) {
     anim->currentFrame = 0;
     anim->frameTimeCounter = 0;
     anim->currentFrame = 0;
+    anim->runnedAtLastOneFrame = false;
+    anim->finished = false;
 }

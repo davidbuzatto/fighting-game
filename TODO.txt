@@ -1,1 +1,8 @@
 Implementar hitboxes;
+
+Os golpes devem ser tratados como animações diferentes, pois podem ser
+cancelados ou não e só mudam o estado do lutador quando terminam caso não
+possam ser cancelados.
+
+Por exemplo, um soco não pode ser cancelado depois de iniciado, fazendo com que
+o lutador fique parado.
