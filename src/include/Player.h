@@ -8,7 +8,7 @@ void initializePlayerKen( float x, float y, Player *p );
 
 void destroyPlayer( Player *player );
 void drawPlayer( Player *player );
-void processInputPlayer( Player *player, float gravity, float delta );
+void processInputPlayer( Player *player, float delta );
 void updatePlayer( Player *player, float gravity, float delta );
 void flipPlayerSide( Player *player );
 

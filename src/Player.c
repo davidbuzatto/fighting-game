@@ -29,9 +29,6 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->jumpSpeed = 420;
     p->state = PLAYER_STATE_IDLE;
     p->lastState = PLAYER_STATE_IDLE;
-    p->moveState = PLAYER_MOVE_STATE_NONE;
-    p->lastMoveState = PLAYER_MOVE_STATE_NONE;
-    p->jumping = false;
     p->lookingRight = true;
 
     p->idleAnim.frameCount = 6;
@@ -39,7 +36,6 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->idleAnim.frameTimeCounter = 0.0f;
     p->idleAnim.stopAtLastFrame = false;
     p->idleAnim.runOnce = false;
-    p->idleAnim.runnedAtLastOneFrame = false;
     p->idleAnim.finished = false;
     createAnimationFrames( &p->idleAnim, p->idleAnim.frameCount );
     p->idleAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 142, -64, 96 }, 65, (Vector2) { 0 } };
@@ -54,7 +50,6 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->forwardAnim.frameTimeCounter = 0.0f;
     p->forwardAnim.stopAtLastFrame = false;
     p->forwardAnim.runOnce = false;
-    p->forwardAnim.runnedAtLastOneFrame = false;
     p->forwardAnim.finished = false;
     createAnimationFrames( &p->forwardAnim, p->forwardAnim.frameCount );
     p->forwardAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 514, -80, 96 }, 70, (Vector2) { 0 } };
@@ -68,7 +63,6 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->backwardAnim.frameTimeCounter = 0.0f;
     p->backwardAnim.stopAtLastFrame = false;
     p->backwardAnim.runOnce = false;
-    p->backwardAnim.runnedAtLastOneFrame = false;
     p->backwardAnim.finished = false;
     createAnimationFrames( &p->backwardAnim, p->backwardAnim.frameCount );
     p->backwardAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 611, -80, 96 }, 80, (Vector2) { 0 } };
@@ -83,7 +77,6 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->straightJumpAnim.frameTimeCounter = 0.0f;
     p->straightJumpAnim.stopAtLastFrame = true;
     p->straightJumpAnim.runOnce = false;
-    p->straightJumpAnim.runnedAtLastOneFrame = false;
     p->straightJumpAnim.finished = false;
     createAnimationFrames( &p->straightJumpAnim, p->straightJumpAnim.frameCount );
     p->straightJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 849, -64, 140 }, 250, (Vector2) { 0 } };
@@ -98,7 +91,6 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->forwardJumpAnim.frameTimeCounter = 0.0f;
     p->forwardJumpAnim.stopAtLastFrame = true;
     p->forwardJumpAnim.runOnce = false;
-    p->forwardJumpAnim.runnedAtLastOneFrame = false;
     p->forwardJumpAnim.finished = false;
     createAnimationFrames( &p->forwardJumpAnim, p->forwardJumpAnim.frameCount );
     p->forwardJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 140 }, 250, (Vector2) { 0 } };
@@ -114,7 +106,6 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->backwardJumpAnim.frameTimeCounter = 0.0f;
     p->backwardJumpAnim.stopAtLastFrame = true;
     p->backwardJumpAnim.runOnce = false;
-    p->backwardJumpAnim.runnedAtLastOneFrame = false;
     p->backwardJumpAnim.finished = false;
     createAnimationFrames( &p->backwardJumpAnim, p->backwardJumpAnim.frameCount );
     p->backwardJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 140 }, 250, (Vector2) { 0 } };
@@ -130,7 +121,6 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->crouchingAnim.frameTimeCounter = 0.0f;
     p->crouchingAnim.stopAtLastFrame = true;
     p->crouchingAnim.runOnce = false;
-    p->crouchingAnim.runnedAtLastOneFrame = false;
     p->crouchingAnim.finished = false;
     createAnimationFrames( &p->crouchingAnim, p->crouchingAnim.frameCount );
     p->crouchingAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 352, -80, 96 }, 30, (Vector2) { 0 } };
@@ -140,21 +130,19 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->lpAnim.frameCount = 3;
     p->lpAnim.currentFrame = 0;
     p->lpAnim.frameTimeCounter = 0.0f;
-    p->lpAnim.stopAtLastFrame = true;
+    p->lpAnim.stopAtLastFrame = false;
     p->lpAnim.runOnce = true;
-    p->lpAnim.runnedAtLastOneFrame = false;
     p->lpAnim.finished = false;
     createAnimationFrames( &p->lpAnim, p->lpAnim.frameCount );
     p->lpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1087, -112, 96 }, 50, (Vector2) { 20, 0 } };
-    p->lpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1087, -112, 96 }, 50, (Vector2) { 20, 0 } };
-    p->lpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 114, 1087, -112, 96 }, 0, (Vector2) { 20, 0 } };
+    p->lpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1087, -112, 96 }, 80, (Vector2) { 20, 0 } };
+    p->lpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 114, 1087, -112, 96 }, 50, (Vector2) { 20, 0 } };
     
     p->mpAnim.frameCount = 2;
     p->mpAnim.currentFrame = 0;
     p->mpAnim.frameTimeCounter = 0.0f;
-    p->mpAnim.stopAtLastFrame = true;
+    p->mpAnim.stopAtLastFrame = false;
     p->mpAnim.runOnce = true;
-    p->mpAnim.runnedAtLastOneFrame = false;
     p->mpAnim.finished = false;
     createAnimationFrames( &p->mpAnim, p->mpAnim.frameCount );
     p->mpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1087, -112, 96 }, 50, (Vector2) { 0 } };
@@ -163,9 +151,8 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->hpAnim.frameCount = 2;
     p->hpAnim.currentFrame = 0;
     p->hpAnim.frameTimeCounter = 0.0f;
-    p->hpAnim.stopAtLastFrame = true;
+    p->hpAnim.stopAtLastFrame = false;
     p->hpAnim.runOnce = true;
-    p->hpAnim.runnedAtLastOneFrame = false;
     p->hpAnim.finished = false;
     createAnimationFrames( &p->hpAnim, p->hpAnim.frameCount );
     p->hpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1087, -112, 96 }, 50, (Vector2) { 0 } };
@@ -174,9 +161,8 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->lkAnim.frameCount = 2;
     p->lkAnim.currentFrame = 0;
     p->lkAnim.frameTimeCounter = 0.0f;
-    p->lkAnim.stopAtLastFrame = true;
+    p->lkAnim.stopAtLastFrame = false;
     p->lkAnim.runOnce = true;
-    p->lkAnim.runnedAtLastOneFrame = false;
     p->lkAnim.finished = false;
     createAnimationFrames( &p->lkAnim, p->lkAnim.frameCount );
     p->lkAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1087, -112, 96 }, 50, (Vector2) { 0 } };
@@ -185,9 +171,8 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->mkAnim.frameCount = 2;
     p->mkAnim.currentFrame = 0;
     p->mkAnim.frameTimeCounter = 0.0f;
-    p->mkAnim.stopAtLastFrame = true;
+    p->mkAnim.stopAtLastFrame = false;
     p->mkAnim.runOnce = true;
-    p->mkAnim.runnedAtLastOneFrame = false;
     p->mkAnim.finished = false;
     createAnimationFrames( &p->mkAnim, p->mkAnim.frameCount );
     p->mkAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1087, -112, 96 }, 50, (Vector2) { 0 } };
@@ -196,9 +181,8 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->hkAnim.frameCount = 2;
     p->hkAnim.currentFrame = 0;
     p->hkAnim.frameTimeCounter = 0.0f;
-    p->hkAnim.stopAtLastFrame = true;
+    p->hkAnim.stopAtLastFrame = false;
     p->hkAnim.runOnce = true;
-    p->hkAnim.runnedAtLastOneFrame = false;
     p->hkAnim.finished = false;
     createAnimationFrames( &p->hkAnim, p->hkAnim.frameCount );
     p->hkAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1087, -112, 96 }, 50, (Vector2) { 0 } };
@@ -261,137 +245,163 @@ void drawPlayer( Player *player ) {
         );
     }
 
-    //DrawText( TextFormat( "%d", player->moveState ), player->pos.x, player->pos.y - 20, 20, BLACK );
-    //DrawText( TextFormat( "%d", player->moveState ), player->pos.x - 2, player->pos.y - 22, 20, WHITE );
 
     //DrawCircle( player->pos.x, player->pos.y, 2, BLUE );
     //DrawRectangleLines( player->pos.x - player->dim.x / 2, player->pos.y, player->dim.x, player->dim.y, BLUE );
 
 }
 
-void processInputPlayer( Player *player, float gravity, float delta ) {
+void processInputPlayer( Player *player, float delta ) {
 
-    // state changes
-    if ( !player->jumping ) {
-        if ( IsKeyDown( player->kb.down ) ) {
-            player->vel.x = 0.0f;
-            player->state = PLAYER_STATE_CROUCHING;
-        } else {
-            if ( IsKeyDown( player->kb.right ) ) {
-                player->vel.x = player->forwardSpeed;
-                player->state = PLAYER_STATE_WALKING_FORWARD;
-            } else if ( IsKeyDown( player->kb.left ) ) {
-                player->vel.x = -player->backwardSpeed;
-                player->state = PLAYER_STATE_WALKING_BACKWARD;
-            } else {
-                player->vel.x = 0.0f;
-                player->state = PLAYER_STATE_IDLE;
-            }
-        }
+    // Bloco 1 — Ataque em progresso: bloqueia todo input
+    Animation *activeAnim = NULL;
+    switch ( player->state ) {
+        case PLAYER_STATE_LP: activeAnim = &player->lpAnim; break;
+        case PLAYER_STATE_MP: activeAnim = &player->mpAnim; break;
+        case PLAYER_STATE_HP: activeAnim = &player->hpAnim; break;
+        case PLAYER_STATE_LK: activeAnim = &player->lkAnim; break;
+        case PLAYER_STATE_MK: activeAnim = &player->mkAnim; break;
+        case PLAYER_STATE_HK: activeAnim = &player->hkAnim; break;
+        default: break;
     }
 
-    if ( IsKeyDown( player->kb.up ) && !player->jumping && player->state != PLAYER_STATE_CROUCHING ) {
+    if ( activeAnim != NULL ) {
+        player->lastState = player->state;   // registra o estado de ataque ANTES de transicionar
+        updateAnimation( activeAnim, delta );
+        if ( activeAnim->finished ) {
+            player->state = PLAYER_STATE_IDLE;
+            resetAnimation( activeAnim );
+        }
+        return;
+    }
+
+    // Bloco 2 — Pulo em progresso: atualiza animação, bloqueia input de ataque
+    if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ||
+         player->state == PLAYER_STATE_JUMPING_FORWARD  ||
+         player->state == PLAYER_STATE_JUMPING_BACKWARD ) {
+        switch ( player->state ) {
+            case PLAYER_STATE_JUMPING_STRAIGHT:
+                updateAnimation( &player->straightJumpAnim, delta );
+                break;
+            case PLAYER_STATE_JUMPING_FORWARD:
+                if ( player->lookingRight ) {
+                    updateAnimation( &player->forwardJumpAnim, delta );
+                } else {
+                    updateAnimation( &player->backwardJumpAnim, delta );
+                }
+                break;
+            case PLAYER_STATE_JUMPING_BACKWARD:
+                if ( player->lookingRight ) {
+                    updateAnimation( &player->backwardJumpAnim, delta );
+                } else {
+                    updateAnimation( &player->forwardJumpAnim, delta );
+                }
+                break;
+            default:
+                break;
+        }
+        // Ataque no ar descartado intencionalmente nesta iteração
+        player->lastState = player->state;
+        return;
+    }
+
+    // Bloco 3 — Chão: ataques têm prioridade sobre movimento
+
+    // 3a. Detecção de ataque
+    PlayerState attackState = PLAYER_STATE_IDLE;
+    Animation *attackAnim = NULL;
+
+    if ( IsKeyPressed( player->kb.lp ) ) {
+        attackState = PLAYER_STATE_LP;  attackAnim = &player->lpAnim;
+    } else if ( IsKeyPressed( player->kb.mp ) ) {
+        attackState = PLAYER_STATE_MP;  attackAnim = &player->mpAnim;
+    } else if ( IsKeyPressed( player->kb.hp ) ) {
+        attackState = PLAYER_STATE_HP;  attackAnim = &player->hpAnim;
+    } else if ( IsKeyPressed( player->kb.lk ) ) {
+        attackState = PLAYER_STATE_LK;  attackAnim = &player->lkAnim;
+    } else if ( IsKeyPressed( player->kb.mk ) ) {
+        attackState = PLAYER_STATE_MK;  attackAnim = &player->mkAnim;
+    } else if ( IsKeyPressed( player->kb.hk ) ) {
+        attackState = PLAYER_STATE_HK;  attackAnim = &player->hkAnim;
+    }
+
+    if ( attackAnim != NULL ) {
+        if ( player->state == PLAYER_STATE_CROUCHING ) {
+            resetAnimation( &player->crouchingAnim );
+        }
+        resetAnimation( attackAnim );
+        player->vel.x = 0.0f;
+        player->state = attackState;
+        player->lastState = player->state;
+        return;
+    }
+
+    // 3b. Pulo (IsKeyPressed: tap, não hold — evita pulo duplo ao aterrissar)
+    if ( IsKeyPressed( player->kb.up ) && player->state != PLAYER_STATE_CROUCHING ) {
         if ( player->vel.x == 0.0f ) {
             player->vel.y = -player->jumpSpeed;
-            player->jumping = true;
-        } else if ( player->vel.x > 0 ) {
+            resetAnimation( &player->straightJumpAnim );
+            player->state = PLAYER_STATE_JUMPING_STRAIGHT;
+        } else if ( player->vel.x > 0.0f ) {
             player->vel.y = -player->jumpSpeed;
             player->vel.x = player->forwardSpeed * 1.6f;
-            player->jumping = true;
+            resetAnimation( &player->forwardJumpAnim );
+            player->state = PLAYER_STATE_JUMPING_FORWARD;
         } else {
             player->vel.y = -player->jumpSpeed;
             player->vel.x = -player->backwardSpeed * 2.0f;
-            player->jumping = true;
+            resetAnimation( &player->backwardJumpAnim );
+            player->state = PLAYER_STATE_JUMPING_BACKWARD;
         }
+        player->lastState = player->state;
+        return;
     }
 
-    if ( IsKeyPressed( player->kb.lp ) ) {
-        player->moveState = PLAYER_MOVE_STATE_LP;
-    } else if ( IsKeyPressed( player->kb.mp ) ) {
-        player->moveState = PLAYER_MOVE_STATE_MP;
-    } else if ( IsKeyPressed( player->kb.hp ) ) {
-        player->moveState = PLAYER_MOVE_STATE_HP;
-    } else if ( IsKeyPressed( player->kb.lk ) ) {
-        player->moveState = PLAYER_MOVE_STATE_LK;
-    } else if ( IsKeyPressed( player->kb.mk ) ) {
-        player->moveState = PLAYER_MOVE_STATE_MK;
-    } else if ( IsKeyPressed( player->kb.hk ) ) {
-        player->moveState = PLAYER_MOVE_STATE_HK;
-    } else {
-        //player->moveState = PLAYER_MOVE_STATE_NONE;
-        // change after animation end
-    }
-
-    if ( player->state != player->lastState ) {
-        //resetPlayerAnimations( player );
-    }
-
-    // animation resolution
-    if ( player->jumping ) {
-        if ( player->vel.x == 0.0f ) {
-            updateAnimation( &player->straightJumpAnim, delta );
-        } else if ( player->vel.x > 0.0f ) {
-            if ( player->lookingRight ) {
-                updateAnimation( &player->forwardJumpAnim, delta );
-            } else {
-                updateAnimation( &player->backwardJumpAnim, delta );
-            }
-        } else {
-            if ( player->lookingRight ) {
-                updateAnimation( &player->backwardJumpAnim, delta );
-            } else {
-                updateAnimation( &player->forwardJumpAnim, delta );
-            }
+    // 3c. Movimento de chão
+    if ( IsKeyDown( player->kb.down ) ) {
+        if ( player->state != PLAYER_STATE_CROUCHING ) {
+            resetAnimation( &player->crouchingAnim );
         }
-    } else if ( player->state == PLAYER_STATE_CROUCHING ) {
-        updateAnimation( &player->crouchingAnim, delta );
+        player->vel.x = 0.0f;
+        player->state = PLAYER_STATE_CROUCHING;
+    } else if ( IsKeyDown( player->kb.right ) ) {
+        player->vel.x = player->forwardSpeed;
+        player->state = PLAYER_STATE_WALKING_FORWARD;
+    } else if ( IsKeyDown( player->kb.left ) ) {
+        player->vel.x = -player->backwardSpeed;
+        player->state = PLAYER_STATE_WALKING_BACKWARD;
     } else {
-        if ( player->state == PLAYER_STATE_IDLE ) {
+        player->vel.x = 0.0f;
+        player->state = PLAYER_STATE_IDLE;
+    }
+
+    // 3d. Atualiza animação de chão
+    switch ( player->state ) {
+        case PLAYER_STATE_IDLE:
             updateAnimation( &player->idleAnim, delta );
-        } else if ( player->state == PLAYER_STATE_WALKING_FORWARD ) {
+            break;
+        case PLAYER_STATE_WALKING_FORWARD:
             if ( player->lookingRight ) {
                 updateAnimation( &player->forwardAnim, delta );
             } else {
                 updateAnimation( &player->backwardAnim, delta );
             }
-        } else if ( player->state == PLAYER_STATE_WALKING_BACKWARD ) {
+            break;
+        case PLAYER_STATE_WALKING_BACKWARD:
             if ( player->lookingRight ) {
                 updateAnimation( &player->backwardAnim, delta );
             } else {
                 updateAnimation( &player->forwardAnim, delta );
             }
-        }
+            break;
+        case PLAYER_STATE_CROUCHING:
+            updateAnimation( &player->crouchingAnim, delta );
+            break;
+        default:
+            break;
     }
 
-    switch ( player->moveState ) {
-        case PLAYER_MOVE_STATE_LP:
-            updateAnimation( &player->lpAnim, delta );
-            if ( player->lpAnim.finished ) {
-                player->moveState = PLAYER_MOVE_STATE_NONE;
-                resetAnimation( &player->lpAnim );
-            }
-            break;
-        case PLAYER_MOVE_STATE_MP:
-            updateAnimation( &player->mpAnim, delta );
-            break;
-        case PLAYER_MOVE_STATE_HP:
-            updateAnimation( &player->hpAnim, delta );
-            break;
-        case PLAYER_MOVE_STATE_LK:
-            updateAnimation( &player->lkAnim, delta );
-            break;
-        case PLAYER_MOVE_STATE_MK:
-            updateAnimation( &player->mkAnim, delta );
-            break;
-        case PLAYER_MOVE_STATE_HK:
-            updateAnimation( &player->hkAnim, delta );
-            break;
-        case PLAYER_MOVE_STATE_NONE:
-            break;
-    }
-    
     player->lastState = player->state;
-    player->lastMoveState = player->moveState;
 
 }
 
@@ -415,39 +425,6 @@ void flipPlayerSide( Player *player ) {
 
 AnimationFrame *getPlayerCurrentAnimationFrame( Player *player ) {
 
-    switch ( player->moveState ) {
-        case PLAYER_MOVE_STATE_LP:
-            return getAnimationCurrentFrame( &player->lpAnim );
-        case PLAYER_MOVE_STATE_MP:
-            return getAnimationCurrentFrame( &player->mpAnim );
-        case PLAYER_MOVE_STATE_HP:
-            return getAnimationCurrentFrame( &player->hpAnim );
-        case PLAYER_MOVE_STATE_LK:
-            return getAnimationCurrentFrame( &player->lkAnim );
-        case PLAYER_MOVE_STATE_MK:
-            return getAnimationCurrentFrame( &player->mkAnim );
-        case PLAYER_MOVE_STATE_HK:
-            return getAnimationCurrentFrame( &player->hkAnim );
-        case PLAYER_MOVE_STATE_NONE:
-            break;
-    }
-
-    if ( player->jumping ) {
-        if ( player->vel.x == 0.0f ) {
-            return getAnimationCurrentFrame( &player->straightJumpAnim );
-        } else if ( player->vel.x > 0.0f ) {
-            if ( player->lookingRight ) {
-                return getAnimationCurrentFrame( &player->forwardJumpAnim );
-            }
-            return getAnimationCurrentFrame( &player->backwardJumpAnim );
-        } else {
-            if ( player->lookingRight ) {
-                return getAnimationCurrentFrame( &player->backwardJumpAnim );
-            }
-            return getAnimationCurrentFrame( &player->forwardJumpAnim );
-        }
-    }
-
     switch ( player->state ) {
         case PLAYER_STATE_IDLE:
             return getAnimationCurrentFrame( &player->idleAnim );
@@ -463,6 +440,30 @@ AnimationFrame *getPlayerCurrentAnimationFrame( Player *player ) {
             return getAnimationCurrentFrame( &player->forwardAnim );
         case PLAYER_STATE_CROUCHING:
             return getAnimationCurrentFrame( &player->crouchingAnim );
+        case PLAYER_STATE_JUMPING_STRAIGHT:
+            return getAnimationCurrentFrame( &player->straightJumpAnim );
+        case PLAYER_STATE_JUMPING_FORWARD:
+            if ( player->lookingRight ) {
+                return getAnimationCurrentFrame( &player->forwardJumpAnim );
+            }
+            return getAnimationCurrentFrame( &player->backwardJumpAnim );
+        case PLAYER_STATE_JUMPING_BACKWARD:
+            if ( player->lookingRight ) {
+                return getAnimationCurrentFrame( &player->backwardJumpAnim );
+            }
+            return getAnimationCurrentFrame( &player->forwardJumpAnim );
+        case PLAYER_STATE_LP:
+            return getAnimationCurrentFrame( &player->lpAnim );
+        case PLAYER_STATE_MP:
+            return getAnimationCurrentFrame( &player->mpAnim );
+        case PLAYER_STATE_HP:
+            return getAnimationCurrentFrame( &player->hpAnim );
+        case PLAYER_STATE_LK:
+            return getAnimationCurrentFrame( &player->lkAnim );
+        case PLAYER_STATE_MK:
+            return getAnimationCurrentFrame( &player->mkAnim );
+        case PLAYER_STATE_HK:
+            return getAnimationCurrentFrame( &player->hkAnim );
     }
 
     return NULL;

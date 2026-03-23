@@ -127,8 +127,8 @@ void updateGameWorld( GameWorld *gw, float delta ) {
         gw->stageTexture = &rm.guileStageTexture;
     }
 
-    processInputPlayer( gw->player1, gw->gravity, delta );
-    processInputPlayer( gw->player2, gw->gravity, delta );
+    processInputPlayer( gw->player1, delta );
+    processInputPlayer( gw->player2, delta );
 
     // TODO: improve
     playerDist = fabs( gw->player1->pos.x - gw->player2->pos.x ) * gw->camera.zoom;
@@ -194,9 +194,11 @@ static void resolveCollisionPlayerStage( Player *player, GameWorld *gw ) {
     if ( player->pos.y + player->dim.y > gw->floor.y ) {
         player->pos.y = gw->floor.y - player->dim.y;
         player->vel.y = 0.0f;
-        if ( player->jumping ) {
-            player->jumping = false;
+        if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ||
+             player->state == PLAYER_STATE_JUMPING_FORWARD  ||
+             player->state == PLAYER_STATE_JUMPING_BACKWARD ) {
             resetPlayerAnimations( player );
+            player->state = PLAYER_STATE_IDLE;
         }
     }
 

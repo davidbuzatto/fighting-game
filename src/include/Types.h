@@ -6,18 +6,17 @@ typedef enum PlayerState {
     PLAYER_STATE_IDLE,
     PLAYER_STATE_WALKING_FORWARD,
     PLAYER_STATE_WALKING_BACKWARD,
-    PLAYER_STATE_CROUCHING
+    PLAYER_STATE_CROUCHING,
+    PLAYER_STATE_JUMPING_STRAIGHT,
+    PLAYER_STATE_JUMPING_FORWARD,
+    PLAYER_STATE_JUMPING_BACKWARD,
+    PLAYER_STATE_LP,
+    PLAYER_STATE_MP,
+    PLAYER_STATE_HP,
+    PLAYER_STATE_LK,
+    PLAYER_STATE_MK,
+    PLAYER_STATE_HK,
 } PlayerState;
-
-typedef enum PlayerMoveState {
-    PLAYER_MOVE_STATE_NONE,
-    PLAYER_MOVE_STATE_LP,
-    PLAYER_MOVE_STATE_MP,
-    PLAYER_MOVE_STATE_HP,
-    PLAYER_MOVE_STATE_LK,
-    PLAYER_MOVE_STATE_MK,
-    PLAYER_MOVE_STATE_HK,
-} PlayerMoveState;
 
 typedef struct AnimationFrame {
     Rectangle source;
@@ -32,7 +31,6 @@ typedef struct Animation {
     int frameTimeCounter;
     bool stopAtLastFrame;
     bool runOnce;
-    bool runnedAtLastOneFrame;
     bool finished;
 } Animation;
 
@@ -80,10 +78,7 @@ typedef struct Player {
 
     PlayerState state;
     PlayerState lastState;
-    PlayerMoveState moveState;
-    PlayerMoveState lastMoveState;
 
-    bool jumping;
     bool lookingRight;
 
     PlayerKeyBindings kb;
