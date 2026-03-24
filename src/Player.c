@@ -253,7 +253,7 @@ void drawPlayer( Player *player ) {
 
 void processInputPlayer( Player *player, float delta ) {
 
-    // Bloco 1 — Ataque em progresso: bloqueia todo input
+    // atack in progress: blocks all input
     Animation *activeAnim = NULL;
     switch ( player->state ) {
         case PLAYER_STATE_LP: activeAnim = &player->lpAnim; break;
@@ -266,7 +266,7 @@ void processInputPlayer( Player *player, float delta ) {
     }
 
     if ( activeAnim != NULL ) {
-        player->lastState = player->state;   // registra o estado de ataque ANTES de transicionar
+        player->lastState = player->state;   // register stack state vefore transitioning
         updateAnimation( activeAnim, delta );
         if ( activeAnim->finished ) {
             player->state = PLAYER_STATE_IDLE;
@@ -275,7 +275,7 @@ void processInputPlayer( Player *player, float delta ) {
         return;
     }
 
-    // Bloco 2 — Pulo em progresso: atualiza animação, bloqueia input de ataque
+    // jump in progress: updates animation and blocks input
     if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ||
          player->state == PLAYER_STATE_JUMPING_FORWARD  ||
          player->state == PLAYER_STATE_JUMPING_BACKWARD ) {
@@ -300,14 +300,12 @@ void processInputPlayer( Player *player, float delta ) {
             default:
                 break;
         }
-        // Ataque no ar descartado intencionalmente nesta iteração
+        // air atack discarted for now
         player->lastState = player->state;
         return;
     }
 
-    // Bloco 3 — Chão: ataques têm prioridade sobre movimento
-
-    // 3a. Detecção de ataque
+    // atack
     PlayerState attackState = PLAYER_STATE_IDLE;
     Animation *attackAnim = NULL;
 
@@ -336,7 +334,7 @@ void processInputPlayer( Player *player, float delta ) {
         return;
     }
 
-    // 3b. Pulo (IsKeyPressed: tap, não hold — evita pulo duplo ao aterrissar)
+    // jump
     if ( IsKeyPressed( player->kb.up ) && player->state != PLAYER_STATE_CROUCHING ) {
         if ( player->vel.x == 0.0f ) {
             player->vel.y = -player->jumpSpeed;
