@@ -26,7 +26,7 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->vel = (Vector2) { 0 };
     p->forwardSpeed = 150;
     p->backwardSpeed = 120;
-    p->jumpSpeed = 420;
+    p->jumpSpeed = 450;
     p->state = PLAYER_STATE_IDLE;
     p->lastState = PLAYER_STATE_IDLE;
     p->lookingRight = true;
@@ -79,12 +79,12 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->straightJumpAnim.runOnce = false;
     p->straightJumpAnim.finished = false;
     createAnimationFrames( &p->straightJumpAnim, p->straightJumpAnim.frameCount );
-    p->straightJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 849, -64, 140 }, 250, (Vector2) { 0 } };
-    p->straightJumpAnim.frames[1] = (AnimationFrame) { (Rectangle) {  66, 849, -64, 140 }, 50, (Vector2) { 0 } };
-    p->straightJumpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 131, 849, -64, 140 }, 50, (Vector2) { 0 } };
-    p->straightJumpAnim.frames[3] = (AnimationFrame) { (Rectangle) { 196, 849, -64, 140 }, 50, (Vector2) { 0 } };
-    p->straightJumpAnim.frames[4] = (AnimationFrame) { (Rectangle) { 261, 849, -64, 140 }, 50, (Vector2) { 0 } };
-    p->straightJumpAnim.frames[5] = (AnimationFrame) { (Rectangle) { 326, 849, -64, 140 }, 50, (Vector2) { 0 } };
+    p->straightJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 821, -64, 112 }, 250, (Vector2) { 0 } };
+    p->straightJumpAnim.frames[1] = (AnimationFrame) { (Rectangle) {  66, 821, -64, 112 }, 50, (Vector2) { 0 } };
+    p->straightJumpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 131, 821, -64, 112 }, 50, (Vector2) { 0 } };
+    p->straightJumpAnim.frames[3] = (AnimationFrame) { (Rectangle) { 196, 821, -64, 112 }, 50, (Vector2) { 0 } };
+    p->straightJumpAnim.frames[4] = (AnimationFrame) { (Rectangle) { 261, 821, -64, 112 }, 50, (Vector2) { 0 } };
+    p->straightJumpAnim.frames[5] = (AnimationFrame) { (Rectangle) { 326, 821, -64, 112 }, 50, (Vector2) { 0 } };
 
     p->forwardJumpAnim.frameCount = 7;
     p->forwardJumpAnim.currentFrame = 0;
@@ -93,13 +93,13 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->forwardJumpAnim.runOnce = false;
     p->forwardJumpAnim.finished = false;
     createAnimationFrames( &p->forwardJumpAnim, p->forwardJumpAnim.frameCount );
-    p->forwardJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 140 }, 250, (Vector2) { 0 } };
-    p->forwardJumpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 130, 708, -128, 140 }, 50, (Vector2) { 0 } };
-    p->forwardJumpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 259, 708, -128, 140 }, 50, (Vector2) { 0 } };
-    p->forwardJumpAnim.frames[3] = (AnimationFrame) { (Rectangle) { 388, 708, -128, 140 }, 50, (Vector2) { 0 } };
-    p->forwardJumpAnim.frames[4] = (AnimationFrame) { (Rectangle) { 517, 708, -128, 140 }, 50, (Vector2) { 0 } };
-    p->forwardJumpAnim.frames[5] = (AnimationFrame) { (Rectangle) { 646, 708, -128, 140 }, 50, (Vector2) { 0 } };
-    p->forwardJumpAnim.frames[6] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 140 }, 50, (Vector2) { 0 } };
+    p->forwardJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 112 }, 250, (Vector2) { 0 } };
+    p->forwardJumpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 130, 708, -128, 112 }, 50, (Vector2) { 0 } };
+    p->forwardJumpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 259, 708, -128, 112 }, 50, (Vector2) { 0 } };
+    p->forwardJumpAnim.frames[3] = (AnimationFrame) { (Rectangle) { 388, 708, -128, 112 }, 50, (Vector2) { 0 } };
+    p->forwardJumpAnim.frames[4] = (AnimationFrame) { (Rectangle) { 517, 708, -128, 112 }, 50, (Vector2) { 0 } };
+    p->forwardJumpAnim.frames[5] = (AnimationFrame) { (Rectangle) { 646, 708, -128, 112 }, 50, (Vector2) { 0 } };
+    p->forwardJumpAnim.frames[6] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 112 }, 50, (Vector2) { 0 } };
 
     p->backwardJumpAnim.frameCount = 7;
     p->backwardJumpAnim.currentFrame = 0;
@@ -108,13 +108,13 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->backwardJumpAnim.runOnce = false;
     p->backwardJumpAnim.finished = false;
     createAnimationFrames( &p->backwardJumpAnim, p->backwardJumpAnim.frameCount );
-    p->backwardJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 140 }, 250, (Vector2) { 0 } };
-    p->backwardJumpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 646, 708, -128, 140 }, 50, (Vector2) { 0 } };
-    p->backwardJumpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 517, 708, -128, 140 }, 50, (Vector2) { 0 } };
-    p->backwardJumpAnim.frames[3] = (AnimationFrame) { (Rectangle) { 388, 708, -128, 140 }, 50, (Vector2) { 0 } };
-    p->backwardJumpAnim.frames[4] = (AnimationFrame) { (Rectangle) { 259, 708, -128, 140 }, 50, (Vector2) { 0 } };
-    p->backwardJumpAnim.frames[5] = (AnimationFrame) { (Rectangle) { 130, 708, -128, 140 }, 50, (Vector2) { 0 } };
-    p->backwardJumpAnim.frames[6] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 140 }, 50, (Vector2) { 0 } };
+    p->backwardJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 112 }, 250, (Vector2) { 0 } };
+    p->backwardJumpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 646, 708, -128, 112 }, 50, (Vector2) { 0 } };
+    p->backwardJumpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 517, 708, -128, 112 }, 50, (Vector2) { 0 } };
+    p->backwardJumpAnim.frames[3] = (AnimationFrame) { (Rectangle) { 388, 708, -128, 112 }, 50, (Vector2) { 0 } };
+    p->backwardJumpAnim.frames[4] = (AnimationFrame) { (Rectangle) { 259, 708, -128, 112 }, 50, (Vector2) { 0 } };
+    p->backwardJumpAnim.frames[5] = (AnimationFrame) { (Rectangle) { 130, 708, -128, 112 }, 50, (Vector2) { 0 } };
+    p->backwardJumpAnim.frames[6] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 112 }, 50, (Vector2) { 0 } };
 
     p->crouchingAnim.frameCount = 3;
     p->crouchingAnim.currentFrame = 0;
@@ -134,9 +134,9 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->lpAnim.runOnce = true;
     p->lpAnim.finished = false;
     createAnimationFrames( &p->lpAnim, p->lpAnim.frameCount );
-    p->lpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1087, -112, 96 }, 50, (Vector2) { 20, 0 } };
-    p->lpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1087, -112, 96 }, 80, (Vector2) { 20, 0 } };
-    p->lpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 114, 1087, -112, 96 }, 50, (Vector2) { 20, 0 } };
+    p->lpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1031, -112, 96 }, 50, (Vector2) { 20, 0 } };
+    p->lpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1031, -112, 96 }, 80, (Vector2) { 20, 0 } };
+    p->lpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 114, 1031, -112, 96 }, 50, (Vector2) { 20, 0 } };
     
     p->mpAnim.frameCount = 2;
     p->mpAnim.currentFrame = 0;
@@ -145,8 +145,8 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->mpAnim.runOnce = true;
     p->mpAnim.finished = false;
     createAnimationFrames( &p->mpAnim, p->mpAnim.frameCount );
-    p->mpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1087, -112, 96 }, 50, (Vector2) { 0 } };
-    p->mpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1087, -112, 96 }, 50, (Vector2) { 0 } };
+    p->mpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1031, -112, 96 }, 50, (Vector2) { 0 } };
+    p->mpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1031, -112, 96 }, 50, (Vector2) { 0 } };
 
     p->hpAnim.frameCount = 2;
     p->hpAnim.currentFrame = 0;
@@ -155,8 +155,8 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->hpAnim.runOnce = true;
     p->hpAnim.finished = false;
     createAnimationFrames( &p->hpAnim, p->hpAnim.frameCount );
-    p->hpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1087, -112, 96 }, 50, (Vector2) { 0 } };
-    p->hpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1087, -112, 96 }, 50, (Vector2) { 0 } };
+    p->hpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1031, -112, 96 }, 50, (Vector2) { 0 } };
+    p->hpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1031, -112, 96 }, 50, (Vector2) { 0 } };
     
     p->lkAnim.frameCount = 2;
     p->lkAnim.currentFrame = 0;
@@ -165,8 +165,8 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->lkAnim.runOnce = true;
     p->lkAnim.finished = false;
     createAnimationFrames( &p->lkAnim, p->lkAnim.frameCount );
-    p->lkAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1087, -112, 96 }, 50, (Vector2) { 0 } };
-    p->lkAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1087, -112, 96 }, 50, (Vector2) { 0 } };
+    p->lkAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1031, -112, 96 }, 50, (Vector2) { 0 } };
+    p->lkAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1031, -112, 96 }, 50, (Vector2) { 0 } };
     
     p->mkAnim.frameCount = 2;
     p->mkAnim.currentFrame = 0;
@@ -175,8 +175,8 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->mkAnim.runOnce = true;
     p->mkAnim.finished = false;
     createAnimationFrames( &p->mkAnim, p->mkAnim.frameCount );
-    p->mkAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1087, -112, 96 }, 50, (Vector2) { 0 } };
-    p->mkAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1087, -112, 96 }, 50, (Vector2) { 0 } };
+    p->mkAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1031, -112, 96 }, 50, (Vector2) { 0 } };
+    p->mkAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1031, -112, 96 }, 50, (Vector2) { 0 } };
 
     p->hkAnim.frameCount = 2;
     p->hkAnim.currentFrame = 0;
@@ -185,8 +185,8 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->hkAnim.runOnce = true;
     p->hkAnim.finished = false;
     createAnimationFrames( &p->hkAnim, p->hkAnim.frameCount );
-    p->hkAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1087, -112, 96 }, 50, (Vector2) { 0 } };
-    p->hkAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1087, -112, 96 }, 50, (Vector2) { 0 } };
+    p->hkAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1031, -112, 96 }, 50, (Vector2) { 0 } };
+    p->hkAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1031, -112, 96 }, 50, (Vector2) { 0 } };
 
     int animationCount = 0;
     p->animations[animationCount++] = &p->idleAnim;
