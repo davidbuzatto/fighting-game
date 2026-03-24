@@ -26,7 +26,7 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->vel = (Vector2) { 0 };
     p->forwardSpeed = 150;
     p->backwardSpeed = 120;
-    p->jumpSpeed = 450;
+    p->jumpSpeed = 420;
     p->state = PLAYER_STATE_IDLE;
     p->lastState = PLAYER_STATE_IDLE;
     p->lookingRight = true;
@@ -134,59 +134,70 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->lpAnim.runOnce = true;
     p->lpAnim.finished = false;
     createAnimationFrames( &p->lpAnim, p->lpAnim.frameCount );
-    p->lpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1031, -112, 96 }, 50, (Vector2) { 20, 0 } };
-    p->lpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1031, -112, 96 }, 80, (Vector2) { 20, 0 } };
-    p->lpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 114, 1031, -112, 96 }, 50, (Vector2) { 20, 0 } };
+    p->lpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1031, -112, 96 }, 50, (Vector2) { 22, 0 } };
+    p->lpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1031, -112, 96 }, 50, (Vector2) { 22, 0 } };
+    p->lpAnim.frames[2] = (AnimationFrame) { (Rectangle) {   1, 1031, -112, 96 }, 50, (Vector2) { 22, 0 } };
     
-    p->mpAnim.frameCount = 2;
+    p->mpAnim.frameCount = 5;
     p->mpAnim.currentFrame = 0;
     p->mpAnim.frameTimeCounter = 0.0f;
     p->mpAnim.stopAtLastFrame = false;
     p->mpAnim.runOnce = true;
     p->mpAnim.finished = false;
     createAnimationFrames( &p->mpAnim, p->mpAnim.frameCount );
-    p->mpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1031, -112, 96 }, 50, (Vector2) { 0 } };
-    p->mpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1031, -112, 96 }, 50, (Vector2) { 0 } };
+    p->mpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1128, -128, 96 }, 50, (Vector2) { 30, 0 } };
+    p->mpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 130, 1128, -128, 96 }, 50, (Vector2) { 30, 0 } };
+    p->mpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 259, 1128, -128, 96 }, 50, (Vector2) { 30, 0 } };
+    p->mpAnim.frames[3] = (AnimationFrame) { (Rectangle) { 130, 1128, -128, 96 }, 50, (Vector2) { 30, 0 } };
+    p->mpAnim.frames[4] = (AnimationFrame) { (Rectangle) {   1, 1128, -128, 96 }, 50, (Vector2) { 30, 0 } };
 
-    p->hpAnim.frameCount = 2;
+    p->hpAnim.frameCount = 5;
     p->hpAnim.currentFrame = 0;
     p->hpAnim.frameTimeCounter = 0.0f;
     p->hpAnim.stopAtLastFrame = false;
     p->hpAnim.runOnce = true;
     p->hpAnim.finished = false;
     createAnimationFrames( &p->hpAnim, p->hpAnim.frameCount );
-    p->hpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1031, -112, 96 }, 50, (Vector2) { 0 } };
-    p->hpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1031, -112, 96 }, 50, (Vector2) { 0 } };
+    p->hpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1128, -128, 96 }, 90, (Vector2) { 30, 0 } };
+    p->hpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 130, 1128, -128, 96 }, 90, (Vector2) { 30, 0 } };
+    p->hpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 259, 1128, -128, 96 }, 90, (Vector2) { 30, 0 } };
+    p->hpAnim.frames[3] = (AnimationFrame) { (Rectangle) { 130, 1128, -128, 96 }, 90, (Vector2) { 30, 0 } };
+    p->hpAnim.frames[4] = (AnimationFrame) { (Rectangle) {   1, 1128, -128, 96 }, 90, (Vector2) { 30, 0 } };
     
-    p->lkAnim.frameCount = 2;
+    p->lkAnim.frameCount = 3;
     p->lkAnim.currentFrame = 0;
     p->lkAnim.frameTimeCounter = 0.0f;
     p->lkAnim.stopAtLastFrame = false;
     p->lkAnim.runOnce = true;
     p->lkAnim.finished = false;
     createAnimationFrames( &p->lkAnim, p->lkAnim.frameCount );
-    p->lkAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1031, -112, 96 }, 50, (Vector2) { 0 } };
-    p->lkAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1031, -112, 96 }, 50, (Vector2) { 0 } };
+    p->lkAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 2001, -128, 96 }, 60, (Vector2) { 0, -5 } };
+    p->lkAnim.frames[1] = (AnimationFrame) { (Rectangle) { 130, 2001, -128, 96 }, 60, (Vector2) { 0, -5 } };
+    p->lkAnim.frames[2] = (AnimationFrame) { (Rectangle) {   1, 2001, -128, 96 }, 60, (Vector2) { 0, -5 } };
     
-    p->mkAnim.frameCount = 2;
+    p->mkAnim.frameCount = 3;
     p->mkAnim.currentFrame = 0;
     p->mkAnim.frameTimeCounter = 0.0f;
     p->mkAnim.stopAtLastFrame = false;
     p->mkAnim.runOnce = true;
     p->mkAnim.finished = false;
     createAnimationFrames( &p->mkAnim, p->mkAnim.frameCount );
-    p->mkAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1031, -112, 96 }, 50, (Vector2) { 0 } };
-    p->mkAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1031, -112, 96 }, 50, (Vector2) { 0 } };
+    p->mkAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 2001, -128, 96 }, 90, (Vector2) { 0, -5 } };
+    p->mkAnim.frames[1] = (AnimationFrame) { (Rectangle) { 130, 2001, -128, 96 }, 90, (Vector2) { 0, -5 } };
+    p->mkAnim.frames[2] = (AnimationFrame) { (Rectangle) {   1, 2001, -128, 96 }, 90, (Vector2) { 0, -5 } };
 
-    p->hkAnim.frameCount = 2;
+    p->hkAnim.frameCount = 5;
     p->hkAnim.currentFrame = 0;
     p->hkAnim.frameTimeCounter = 0.0f;
     p->hkAnim.stopAtLastFrame = false;
     p->hkAnim.runOnce = true;
     p->hkAnim.finished = false;
     createAnimationFrames( &p->hkAnim, p->hkAnim.frameCount );
-    p->hkAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1031, -112, 96 }, 50, (Vector2) { 0 } };
-    p->hkAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1031, -112, 96 }, 50, (Vector2) { 0 } };
+    p->hkAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 2098, -128, 96 }, 90, (Vector2) { 20, 0 } };
+    p->hkAnim.frames[1] = (AnimationFrame) { (Rectangle) { 130, 2098, -128, 96 }, 90, (Vector2) { 20, 0 } };
+    p->hkAnim.frames[2] = (AnimationFrame) { (Rectangle) { 259, 2098, -128, 96 }, 90, (Vector2) { 20, 0 } };
+    p->hkAnim.frames[3] = (AnimationFrame) { (Rectangle) { 388, 2098, -128, 96 }, 90, (Vector2) { 20, 0 } };
+    p->hkAnim.frames[4] = (AnimationFrame) { (Rectangle) { 517, 2098, -128, 96 }, 90, (Vector2) { 20, 0 } };
 
     int animationCount = 0;
     p->animations[animationCount++] = &p->idleAnim;
@@ -248,10 +259,11 @@ void drawPlayer( Player *player ) {
 
     //DrawCircle( player->pos.x, player->pos.y, 2, BLUE );
     //DrawRectangleLines( player->pos.x - player->dim.x / 2, player->pos.y, player->dim.x, player->dim.y, BLUE );
+    //DrawText( TextFormat( "y: %.2f", player->pos.y ), player->pos.x + 10, player->pos.y, 10, BLACK );
 
 }
 
-void processInputPlayer( Player *player, float delta ) {
+void processInputPlayer( Player *player, Player *opponent, float delta ) {
 
     // atack in progress: blocks all input
     Animation *activeAnim = NULL;
@@ -310,17 +322,23 @@ void processInputPlayer( Player *player, float delta ) {
     Animation *attackAnim = NULL;
 
     if ( IsKeyPressed( player->kb.lp ) ) {
-        attackState = PLAYER_STATE_LP;  attackAnim = &player->lpAnim;
+        attackState = PLAYER_STATE_LP;
+        attackAnim = &player->lpAnim;
     } else if ( IsKeyPressed( player->kb.mp ) ) {
-        attackState = PLAYER_STATE_MP;  attackAnim = &player->mpAnim;
+        attackState = PLAYER_STATE_MP;
+        attackAnim = &player->mpAnim;
     } else if ( IsKeyPressed( player->kb.hp ) ) {
-        attackState = PLAYER_STATE_HP;  attackAnim = &player->hpAnim;
+        attackState = PLAYER_STATE_HP;
+        attackAnim = &player->hpAnim;
     } else if ( IsKeyPressed( player->kb.lk ) ) {
-        attackState = PLAYER_STATE_LK;  attackAnim = &player->lkAnim;
+        attackState = PLAYER_STATE_LK;
+        attackAnim = &player->lkAnim;
     } else if ( IsKeyPressed( player->kb.mk ) ) {
-        attackState = PLAYER_STATE_MK;  attackAnim = &player->mkAnim;
+        attackState = PLAYER_STATE_MK;
+        attackAnim = &player->mkAnim;
     } else if ( IsKeyPressed( player->kb.hk ) ) {
-        attackState = PLAYER_STATE_HK;  attackAnim = &player->hkAnim;
+        attackState = PLAYER_STATE_HK;
+        attackAnim = &player->hkAnim;
     }
 
     if ( attackAnim != NULL ) {
@@ -403,7 +421,7 @@ void processInputPlayer( Player *player, float delta ) {
 
 }
 
-void updatePlayer( Player *player, float gravity, float delta ) {
+void updatePlayer( Player *player, Player *opponent, float gravity, float delta ) {
 
     // positioning and physics
     player->pos.x += player->vel.x * delta;

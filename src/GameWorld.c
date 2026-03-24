@@ -45,7 +45,7 @@ GameWorld* createGameWorld( void ) {
     };
     gw->stageTexture = &rm.kenStageTexture;
 
-    gw->gravity = 1500;
+    gw->gravity = 1200;
 
     gw->camera = (Camera2D) {
         .offset = { GetScreenWidth() / 2, 0 },
@@ -60,8 +60,8 @@ GameWorld* createGameWorld( void ) {
     Player *player1 = createPlayer();
     Player *player2 = createPlayer();
 
-    initializePlayerRyu( gw->stageTexture->width / 2 - 78, 326, player1 );
-    initializePlayerKen( gw->stageTexture->width / 2 + 50, 326, player2 );
+    initializePlayerRyu( gw->stageTexture->width / 2 - 78, 542, player1 );
+    initializePlayerKen( gw->stageTexture->width / 2 + 50, 542, player2 );
     flipPlayerSide( player2 );
 
     player1->kb = (PlayerKeyBindings) {
@@ -127,8 +127,8 @@ void updateGameWorld( GameWorld *gw, float delta ) {
         gw->stageTexture = &rm.guileStageTexture;
     }
 
-    processInputPlayer( gw->player1, delta );
-    processInputPlayer( gw->player2, delta );
+    processInputPlayer( gw->player1, gw->player2, delta );
+    processInputPlayer( gw->player2, gw->player1, delta );
 
     // TODO: improve
     playerDist = fabs( gw->player1->pos.x - gw->player2->pos.x ) * gw->camera.zoom;
@@ -140,8 +140,8 @@ void updateGameWorld( GameWorld *gw, float delta ) {
         adjust = true;
     }
 
-    updatePlayer( gw->player1, gw->gravity, delta );
-    updatePlayer( gw->player2, gw->gravity, delta );
+    updatePlayer( gw->player1, gw->player2, gw->gravity, delta );
+    updatePlayer( gw->player2, gw->player1, gw->gravity, delta );
 
     // TODO: improve
     if ( adjust ) {
