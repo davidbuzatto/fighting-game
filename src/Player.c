@@ -31,6 +31,13 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->lastState = PLAYER_STATE_IDLE;
     p->lookingRight = true;
 
+    p->lpCloseTriggerDist = 70;
+    p->mpCloseTriggerDist = 70;
+    p->hpCloseTriggerDist = 70;
+    p->lkCloseTriggerDist = 50;
+    p->mkCloseTriggerDist = 50;
+    p->hkCloseTriggerDist = 90;
+
     p->idleAnim.frameCount = 6;
     p->idleAnim.currentFrame = 0;
     p->idleAnim.frameTimeCounter = 0.0f;
@@ -199,6 +206,75 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->hkAnim.frames[3] = (AnimationFrame) { (Rectangle) { 388, 2098, -128, 96 }, 90, (Vector2) { 20, 0 } };
     p->hkAnim.frames[4] = (AnimationFrame) { (Rectangle) { 517, 2098, -128, 96 }, 90, (Vector2) { 20, 0 } };
 
+    p->lpCloseAnim.frameCount = 1;
+    p->lpCloseAnim.currentFrame = 0;
+    p->lpCloseAnim.frameTimeCounter = 0.0f;
+    p->lpCloseAnim.stopAtLastFrame = false;
+    p->lpCloseAnim.runOnce = true;
+    p->lpCloseAnim.finished = false;
+    createAnimationFrames( &p->lpCloseAnim, p->lpCloseAnim.frameCount );
+    p->lpCloseAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1225, -80, 112 }, 150, (Vector2) { 5, 0 } };
+    
+    p->mpCloseAnim.frameCount = 5;
+    p->mpCloseAnim.currentFrame = 0;
+    p->mpCloseAnim.frameTimeCounter = 0.0f;
+    p->mpCloseAnim.stopAtLastFrame = false;
+    p->mpCloseAnim.runOnce = true;
+    p->mpCloseAnim.finished = false;
+    createAnimationFrames( &p->mpCloseAnim, p->mpCloseAnim.frameCount );
+    p->mpCloseAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1338, -96, 96 }, 65, (Vector2) { 7, -1 } };
+    p->mpCloseAnim.frames[1] = (AnimationFrame) { (Rectangle) {  98, 1338, -96, 96 }, 65, (Vector2) { 7, -1 } };
+    p->mpCloseAnim.frames[2] = (AnimationFrame) { (Rectangle) { 195, 1338, -96, 96 }, 65, (Vector2) { 7, -1 } };
+    p->mpCloseAnim.frames[3] = (AnimationFrame) { (Rectangle) {  98, 1338, -96, 96 }, 65, (Vector2) { 7, -1 } };
+    p->mpCloseAnim.frames[4] = (AnimationFrame) { (Rectangle) {   1, 1338, -96, 96 }, 65, (Vector2) { 7, -1 } };
+
+    p->hpCloseAnim.frameCount = 5;
+    p->hpCloseAnim.currentFrame = 0;
+    p->hpCloseAnim.frameTimeCounter = 0.0f;
+    p->hpCloseAnim.stopAtLastFrame = false;
+    p->hpCloseAnim.runOnce = true;
+    p->hpCloseAnim.finished = false;
+    createAnimationFrames( &p->hpCloseAnim, p->hpCloseAnim.frameCount );
+    p->hpCloseAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1435, -112, 128 }, 65, (Vector2) { 20, 0 } };
+    p->hpCloseAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1435, -112, 128 }, 65, (Vector2) { 20, 0 } };
+    p->hpCloseAnim.frames[2] = (AnimationFrame) { (Rectangle) { 227, 1435, -112, 128 }, 65, (Vector2) { 20, 0 } };
+    p->hpCloseAnim.frames[3] = (AnimationFrame) { (Rectangle) { 114, 1435, -112, 128 }, 65, (Vector2) { 20, 0 } };
+    p->hpCloseAnim.frames[4] = (AnimationFrame) { (Rectangle) {   1, 1435, -112, 128 }, 65, (Vector2) { 20, 0 } };
+    
+    p->lkCloseAnim.frameCount = 3;
+    p->lkCloseAnim.currentFrame = 0;
+    p->lkCloseAnim.frameTimeCounter = 0.0f;
+    p->lkCloseAnim.stopAtLastFrame = false;
+    p->lkCloseAnim.runOnce = true;
+    p->lkCloseAnim.finished = false;
+    createAnimationFrames( &p->lkCloseAnim, p->lkCloseAnim.frameCount );
+    p->lkCloseAnim.frames[0] = (AnimationFrame) { (Rectangle) {  1, 2195, -96, 96 },  60, (Vector2) { 42, 0 } };
+    p->lkCloseAnim.frames[1] = (AnimationFrame) { (Rectangle) { 98, 2195, -96, 96 }, 120, (Vector2) { 42, 0 } };
+    p->lkCloseAnim.frames[2] = (AnimationFrame) { (Rectangle) {  1, 2195, -96, 96 },  60, (Vector2) { 42, 0 } };
+    
+    p->mkCloseAnim.frameCount = 3;
+    p->mkCloseAnim.currentFrame = 0;
+    p->mkCloseAnim.frameTimeCounter = 0.0f;
+    p->mkCloseAnim.stopAtLastFrame = false;
+    p->mkCloseAnim.runOnce = true;
+    p->mkCloseAnim.finished = false;
+    createAnimationFrames( &p->mkCloseAnim, p->mkCloseAnim.frameCount );
+    p->mkCloseAnim.frames[0] = (AnimationFrame) { (Rectangle) {  1, 2292, -80, 112 },  60, (Vector2) { 30, 0 } };
+    p->mkCloseAnim.frames[1] = (AnimationFrame) { (Rectangle) { 82, 2292, -80, 112 }, 120, (Vector2) { 30, 0 } };
+    p->mkCloseAnim.frames[2] = (AnimationFrame) { (Rectangle) {  1, 2292, -80, 112 },  60, (Vector2) { 30, 0 } };
+
+    p->hkCloseAnim.frameCount = 4;
+    p->hkCloseAnim.currentFrame = 0;
+    p->hkCloseAnim.frameTimeCounter = 0.0f;
+    p->hkCloseAnim.stopAtLastFrame = false;
+    p->hkCloseAnim.runOnce = true;
+    p->hkCloseAnim.finished = false;
+    createAnimationFrames( &p->hkCloseAnim, p->hkCloseAnim.frameCount );
+    p->hkCloseAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 2405, -112, 128 },  60, (Vector2) { 47, 0 } };
+    p->hkCloseAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 2405, -112, 128 }, 120, (Vector2) { 47, 0 } };
+    p->hkCloseAnim.frames[2] = (AnimationFrame) { (Rectangle) { 227, 2405, -112, 128 }, 120, (Vector2) { 47, 0 } };
+    p->hkCloseAnim.frames[3] = (AnimationFrame) { (Rectangle) {   1, 2405, -112, 128 },  60, (Vector2) { 47, 0 } };
+
     int animationCount = 0;
     p->animations[animationCount++] = &p->idleAnim;
     p->animations[animationCount++] = &p->forwardAnim;
@@ -213,6 +289,12 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->animations[animationCount++] = &p->lkAnim;
     p->animations[animationCount++] = &p->mkAnim;
     p->animations[animationCount++] = &p->hkAnim;
+    p->animations[animationCount++] = &p->lpCloseAnim;
+    p->animations[animationCount++] = &p->mpCloseAnim;
+    p->animations[animationCount++] = &p->hpCloseAnim;
+    p->animations[animationCount++] = &p->lkCloseAnim;
+    p->animations[animationCount++] = &p->mkCloseAnim;
+    p->animations[animationCount++] = &p->hkCloseAnim;
     p->animationCount = animationCount;
 
 }
@@ -274,6 +356,12 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
         case PLAYER_STATE_LK: activeAnim = &player->lkAnim; break;
         case PLAYER_STATE_MK: activeAnim = &player->mkAnim; break;
         case PLAYER_STATE_HK: activeAnim = &player->hkAnim; break;
+        case PLAYER_STATE_LP_CLOSE: activeAnim = &player->lpCloseAnim; break;
+        case PLAYER_STATE_MP_CLOSE: activeAnim = &player->mpCloseAnim; break;
+        case PLAYER_STATE_HP_CLOSE: activeAnim = &player->hpCloseAnim; break;
+        case PLAYER_STATE_LK_CLOSE: activeAnim = &player->lkCloseAnim; break;
+        case PLAYER_STATE_MK_CLOSE: activeAnim = &player->mkCloseAnim; break;
+        case PLAYER_STATE_HK_CLOSE: activeAnim = &player->hkCloseAnim; break;
         default: break;
     }
 
@@ -320,25 +408,56 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
     // atack
     PlayerState attackState = PLAYER_STATE_IDLE;
     Animation *attackAnim = NULL;
+    float dist = distancePlayer( player, opponent );
 
     if ( IsKeyPressed( player->kb.lp ) ) {
-        attackState = PLAYER_STATE_LP;
-        attackAnim = &player->lpAnim;
+        if ( dist > player->lpCloseTriggerDist ) {
+            attackState = PLAYER_STATE_LP;
+            attackAnim = &player->lpAnim;
+        } else {
+            attackState = PLAYER_STATE_LP_CLOSE;
+            attackAnim = &player->lpCloseAnim;
+        }
     } else if ( IsKeyPressed( player->kb.mp ) ) {
-        attackState = PLAYER_STATE_MP;
-        attackAnim = &player->mpAnim;
+        if ( dist > player->mpCloseTriggerDist ) {
+            attackState = PLAYER_STATE_MP;
+            attackAnim = &player->mpAnim;
+        } else {
+            attackState = PLAYER_STATE_MP_CLOSE;
+            attackAnim = &player->mpCloseAnim;
+        }
     } else if ( IsKeyPressed( player->kb.hp ) ) {
-        attackState = PLAYER_STATE_HP;
-        attackAnim = &player->hpAnim;
+        if ( dist > player->hpCloseTriggerDist ) {
+            attackState = PLAYER_STATE_HP;
+            attackAnim = &player->hpAnim;
+        } else {
+            attackState = PLAYER_STATE_HP_CLOSE;
+            attackAnim = &player->hpCloseAnim;
+        }
     } else if ( IsKeyPressed( player->kb.lk ) ) {
-        attackState = PLAYER_STATE_LK;
-        attackAnim = &player->lkAnim;
+        if ( dist > player->lkCloseTriggerDist ) {
+            attackState = PLAYER_STATE_LK;
+            attackAnim = &player->lkAnim;
+        } else {
+            attackState = PLAYER_STATE_LK_CLOSE;
+            attackAnim = &player->lkCloseAnim;
+        }
     } else if ( IsKeyPressed( player->kb.mk ) ) {
-        attackState = PLAYER_STATE_MK;
-        attackAnim = &player->mkAnim;
+        if ( dist > player->mkCloseTriggerDist ) {
+            attackState = PLAYER_STATE_MK;
+            attackAnim = &player->mkAnim;
+        } else {
+            attackState = PLAYER_STATE_MK_CLOSE;
+            attackAnim = &player->mkCloseAnim;
+        }
     } else if ( IsKeyPressed( player->kb.hk ) ) {
-        attackState = PLAYER_STATE_HK;
-        attackAnim = &player->hkAnim;
+        if ( dist > player->hkCloseTriggerDist ) {
+            attackState = PLAYER_STATE_HK;
+            attackAnim = &player->hkAnim;
+        } else {
+            attackState = PLAYER_STATE_HK_CLOSE;
+            attackAnim = &player->hkCloseAnim;
+        }
     }
 
     if ( attackAnim != NULL ) {
@@ -439,6 +558,10 @@ void flipPlayerSide( Player *player ) {
     player->lookingRight = !player->lookingRight;
 }
 
+float distancePlayer( Player *player1, Player *player2 ) {
+    return hypotf( player1->pos.x - player2->pos.x, player1->pos.y - player2->pos.y );
+}
+
 AnimationFrame *getPlayerCurrentAnimationFrame( Player *player ) {
 
     switch ( player->state ) {
@@ -480,6 +603,18 @@ AnimationFrame *getPlayerCurrentAnimationFrame( Player *player ) {
             return getAnimationCurrentFrame( &player->mkAnim );
         case PLAYER_STATE_HK:
             return getAnimationCurrentFrame( &player->hkAnim );
+        case PLAYER_STATE_LP_CLOSE:
+            return getAnimationCurrentFrame( &player->lpCloseAnim );
+        case PLAYER_STATE_MP_CLOSE:
+            return getAnimationCurrentFrame( &player->mpCloseAnim );
+        case PLAYER_STATE_HP_CLOSE:
+            return getAnimationCurrentFrame( &player->hpCloseAnim );
+        case PLAYER_STATE_LK_CLOSE:
+            return getAnimationCurrentFrame( &player->lkCloseAnim );
+        case PLAYER_STATE_MK_CLOSE:
+            return getAnimationCurrentFrame( &player->mkCloseAnim );
+        case PLAYER_STATE_HK_CLOSE:
+            return getAnimationCurrentFrame( &player->hkCloseAnim );
     }
 
     return NULL;

@@ -16,6 +16,12 @@ typedef enum PlayerState {
     PLAYER_STATE_LK,
     PLAYER_STATE_MK,
     PLAYER_STATE_HK,
+    PLAYER_STATE_LP_CLOSE,
+    PLAYER_STATE_MP_CLOSE,
+    PLAYER_STATE_HP_CLOSE,
+    PLAYER_STATE_LK_CLOSE,
+    PLAYER_STATE_MK_CLOSE,
+    PLAYER_STATE_HK_CLOSE,
 } PlayerState;
 
 typedef struct AnimationFrame {
@@ -72,6 +78,20 @@ typedef struct Player {
     Animation lkAnim;
     Animation mkAnim;
     Animation hkAnim;
+    
+    Animation lpCloseAnim;
+    Animation mpCloseAnim;
+    Animation hpCloseAnim;
+    Animation lkCloseAnim;
+    Animation mkCloseAnim;
+    Animation hkCloseAnim;
+
+    int lpCloseTriggerDist;
+    int mpCloseTriggerDist;
+    int hpCloseTriggerDist;
+    int lkCloseTriggerDist;
+    int mkCloseTriggerDist;
+    int hkCloseTriggerDist;
 
     Animation *animations[50];
     int animationCount;

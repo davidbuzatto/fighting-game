@@ -11,6 +11,7 @@ void drawPlayer( Player *player );
 void processInputPlayer( Player *player, Player *opponent, float delta );
 void updatePlayer( Player *player, Player *opponent, float gravity, float delta );
 void flipPlayerSide( Player *player );
+float distancePlayer( Player *player1, Player *player2 );
 
 AnimationFrame *getPlayerCurrentAnimationFrame( Player *player );
 void resetPlayerAnimations( Player *player );
