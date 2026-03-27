@@ -29,6 +29,24 @@ typedef enum PlayerState {
     PLAYER_STATE_LK_CROUCH,
     PLAYER_STATE_MK_CROUCH,
     PLAYER_STATE_HK_CROUCH,
+    PLAYER_STATE_LP_JUMP_STRAIGHT,
+    PLAYER_STATE_MP_JUMP_STRAIGHT,
+    PLAYER_STATE_HP_JUMP_STRAIGHT,
+    PLAYER_STATE_LK_JUMP_STRAIGHT,
+    PLAYER_STATE_MK_JUMP_STRAIGHT,
+    PLAYER_STATE_HK_JUMP_STRAIGHT,
+    PLAYER_STATE_LP_JUMP_FORWARD,
+    PLAYER_STATE_MP_JUMP_FORWARD,
+    PLAYER_STATE_HP_JUMP_FORWARD,
+    PLAYER_STATE_LK_JUMP_FORWARD,
+    PLAYER_STATE_MK_JUMP_FORWARD,
+    PLAYER_STATE_HK_JUMP_FORWARD,
+    PLAYER_STATE_LP_JUMP_BACKWARD,
+    PLAYER_STATE_MP_JUMP_BACKWARD,
+    PLAYER_STATE_HP_JUMP_BACKWARD,
+    PLAYER_STATE_LK_JUMP_BACKWARD,
+    PLAYER_STATE_MK_JUMP_BACKWARD,
+    PLAYER_STATE_HK_JUMP_BACKWARD,
 } PlayerState;
 
 typedef struct AnimationFrame {
@@ -100,6 +118,27 @@ typedef struct Player {
     Animation lkCrouchAnim;
     Animation mkCrouchAnim;
     Animation hkCrouchAnim;
+
+    Animation lpJumpStraightAnim;
+    Animation mpJumpStraightAnim;
+    Animation hpJumpStraightAnim;
+    Animation lkJumpStraightAnim;
+    Animation mkJumpStraightAnim;
+    Animation hkJumpStraightAnim;
+
+    Animation lpJumpForwardAnim;
+    Animation mpJumpForwardAnim;
+    Animation hpJumpForwardAnim;
+    Animation lkJumpForwardAnim;
+    Animation mkJumpForwardAnim;
+    Animation hkJumpForwardAnim;
+
+    Animation lpJumpBackwardAnim;
+    Animation mpJumpBackwardAnim;
+    Animation hpJumpBackwardAnim;
+    Animation lkJumpBackwardAnim;
+    Animation mkJumpBackwardAnim;
+    Animation hkJumpBackwardAnim;
 
     int lpCloseTriggerDist;
     int mpCloseTriggerDist;

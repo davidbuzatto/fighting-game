@@ -62,6 +62,24 @@ static const char *playerStateToText( PlayerState state ) {
         case PLAYER_STATE_MK_CROUCH: return "K";
         case PLAYER_STATE_HK_CROUCH: return "K";
         case PLAYER_STATE_JUMP_COOLDOWN: return "L";
+        case PLAYER_STATE_LP_JUMP_STRAIGHT: return "P";
+        case PLAYER_STATE_MP_JUMP_STRAIGHT: return "P";
+        case PLAYER_STATE_HP_JUMP_STRAIGHT: return "P";
+        case PLAYER_STATE_LK_JUMP_STRAIGHT: return "K";
+        case PLAYER_STATE_MK_JUMP_STRAIGHT: return "K";
+        case PLAYER_STATE_HK_JUMP_STRAIGHT: return "K";
+        case PLAYER_STATE_LP_JUMP_FORWARD: return "P";
+        case PLAYER_STATE_MP_JUMP_FORWARD: return "P";
+        case PLAYER_STATE_HP_JUMP_FORWARD: return "P";
+        case PLAYER_STATE_LK_JUMP_FORWARD: return "K";
+        case PLAYER_STATE_MK_JUMP_FORWARD: return "K";
+        case PLAYER_STATE_HK_JUMP_FORWARD: return "K";
+        case PLAYER_STATE_LP_JUMP_BACKWARD: return "P";
+        case PLAYER_STATE_MP_JUMP_BACKWARD: return "P";
+        case PLAYER_STATE_HP_JUMP_BACKWARD: return "P";
+        case PLAYER_STATE_LK_JUMP_BACKWARD: return "K";
+        case PLAYER_STATE_MK_JUMP_BACKWARD: return "K";
+        case PLAYER_STATE_HK_JUMP_BACKWARD: return "K";
     }
 
     return "";
@@ -97,6 +115,24 @@ static Color playerStateToColor( PlayerState state ) {
         case PLAYER_STATE_MK_CROUCH: return YELLOW;
         case PLAYER_STATE_HK_CROUCH: return RED;
         case PLAYER_STATE_JUMP_COOLDOWN: return ORANGE;
+        case PLAYER_STATE_LP_JUMP_STRAIGHT: return SKYBLUE;
+        case PLAYER_STATE_MP_JUMP_STRAIGHT: return YELLOW;
+        case PLAYER_STATE_HP_JUMP_STRAIGHT: return RED;
+        case PLAYER_STATE_LK_JUMP_STRAIGHT: return SKYBLUE;
+        case PLAYER_STATE_MK_JUMP_STRAIGHT: return YELLOW;
+        case PLAYER_STATE_HK_JUMP_STRAIGHT: return RED;
+        case PLAYER_STATE_LP_JUMP_FORWARD: return SKYBLUE;
+        case PLAYER_STATE_MP_JUMP_FORWARD: return YELLOW;
+        case PLAYER_STATE_HP_JUMP_FORWARD: return RED;
+        case PLAYER_STATE_LK_JUMP_FORWARD: return SKYBLUE;
+        case PLAYER_STATE_MK_JUMP_FORWARD: return YELLOW;
+        case PLAYER_STATE_HK_JUMP_FORWARD: return RED;
+        case PLAYER_STATE_LP_JUMP_BACKWARD: return SKYBLUE;
+        case PLAYER_STATE_MP_JUMP_BACKWARD: return YELLOW;
+        case PLAYER_STATE_HP_JUMP_BACKWARD: return RED;
+        case PLAYER_STATE_LK_JUMP_BACKWARD: return SKYBLUE;
+        case PLAYER_STATE_MK_JUMP_BACKWARD: return YELLOW;
+        case PLAYER_STATE_HK_JUMP_BACKWARD: return RED;
     }
 
     return PINK;
@@ -440,6 +476,171 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->hkCrouchAnim.frames[2] = (AnimationFrame) { (Rectangle) { 291, 2599, -144, 64 }, 60, (Vector2) { 32, 0 } };
     p->hkCrouchAnim.frames[3] = (AnimationFrame) { (Rectangle) { 436, 2599, -144, 64 }, 60, (Vector2) { 32, 0 } };
 
+    // jump straight attacks (dummy frames)
+    p->lpJumpStraightAnim.frameCount = 1;
+    p->lpJumpStraightAnim.currentFrame = 0;
+    p->lpJumpStraightAnim.frameTimeCounter = 0.0f;
+    p->lpJumpStraightAnim.stopAtLastFrame = false;
+    p->lpJumpStraightAnim.runOnce = true;
+    p->lpJumpStraightAnim.finished = false;
+    createAnimationFrames( &p->lpJumpStraightAnim, p->lpJumpStraightAnim.frameCount );
+    p->lpJumpStraightAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+
+    p->mpJumpStraightAnim.frameCount = 1;
+    p->mpJumpStraightAnim.currentFrame = 0;
+    p->mpJumpStraightAnim.frameTimeCounter = 0.0f;
+    p->mpJumpStraightAnim.stopAtLastFrame = false;
+    p->mpJumpStraightAnim.runOnce = true;
+    p->mpJumpStraightAnim.finished = false;
+    createAnimationFrames( &p->mpJumpStraightAnim, p->mpJumpStraightAnim.frameCount );
+    p->mpJumpStraightAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+
+    p->hpJumpStraightAnim.frameCount = 1;
+    p->hpJumpStraightAnim.currentFrame = 0;
+    p->hpJumpStraightAnim.frameTimeCounter = 0.0f;
+    p->hpJumpStraightAnim.stopAtLastFrame = false;
+    p->hpJumpStraightAnim.runOnce = true;
+    p->hpJumpStraightAnim.finished = false;
+    createAnimationFrames( &p->hpJumpStraightAnim, p->hpJumpStraightAnim.frameCount );
+    p->hpJumpStraightAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+
+    p->lkJumpStraightAnim.frameCount = 1;
+    p->lkJumpStraightAnim.currentFrame = 0;
+    p->lkJumpStraightAnim.frameTimeCounter = 0.0f;
+    p->lkJumpStraightAnim.stopAtLastFrame = false;
+    p->lkJumpStraightAnim.runOnce = true;
+    p->lkJumpStraightAnim.finished = false;
+    createAnimationFrames( &p->lkJumpStraightAnim, p->lkJumpStraightAnim.frameCount );
+    p->lkJumpStraightAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+
+    p->mkJumpStraightAnim.frameCount = 1;
+    p->mkJumpStraightAnim.currentFrame = 0;
+    p->mkJumpStraightAnim.frameTimeCounter = 0.0f;
+    p->mkJumpStraightAnim.stopAtLastFrame = false;
+    p->mkJumpStraightAnim.runOnce = true;
+    p->mkJumpStraightAnim.finished = false;
+    createAnimationFrames( &p->mkJumpStraightAnim, p->mkJumpStraightAnim.frameCount );
+    p->mkJumpStraightAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+
+    p->hkJumpStraightAnim.frameCount = 1;
+    p->hkJumpStraightAnim.currentFrame = 0;
+    p->hkJumpStraightAnim.frameTimeCounter = 0.0f;
+    p->hkJumpStraightAnim.stopAtLastFrame = false;
+    p->hkJumpStraightAnim.runOnce = true;
+    p->hkJumpStraightAnim.finished = false;
+    createAnimationFrames( &p->hkJumpStraightAnim, p->hkJumpStraightAnim.frameCount );
+    p->hkJumpStraightAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+
+    // jump forward attacks (dummy frames)
+    p->lpJumpForwardAnim.frameCount = 1;
+    p->lpJumpForwardAnim.currentFrame = 0;
+    p->lpJumpForwardAnim.frameTimeCounter = 0.0f;
+    p->lpJumpForwardAnim.stopAtLastFrame = false;
+    p->lpJumpForwardAnim.runOnce = true;
+    p->lpJumpForwardAnim.finished = false;
+    createAnimationFrames( &p->lpJumpForwardAnim, p->lpJumpForwardAnim.frameCount );
+    p->lpJumpForwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+
+    p->mpJumpForwardAnim.frameCount = 1;
+    p->mpJumpForwardAnim.currentFrame = 0;
+    p->mpJumpForwardAnim.frameTimeCounter = 0.0f;
+    p->mpJumpForwardAnim.stopAtLastFrame = false;
+    p->mpJumpForwardAnim.runOnce = true;
+    p->mpJumpForwardAnim.finished = false;
+    createAnimationFrames( &p->mpJumpForwardAnim, p->mpJumpForwardAnim.frameCount );
+    p->mpJumpForwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+
+    p->hpJumpForwardAnim.frameCount = 1;
+    p->hpJumpForwardAnim.currentFrame = 0;
+    p->hpJumpForwardAnim.frameTimeCounter = 0.0f;
+    p->hpJumpForwardAnim.stopAtLastFrame = false;
+    p->hpJumpForwardAnim.runOnce = true;
+    p->hpJumpForwardAnim.finished = false;
+    createAnimationFrames( &p->hpJumpForwardAnim, p->hpJumpForwardAnim.frameCount );
+    p->hpJumpForwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+
+    p->lkJumpForwardAnim.frameCount = 1;
+    p->lkJumpForwardAnim.currentFrame = 0;
+    p->lkJumpForwardAnim.frameTimeCounter = 0.0f;
+    p->lkJumpForwardAnim.stopAtLastFrame = false;
+    p->lkJumpForwardAnim.runOnce = true;
+    p->lkJumpForwardAnim.finished = false;
+    createAnimationFrames( &p->lkJumpForwardAnim, p->lkJumpForwardAnim.frameCount );
+    p->lkJumpForwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+
+    p->mkJumpForwardAnim.frameCount = 1;
+    p->mkJumpForwardAnim.currentFrame = 0;
+    p->mkJumpForwardAnim.frameTimeCounter = 0.0f;
+    p->mkJumpForwardAnim.stopAtLastFrame = false;
+    p->mkJumpForwardAnim.runOnce = true;
+    p->mkJumpForwardAnim.finished = false;
+    createAnimationFrames( &p->mkJumpForwardAnim, p->mkJumpForwardAnim.frameCount );
+    p->mkJumpForwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+
+    p->hkJumpForwardAnim.frameCount = 1;
+    p->hkJumpForwardAnim.currentFrame = 0;
+    p->hkJumpForwardAnim.frameTimeCounter = 0.0f;
+    p->hkJumpForwardAnim.stopAtLastFrame = false;
+    p->hkJumpForwardAnim.runOnce = true;
+    p->hkJumpForwardAnim.finished = false;
+    createAnimationFrames( &p->hkJumpForwardAnim, p->hkJumpForwardAnim.frameCount );
+    p->hkJumpForwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+
+    // jump backward attacks (dummy frames)
+    p->lpJumpBackwardAnim.frameCount = 1;
+    p->lpJumpBackwardAnim.currentFrame = 0;
+    p->lpJumpBackwardAnim.frameTimeCounter = 0.0f;
+    p->lpJumpBackwardAnim.stopAtLastFrame = false;
+    p->lpJumpBackwardAnim.runOnce = true;
+    p->lpJumpBackwardAnim.finished = false;
+    createAnimationFrames( &p->lpJumpBackwardAnim, p->lpJumpBackwardAnim.frameCount );
+    p->lpJumpBackwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+
+    p->mpJumpBackwardAnim.frameCount = 1;
+    p->mpJumpBackwardAnim.currentFrame = 0;
+    p->mpJumpBackwardAnim.frameTimeCounter = 0.0f;
+    p->mpJumpBackwardAnim.stopAtLastFrame = false;
+    p->mpJumpBackwardAnim.runOnce = true;
+    p->mpJumpBackwardAnim.finished = false;
+    createAnimationFrames( &p->mpJumpBackwardAnim, p->mpJumpBackwardAnim.frameCount );
+    p->mpJumpBackwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+
+    p->hpJumpBackwardAnim.frameCount = 1;
+    p->hpJumpBackwardAnim.currentFrame = 0;
+    p->hpJumpBackwardAnim.frameTimeCounter = 0.0f;
+    p->hpJumpBackwardAnim.stopAtLastFrame = false;
+    p->hpJumpBackwardAnim.runOnce = true;
+    p->hpJumpBackwardAnim.finished = false;
+    createAnimationFrames( &p->hpJumpBackwardAnim, p->hpJumpBackwardAnim.frameCount );
+    p->hpJumpBackwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+
+    p->lkJumpBackwardAnim.frameCount = 1;
+    p->lkJumpBackwardAnim.currentFrame = 0;
+    p->lkJumpBackwardAnim.frameTimeCounter = 0.0f;
+    p->lkJumpBackwardAnim.stopAtLastFrame = false;
+    p->lkJumpBackwardAnim.runOnce = true;
+    p->lkJumpBackwardAnim.finished = false;
+    createAnimationFrames( &p->lkJumpBackwardAnim, p->lkJumpBackwardAnim.frameCount );
+    p->lkJumpBackwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+
+    p->mkJumpBackwardAnim.frameCount = 1;
+    p->mkJumpBackwardAnim.currentFrame = 0;
+    p->mkJumpBackwardAnim.frameTimeCounter = 0.0f;
+    p->mkJumpBackwardAnim.stopAtLastFrame = false;
+    p->mkJumpBackwardAnim.runOnce = true;
+    p->mkJumpBackwardAnim.finished = false;
+    createAnimationFrames( &p->mkJumpBackwardAnim, p->mkJumpBackwardAnim.frameCount );
+    p->mkJumpBackwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+
+    p->hkJumpBackwardAnim.frameCount = 1;
+    p->hkJumpBackwardAnim.currentFrame = 0;
+    p->hkJumpBackwardAnim.frameTimeCounter = 0.0f;
+    p->hkJumpBackwardAnim.stopAtLastFrame = false;
+    p->hkJumpBackwardAnim.runOnce = true;
+    p->hkJumpBackwardAnim.finished = false;
+    createAnimationFrames( &p->hkJumpBackwardAnim, p->hkJumpBackwardAnim.frameCount );
+    p->hkJumpBackwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+
     int animationCount = 0;
     p->animations[animationCount++] = &p->idleAnim;
     p->animations[animationCount++] = &p->forwardAnim;
@@ -467,6 +668,24 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->animations[animationCount++] = &p->lkCrouchAnim;
     p->animations[animationCount++] = &p->mkCrouchAnim;
     p->animations[animationCount++] = &p->hkCrouchAnim;
+    p->animations[animationCount++] = &p->lpJumpStraightAnim;
+    p->animations[animationCount++] = &p->mpJumpStraightAnim;
+    p->animations[animationCount++] = &p->hpJumpStraightAnim;
+    p->animations[animationCount++] = &p->lkJumpStraightAnim;
+    p->animations[animationCount++] = &p->mkJumpStraightAnim;
+    p->animations[animationCount++] = &p->hkJumpStraightAnim;
+    p->animations[animationCount++] = &p->lpJumpForwardAnim;
+    p->animations[animationCount++] = &p->mpJumpForwardAnim;
+    p->animations[animationCount++] = &p->hpJumpForwardAnim;
+    p->animations[animationCount++] = &p->lkJumpForwardAnim;
+    p->animations[animationCount++] = &p->mkJumpForwardAnim;
+    p->animations[animationCount++] = &p->hkJumpForwardAnim;
+    p->animations[animationCount++] = &p->lpJumpBackwardAnim;
+    p->animations[animationCount++] = &p->mpJumpBackwardAnim;
+    p->animations[animationCount++] = &p->hpJumpBackwardAnim;
+    p->animations[animationCount++] = &p->lkJumpBackwardAnim;
+    p->animations[animationCount++] = &p->mkJumpBackwardAnim;
+    p->animations[animationCount++] = &p->hkJumpBackwardAnim;
     p->animationCount = animationCount;
 
 }
@@ -596,11 +815,28 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
         case PLAYER_STATE_LK_CROUCH: activeAnim = &player->lkCrouchAnim; break;
         case PLAYER_STATE_MK_CROUCH: activeAnim = &player->mkCrouchAnim; break;
         case PLAYER_STATE_HK_CROUCH: activeAnim = &player->hkCrouchAnim; break;
+        case PLAYER_STATE_LP_JUMP_STRAIGHT: activeAnim = &player->lpJumpStraightAnim; break;
+        case PLAYER_STATE_MP_JUMP_STRAIGHT: activeAnim = &player->mpJumpStraightAnim; break;
+        case PLAYER_STATE_HP_JUMP_STRAIGHT: activeAnim = &player->hpJumpStraightAnim; break;
+        case PLAYER_STATE_LK_JUMP_STRAIGHT: activeAnim = &player->lkJumpStraightAnim; break;
+        case PLAYER_STATE_MK_JUMP_STRAIGHT: activeAnim = &player->mkJumpStraightAnim; break;
+        case PLAYER_STATE_HK_JUMP_STRAIGHT: activeAnim = &player->hkJumpStraightAnim; break;
+        case PLAYER_STATE_LP_JUMP_FORWARD: activeAnim = &player->lpJumpForwardAnim; break;
+        case PLAYER_STATE_MP_JUMP_FORWARD: activeAnim = &player->mpJumpForwardAnim; break;
+        case PLAYER_STATE_HP_JUMP_FORWARD: activeAnim = &player->hpJumpForwardAnim; break;
+        case PLAYER_STATE_LK_JUMP_FORWARD: activeAnim = &player->lkJumpForwardAnim; break;
+        case PLAYER_STATE_MK_JUMP_FORWARD: activeAnim = &player->mkJumpForwardAnim; break;
+        case PLAYER_STATE_HK_JUMP_FORWARD: activeAnim = &player->hkJumpForwardAnim; break;
+        case PLAYER_STATE_LP_JUMP_BACKWARD: activeAnim = &player->lpJumpBackwardAnim; break;
+        case PLAYER_STATE_MP_JUMP_BACKWARD: activeAnim = &player->mpJumpBackwardAnim; break;
+        case PLAYER_STATE_HP_JUMP_BACKWARD: activeAnim = &player->hpJumpBackwardAnim; break;
+        case PLAYER_STATE_LK_JUMP_BACKWARD: activeAnim = &player->lkJumpBackwardAnim; break;
+        case PLAYER_STATE_MK_JUMP_BACKWARD: activeAnim = &player->mkJumpBackwardAnim; break;
+        case PLAYER_STATE_HK_JUMP_BACKWARD: activeAnim = &player->hkJumpBackwardAnim; break;
         default: break;
     }
 
     if ( activeAnim != NULL ) {
-        player->lastState = player->state;   // register stack state before transitioning
         updateAnimation( activeAnim, delta );
         if ( activeAnim->finished ) {
             bool isCrouchAttack = (
@@ -611,7 +847,33 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
                 player->state == PLAYER_STATE_MK_CROUCH ||
                 player->state == PLAYER_STATE_HK_CROUCH
             );
-            player->state = isCrouchAttack ? PLAYER_STATE_CROUCHING : PLAYER_STATE_IDLE;
+            bool isJumpAttack = (
+                player->state == PLAYER_STATE_LP_JUMP_STRAIGHT ||
+                player->state == PLAYER_STATE_MP_JUMP_STRAIGHT ||
+                player->state == PLAYER_STATE_HP_JUMP_STRAIGHT ||
+                player->state == PLAYER_STATE_LK_JUMP_STRAIGHT ||
+                player->state == PLAYER_STATE_MK_JUMP_STRAIGHT ||
+                player->state == PLAYER_STATE_HK_JUMP_STRAIGHT ||
+                player->state == PLAYER_STATE_LP_JUMP_FORWARD  ||
+                player->state == PLAYER_STATE_MP_JUMP_FORWARD  ||
+                player->state == PLAYER_STATE_HP_JUMP_FORWARD  ||
+                player->state == PLAYER_STATE_LK_JUMP_FORWARD  ||
+                player->state == PLAYER_STATE_MK_JUMP_FORWARD  ||
+                player->state == PLAYER_STATE_HK_JUMP_FORWARD  ||
+                player->state == PLAYER_STATE_LP_JUMP_BACKWARD ||
+                player->state == PLAYER_STATE_MP_JUMP_BACKWARD ||
+                player->state == PLAYER_STATE_HP_JUMP_BACKWARD ||
+                player->state == PLAYER_STATE_LK_JUMP_BACKWARD ||
+                player->state == PLAYER_STATE_MK_JUMP_BACKWARD ||
+                player->state == PLAYER_STATE_HK_JUMP_BACKWARD
+            );
+            if ( isCrouchAttack ) {
+                player->state = PLAYER_STATE_CROUCHING;
+            } else if ( isJumpAttack ) {
+                player->state = player->lastState;
+            } else {
+                player->state = PLAYER_STATE_IDLE;
+            }
             resetAnimation( activeAnim );
         }
         return;
@@ -642,8 +904,84 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
             default:
                 break;
         }
-        // air atack discarted for now
-        player->lastState = player->state;
+        // jump attack input
+        PlayerState jumpAttackState = PLAYER_STATE_IDLE;
+        Animation *jumpAttackAnim = NULL;
+
+        if ( IsKeyPressed( player->kb.lp ) ) {
+            if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
+                jumpAttackState = PLAYER_STATE_LP_JUMP_STRAIGHT;
+                jumpAttackAnim = &player->lpJumpStraightAnim;
+            } else if ( player->state == PLAYER_STATE_JUMPING_FORWARD ) {
+                jumpAttackState = PLAYER_STATE_LP_JUMP_FORWARD;
+                jumpAttackAnim = &player->lpJumpForwardAnim;
+            } else {
+                jumpAttackState = PLAYER_STATE_LP_JUMP_BACKWARD;
+                jumpAttackAnim = &player->lpJumpBackwardAnim;
+            }
+        } else if ( IsKeyPressed( player->kb.mp ) ) {
+            if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
+                jumpAttackState = PLAYER_STATE_MP_JUMP_STRAIGHT;
+                jumpAttackAnim = &player->mpJumpStraightAnim;
+            } else if ( player->state == PLAYER_STATE_JUMPING_FORWARD ) {
+                jumpAttackState = PLAYER_STATE_MP_JUMP_FORWARD;
+                jumpAttackAnim = &player->mpJumpForwardAnim;
+            } else {
+                jumpAttackState = PLAYER_STATE_MP_JUMP_BACKWARD;
+                jumpAttackAnim = &player->mpJumpBackwardAnim;
+            }
+        } else if ( IsKeyPressed( player->kb.hp ) ) {
+            if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
+                jumpAttackState = PLAYER_STATE_HP_JUMP_STRAIGHT;
+                jumpAttackAnim = &player->hpJumpStraightAnim;
+            } else if ( player->state == PLAYER_STATE_JUMPING_FORWARD ) {
+                jumpAttackState = PLAYER_STATE_HP_JUMP_FORWARD;
+                jumpAttackAnim = &player->hpJumpForwardAnim;
+            } else {
+                jumpAttackState = PLAYER_STATE_HP_JUMP_BACKWARD;
+                jumpAttackAnim = &player->hpJumpBackwardAnim;
+            }
+        } else if ( IsKeyPressed( player->kb.lk ) ) {
+            if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
+                jumpAttackState = PLAYER_STATE_LK_JUMP_STRAIGHT;
+                jumpAttackAnim = &player->lkJumpStraightAnim;
+            } else if ( player->state == PLAYER_STATE_JUMPING_FORWARD ) {
+                jumpAttackState = PLAYER_STATE_LK_JUMP_FORWARD;
+                jumpAttackAnim = &player->lkJumpForwardAnim;
+            } else {
+                jumpAttackState = PLAYER_STATE_LK_JUMP_BACKWARD;
+                jumpAttackAnim = &player->lkJumpBackwardAnim;
+            }
+        } else if ( IsKeyPressed( player->kb.mk ) ) {
+            if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
+                jumpAttackState = PLAYER_STATE_MK_JUMP_STRAIGHT;
+                jumpAttackAnim = &player->mkJumpStraightAnim;
+            } else if ( player->state == PLAYER_STATE_JUMPING_FORWARD ) {
+                jumpAttackState = PLAYER_STATE_MK_JUMP_FORWARD;
+                jumpAttackAnim = &player->mkJumpForwardAnim;
+            } else {
+                jumpAttackState = PLAYER_STATE_MK_JUMP_BACKWARD;
+                jumpAttackAnim = &player->mkJumpBackwardAnim;
+            }
+        } else if ( IsKeyPressed( player->kb.hk ) ) {
+            if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
+                jumpAttackState = PLAYER_STATE_HK_JUMP_STRAIGHT;
+                jumpAttackAnim = &player->hkJumpStraightAnim;
+            } else if ( player->state == PLAYER_STATE_JUMPING_FORWARD ) {
+                jumpAttackState = PLAYER_STATE_HK_JUMP_FORWARD;
+                jumpAttackAnim = &player->hkJumpForwardAnim;
+            } else {
+                jumpAttackState = PLAYER_STATE_HK_JUMP_BACKWARD;
+                jumpAttackAnim = &player->hkJumpBackwardAnim;
+            }
+        }
+
+        if ( jumpAttackAnim != NULL ) {
+            resetAnimation( jumpAttackAnim );
+            player->lastState = player->state;   // preserve jump state for recovery after attack
+            player->state = jumpAttackState;
+        }
+
         return;
     }
 
@@ -902,6 +1240,42 @@ AnimationFrame *getPlayerCurrentAnimationFrame( Player *player ) {
             return getAnimationCurrentFrame( &player->hkCrouchAnim );
         case PLAYER_STATE_JUMP_COOLDOWN:
             return getAnimationCurrentFrame( &player->jumpCooldownAnim );
+        case PLAYER_STATE_LP_JUMP_STRAIGHT:
+            return getAnimationCurrentFrame( &player->lpJumpStraightAnim );
+        case PLAYER_STATE_MP_JUMP_STRAIGHT:
+            return getAnimationCurrentFrame( &player->mpJumpStraightAnim );
+        case PLAYER_STATE_HP_JUMP_STRAIGHT:
+            return getAnimationCurrentFrame( &player->hpJumpStraightAnim );
+        case PLAYER_STATE_LK_JUMP_STRAIGHT:
+            return getAnimationCurrentFrame( &player->lkJumpStraightAnim );
+        case PLAYER_STATE_MK_JUMP_STRAIGHT:
+            return getAnimationCurrentFrame( &player->mkJumpStraightAnim );
+        case PLAYER_STATE_HK_JUMP_STRAIGHT:
+            return getAnimationCurrentFrame( &player->hkJumpStraightAnim );
+        case PLAYER_STATE_LP_JUMP_FORWARD:
+            return getAnimationCurrentFrame( &player->lpJumpForwardAnim );
+        case PLAYER_STATE_MP_JUMP_FORWARD:
+            return getAnimationCurrentFrame( &player->mpJumpForwardAnim );
+        case PLAYER_STATE_HP_JUMP_FORWARD:
+            return getAnimationCurrentFrame( &player->hpJumpForwardAnim );
+        case PLAYER_STATE_LK_JUMP_FORWARD:
+            return getAnimationCurrentFrame( &player->lkJumpForwardAnim );
+        case PLAYER_STATE_MK_JUMP_FORWARD:
+            return getAnimationCurrentFrame( &player->mkJumpForwardAnim );
+        case PLAYER_STATE_HK_JUMP_FORWARD:
+            return getAnimationCurrentFrame( &player->hkJumpForwardAnim );
+        case PLAYER_STATE_LP_JUMP_BACKWARD:
+            return getAnimationCurrentFrame( &player->lpJumpBackwardAnim );
+        case PLAYER_STATE_MP_JUMP_BACKWARD:
+            return getAnimationCurrentFrame( &player->mpJumpBackwardAnim );
+        case PLAYER_STATE_HP_JUMP_BACKWARD:
+            return getAnimationCurrentFrame( &player->hpJumpBackwardAnim );
+        case PLAYER_STATE_LK_JUMP_BACKWARD:
+            return getAnimationCurrentFrame( &player->lkJumpBackwardAnim );
+        case PLAYER_STATE_MK_JUMP_BACKWARD:
+            return getAnimationCurrentFrame( &player->mkJumpBackwardAnim );
+        case PLAYER_STATE_HK_JUMP_BACKWARD:
+            return getAnimationCurrentFrame( &player->hkJumpBackwardAnim );
     }
 
     return NULL;
