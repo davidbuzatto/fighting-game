@@ -427,7 +427,7 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->hkCrouchAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 2599, -144, 64 }, 60, (Vector2) { 32, 0 } };
     p->hkCrouchAnim.frames[1] = (AnimationFrame) { (Rectangle) { 146, 2599, -144, 64 }, 60, (Vector2) { 32, 0 } };
     p->hkCrouchAnim.frames[2] = (AnimationFrame) { (Rectangle) { 291, 2599, -144, 64 }, 60, (Vector2) { 32, 0 } };
-    p->hkCrouchAnim.frames[2] = (AnimationFrame) { (Rectangle) { 436, 2599, -144, 64 }, 60, (Vector2) { 32, 0 } };
+    p->hkCrouchAnim.frames[3] = (AnimationFrame) { (Rectangle) { 436, 2599, -144, 64 }, 60, (Vector2) { 32, 0 } };
 
     int animationCount = 0;
     p->animations[animationCount++] = &p->idleAnim;
@@ -449,6 +449,12 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->animations[animationCount++] = &p->lkCloseAnim;
     p->animations[animationCount++] = &p->mkCloseAnim;
     p->animations[animationCount++] = &p->hkCloseAnim;
+    p->animations[animationCount++] = &p->lpCrouchAnim;
+    p->animations[animationCount++] = &p->mpCrouchAnim;
+    p->animations[animationCount++] = &p->hpCrouchAnim;
+    p->animations[animationCount++] = &p->lkCrouchAnim;
+    p->animations[animationCount++] = &p->mkCrouchAnim;
+    p->animations[animationCount++] = &p->hkCrouchAnim;
     p->animationCount = animationCount;
 
 }
@@ -585,7 +591,15 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
         player->lastState = player->state;   // register stack state before transitioning
         updateAnimation( activeAnim, delta );
         if ( activeAnim->finished ) {
-            player->state = PLAYER_STATE_IDLE;
+            bool isCrouchAttack = (
+                player->state == PLAYER_STATE_LP_CROUCH ||
+                player->state == PLAYER_STATE_MP_CROUCH ||
+                player->state == PLAYER_STATE_HP_CROUCH ||
+                player->state == PLAYER_STATE_LK_CROUCH ||
+                player->state == PLAYER_STATE_MK_CROUCH ||
+                player->state == PLAYER_STATE_HK_CROUCH
+            );
+            player->state = isCrouchAttack ? PLAYER_STATE_CROUCHING : PLAYER_STATE_IDLE;
             resetAnimation( activeAnim );
         }
         return;
@@ -695,9 +709,6 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
     }
 
     if ( attackAnim != NULL ) {
-        if ( player->state == PLAYER_STATE_CROUCHING ) {
-            resetAnimation( &player->crouchingAnim );
-        }
         resetAnimation( attackAnim );
         player->vel.x = 0.0f;
         player->state = attackState;
