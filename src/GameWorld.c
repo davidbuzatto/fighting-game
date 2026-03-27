@@ -198,7 +198,8 @@ static void resolveCollisionPlayerStage( Player *player, GameWorld *gw ) {
              player->state == PLAYER_STATE_JUMPING_FORWARD  ||
              player->state == PLAYER_STATE_JUMPING_BACKWARD ) {
             resetPlayerAnimations( player );
-            player->state = PLAYER_STATE_IDLE;
+            player->vel.x = 0.0f;
+            player->state = PLAYER_STATE_JUMP_COOLDOWN;
         }
     }
 

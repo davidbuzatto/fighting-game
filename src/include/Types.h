@@ -10,6 +10,7 @@ typedef enum PlayerState {
     PLAYER_STATE_JUMPING_STRAIGHT,
     PLAYER_STATE_JUMPING_FORWARD,
     PLAYER_STATE_JUMPING_BACKWARD,
+    PLAYER_STATE_JUMP_COOLDOWN,
     PLAYER_STATE_LP,
     PLAYER_STATE_MP,
     PLAYER_STATE_HP,
@@ -76,6 +77,7 @@ typedef struct Player {
     Animation straightJumpAnim;
     Animation forwardJumpAnim;
     Animation backwardJumpAnim;
+    Animation jumpCooldownAnim;
     Animation crouchingAnim;
 
     Animation lpAnim;

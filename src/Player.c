@@ -61,13 +61,14 @@ static const char *playerStateToText( PlayerState state ) {
         case PLAYER_STATE_LK_CROUCH: return "K";
         case PLAYER_STATE_MK_CROUCH: return "K";
         case PLAYER_STATE_HK_CROUCH: return "K";
+        case PLAYER_STATE_JUMP_COOLDOWN: return "L";
     }
 
     return "";
 
 }
 
-static const Color playerStateToColor( PlayerState state ) {
+static Color playerStateToColor( PlayerState state ) {
 
     switch ( state ) {
         case PLAYER_STATE_IDLE: return LIGHTGRAY;
@@ -95,6 +96,7 @@ static const Color playerStateToColor( PlayerState state ) {
         case PLAYER_STATE_LK_CROUCH: return SKYBLUE;
         case PLAYER_STATE_MK_CROUCH: return YELLOW;
         case PLAYER_STATE_HK_CROUCH: return RED;
+        case PLAYER_STATE_JUMP_COOLDOWN: return ORANGE;
     }
 
     return PINK;
@@ -213,6 +215,15 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->backwardJumpAnim.frames[4] = (AnimationFrame) { (Rectangle) { 259, 708, -128, 112 }, 50, (Vector2) { 0 } };
     p->backwardJumpAnim.frames[5] = (AnimationFrame) { (Rectangle) { 130, 708, -128, 112 }, 50, (Vector2) { 0 } };
     p->backwardJumpAnim.frames[6] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 112 }, 50, (Vector2) { 0 } };
+
+    p->jumpCooldownAnim.frameCount = 1;
+    p->jumpCooldownAnim.currentFrame = 0;
+    p->jumpCooldownAnim.frameTimeCounter = 0.0f;
+    p->jumpCooldownAnim.stopAtLastFrame = false;
+    p->jumpCooldownAnim.runOnce = true;
+    p->jumpCooldownAnim.finished = false;
+    createAnimationFrames( &p->jumpCooldownAnim, p->jumpCooldownAnim.frameCount );
+    p->jumpCooldownAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 934, -64, 96 }, 60, (Vector2) { 0 } };
 
     p->crouchingAnim.frameCount = 3;
     p->crouchingAnim.currentFrame = 0;
@@ -436,6 +447,7 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->animations[animationCount++] = &p->straightJumpAnim;
     p->animations[animationCount++] = &p->forwardJumpAnim;
     p->animations[animationCount++] = &p->backwardJumpAnim;
+    p->animations[animationCount++] = &p->jumpCooldownAnim;
     p->animations[animationCount++] = &p->crouchingAnim;
     p->animations[animationCount++] = &p->lpAnim;
     p->animations[animationCount++] = &p->mpAnim;
@@ -635,6 +647,17 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
         return;
     }
 
+    // jump cooldown in progress: blocks input until animation finishes
+    if ( player->state == PLAYER_STATE_JUMP_COOLDOWN ) {
+        updateAnimation( &player->jumpCooldownAnim, delta );
+        if ( player->jumpCooldownAnim.finished ) {
+            player->state = PLAYER_STATE_IDLE;
+            resetAnimation( &player->jumpCooldownAnim );
+        }
+        player->lastState = player->state;
+        return;
+    }
+
     // attack
     PlayerState attackState = PLAYER_STATE_IDLE;
     Animation *attackAnim = NULL;
@@ -717,21 +740,22 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
     }
 
     // jump
-    if ( IsKeyPressed( player->kb.up ) && player->state != PLAYER_STATE_CROUCHING ) {
-        if ( player->vel.x == 0.0f ) {
-            player->vel.y = -player->jumpSpeed;
-            resetAnimation( &player->straightJumpAnim );
-            player->state = PLAYER_STATE_JUMPING_STRAIGHT;
-        } else if ( player->vel.x > 0.0f ) {
+    if ( IsKeyDown( player->kb.up ) && player->state != PLAYER_STATE_CROUCHING ) {
+        if ( IsKeyDown( player->kb.right ) ) {
             player->vel.y = -player->jumpSpeed;
             player->vel.x = player->forwardSpeed * 1.6f;
             resetAnimation( &player->forwardJumpAnim );
             player->state = PLAYER_STATE_JUMPING_FORWARD;
-        } else {
+        } else if ( IsKeyDown( player->kb.left ) ) {
             player->vel.y = -player->jumpSpeed;
             player->vel.x = -player->backwardSpeed * 2.0f;
             resetAnimation( &player->backwardJumpAnim );
             player->state = PLAYER_STATE_JUMPING_BACKWARD;
+        } else {
+            player->vel.y = -player->jumpSpeed;
+            player->vel.x = 0.0f;
+            resetAnimation( &player->straightJumpAnim );
+            player->state = PLAYER_STATE_JUMPING_STRAIGHT;
         }
         player->lastState = player->state;
         return;
@@ -876,6 +900,8 @@ AnimationFrame *getPlayerCurrentAnimationFrame( Player *player ) {
             return getAnimationCurrentFrame( &player->mkCrouchAnim );
         case PLAYER_STATE_HK_CROUCH:
             return getAnimationCurrentFrame( &player->hkCrouchAnim );
+        case PLAYER_STATE_JUMP_COOLDOWN:
+            return getAnimationCurrentFrame( &player->jumpCooldownAnim );
     }
 
     return NULL;
