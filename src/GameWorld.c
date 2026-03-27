@@ -60,8 +60,8 @@ GameWorld* createGameWorld( void ) {
     Player *player1 = createPlayer();
     Player *player2 = createPlayer();
 
-    initializePlayerRyu( gw->stageTexture->width / 2 - 78, 542, player1 );
-    initializePlayerKen( gw->stageTexture->width / 2 + 50, 542, player2 );
+    initializePlayerRyu( gw->stageTexture->width / 2 - 78, 542, player1, true );
+    initializePlayerKen( gw->stageTexture->width / 2 + 50, 542, player2, false );
     flipPlayerSide( player2 );
 
     player1->kb = (PlayerKeyBindings) {
@@ -174,8 +174,8 @@ void drawGameWorld( GameWorld *gw ) {
     BeginMode2D( gw->camera );
 
     DrawTexture( *gw->stageTexture, 0, GetScreenHeight() - gw->stageTexture->height, WHITE );
-    drawPlayer( gw->player2 );
-    drawPlayer( gw->player1 );
+    drawPlayer( gw->player2, &gw->camera );
+    drawPlayer( gw->player1, &gw->camera );
 
     EndMode2D();
 

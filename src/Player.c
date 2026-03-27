@@ -11,12 +11,102 @@
 #include "ResourceManager.h"
 #include "Types.h"
 
+#define TRACK_STATE_SIZE 14
+static PlayerState states[TRACK_STATE_SIZE] = { 0 };
+static int head = -1;
+static int tail = -1;
+static int count = 0;
+
+static void addState( int state ) {
+    if ( count == 0 ) {
+        states[0] = state;
+        head = 0;
+        tail = 0;
+        count++;
+    } else {
+        tail++;
+        count++;
+        states[tail%TRACK_STATE_SIZE] = state;
+        if ( count > TRACK_STATE_SIZE ) {
+            head++;
+        }
+    }
+}
+
+static const char *playerStateToText( PlayerState state ) {
+
+    switch ( state ) {
+        case PLAYER_STATE_IDLE: return "I";
+        case PLAYER_STATE_WALKING_FORWARD: return "F";
+        case PLAYER_STATE_WALKING_BACKWARD: return "B";
+        case PLAYER_STATE_CROUCHING: return "C";
+        case PLAYER_STATE_JUMPING_STRAIGHT: return "J";
+        case PLAYER_STATE_JUMPING_FORWARD: return "J";
+        case PLAYER_STATE_JUMPING_BACKWARD: return "J";
+        case PLAYER_STATE_LP: return "P";
+        case PLAYER_STATE_MP: return "P";
+        case PLAYER_STATE_HP: return "P";
+        case PLAYER_STATE_LK: return "K";
+        case PLAYER_STATE_MK: return "K";
+        case PLAYER_STATE_HK: return "K";
+        case PLAYER_STATE_LP_CLOSE: return "P";
+        case PLAYER_STATE_MP_CLOSE: return "P";
+        case PLAYER_STATE_HP_CLOSE: return "P";
+        case PLAYER_STATE_LK_CLOSE: return "K";
+        case PLAYER_STATE_MK_CLOSE: return "K";
+        case PLAYER_STATE_HK_CLOSE: return "K";
+        case PLAYER_STATE_LP_CROUCH: return "P";
+        case PLAYER_STATE_MP_CROUCH: return "P";
+        case PLAYER_STATE_HP_CROUCH: return "P";
+        case PLAYER_STATE_LK_CROUCH: return "K";
+        case PLAYER_STATE_MK_CROUCH: return "K";
+        case PLAYER_STATE_HK_CROUCH: return "K";
+    }
+
+    return "";
+
+}
+
+static const Color playerStateToColor( PlayerState state ) {
+
+    switch ( state ) {
+        case PLAYER_STATE_IDLE: return LIGHTGRAY;
+        case PLAYER_STATE_WALKING_FORWARD: return LIGHTGRAY;
+        case PLAYER_STATE_WALKING_BACKWARD: return LIGHTGRAY;
+        case PLAYER_STATE_CROUCHING: return LIGHTGRAY;
+        case PLAYER_STATE_JUMPING_STRAIGHT: return LIGHTGRAY;
+        case PLAYER_STATE_JUMPING_FORWARD: return LIGHTGRAY;
+        case PLAYER_STATE_JUMPING_BACKWARD: return LIGHTGRAY;
+        case PLAYER_STATE_LP: return SKYBLUE;
+        case PLAYER_STATE_MP: return YELLOW;
+        case PLAYER_STATE_HP: return RED;
+        case PLAYER_STATE_LK: return SKYBLUE;
+        case PLAYER_STATE_MK: return YELLOW;
+        case PLAYER_STATE_HK: return RED;
+        case PLAYER_STATE_LP_CLOSE: return SKYBLUE;
+        case PLAYER_STATE_MP_CLOSE: return YELLOW;
+        case PLAYER_STATE_HP_CLOSE: return RED;
+        case PLAYER_STATE_LK_CLOSE: return SKYBLUE;
+        case PLAYER_STATE_MK_CLOSE: return YELLOW;
+        case PLAYER_STATE_HK_CLOSE: return RED;
+        case PLAYER_STATE_LP_CROUCH: return SKYBLUE;
+        case PLAYER_STATE_MP_CROUCH: return YELLOW;
+        case PLAYER_STATE_HP_CROUCH: return RED;
+        case PLAYER_STATE_LK_CROUCH: return SKYBLUE;
+        case PLAYER_STATE_MK_CROUCH: return YELLOW;
+        case PLAYER_STATE_HK_CROUCH: return RED;
+    }
+
+    return PINK;
+
+}
+
 Player *createPlayer() {
     Player *p = (Player*) malloc( sizeof( Player ) );
     return p;
 }
 
-void initializePlayerRyu( float x, float y, Player *p ) {
+void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
 
     p->pos.x = x;
     p->pos.y = y;
@@ -30,6 +120,7 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->state = PLAYER_STATE_IDLE;
     p->lastState = PLAYER_STATE_IDLE;
     p->lookingRight = true;
+    p->showDebugInfo = showDebugInfo;
 
     p->lpCloseTriggerDist = 70;
     p->mpCloseTriggerDist = 70;
@@ -275,6 +366,69 @@ void initializePlayerRyu( float x, float y, Player *p ) {
     p->hkCloseAnim.frames[2] = (AnimationFrame) { (Rectangle) { 227, 2405, -112, 128 }, 120, (Vector2) { 47, 0 } };
     p->hkCloseAnim.frames[3] = (AnimationFrame) { (Rectangle) {   1, 2405, -112, 128 },  60, (Vector2) { 47, 0 } };
 
+    p->lpCrouchAnim.frameCount = 2;
+    p->lpCrouchAnim.currentFrame = 0;
+    p->lpCrouchAnim.frameTimeCounter = 0.0f;
+    p->lpCrouchAnim.stopAtLastFrame = false;
+    p->lpCrouchAnim.runOnce = true;
+    p->lpCrouchAnim.finished = false;
+    createAnimationFrames( &p->lpCrouchAnim, p->lpCrouchAnim.frameCount );
+    p->lpCrouchAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1564, -112, 64 }, 60, (Vector2) { 16, 0 } };
+    p->lpCrouchAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1564, -112, 64 }, 60, (Vector2) { 16, 0 } };
+
+    p->mpCrouchAnim.frameCount = 3;
+    p->mpCrouchAnim.currentFrame = 0;
+    p->mpCrouchAnim.frameTimeCounter = 0.0f;
+    p->mpCrouchAnim.stopAtLastFrame = false;
+    p->mpCrouchAnim.runOnce = true;
+    p->mpCrouchAnim.finished = false;
+    createAnimationFrames( &p->mpCrouchAnim, p->mpCrouchAnim.frameCount );
+    p->mpCrouchAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1629, -112, 64 }, 60, (Vector2) { 16, 0 } };
+    p->mpCrouchAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1629, -112, 64 }, 60, (Vector2) { 16, 0 } };
+    p->mpCrouchAnim.frames[2] = (AnimationFrame) { (Rectangle) { 227, 1629, -112, 64 }, 60, (Vector2) { 16, 0 } };
+
+    p->hpCrouchAnim.frameCount = 3;
+    p->hpCrouchAnim.currentFrame = 0;
+    p->hpCrouchAnim.frameTimeCounter = 0.0f;
+    p->hpCrouchAnim.stopAtLastFrame = false;
+    p->hpCrouchAnim.runOnce = true;
+    p->hpCrouchAnim.finished = false;
+    createAnimationFrames( &p->hpCrouchAnim, p->hpCrouchAnim.frameCount );
+    p->hpCrouchAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1694, -96, 128 }, 60, (Vector2) { 8, 0 } };
+    p->hpCrouchAnim.frames[1] = (AnimationFrame) { (Rectangle) {  98, 1694, -96, 128 }, 60, (Vector2) { 8, 0 } };
+    p->hpCrouchAnim.frames[2] = (AnimationFrame) { (Rectangle) { 195, 1694, -96, 128 }, 60, (Vector2) { 8, 0 } };
+
+    p->lkCrouchAnim.frameCount = 1;
+    p->lkCrouchAnim.currentFrame = 0;
+    p->lkCrouchAnim.frameTimeCounter = 0.0f;
+    p->lkCrouchAnim.stopAtLastFrame = false;
+    p->lkCrouchAnim.runOnce = true;
+    p->lkCrouchAnim.finished = false;
+    createAnimationFrames( &p->lkCrouchAnim, p->lkCrouchAnim.frameCount );
+    p->lkCrouchAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 2534, -160, 64 }, 60, (Vector2) { 40, 0 } };
+
+    p->mkCrouchAnim.frameCount = 2;
+    p->mkCrouchAnim.currentFrame = 0;
+    p->mkCrouchAnim.frameTimeCounter = 0.0f;
+    p->mkCrouchAnim.stopAtLastFrame = false;
+    p->mkCrouchAnim.runOnce = true;
+    p->mkCrouchAnim.finished = false;
+    createAnimationFrames( &p->mkCrouchAnim, p->mkCrouchAnim.frameCount );
+    p->mkCrouchAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 2534, -160, 64 }, 60, (Vector2) { 40, 0 } };
+    p->mkCrouchAnim.frames[1] = (AnimationFrame) { (Rectangle) { 162, 2534, -160, 64 }, 60, (Vector2) { 40, 0 } };
+
+    p->hkCrouchAnim.frameCount = 4;
+    p->hkCrouchAnim.currentFrame = 0;
+    p->hkCrouchAnim.frameTimeCounter = 0.0f;
+    p->hkCrouchAnim.stopAtLastFrame = false;
+    p->hkCrouchAnim.runOnce = true;
+    p->hkCrouchAnim.finished = false;
+    createAnimationFrames( &p->hkCrouchAnim, p->hkCrouchAnim.frameCount );
+    p->hkCrouchAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 2599, -144, 64 }, 60, (Vector2) { 32, 0 } };
+    p->hkCrouchAnim.frames[1] = (AnimationFrame) { (Rectangle) { 146, 2599, -144, 64 }, 60, (Vector2) { 32, 0 } };
+    p->hkCrouchAnim.frames[2] = (AnimationFrame) { (Rectangle) { 291, 2599, -144, 64 }, 60, (Vector2) { 32, 0 } };
+    p->hkCrouchAnim.frames[2] = (AnimationFrame) { (Rectangle) { 436, 2599, -144, 64 }, 60, (Vector2) { 32, 0 } };
+
     int animationCount = 0;
     p->animations[animationCount++] = &p->idleAnim;
     p->animations[animationCount++] = &p->forwardAnim;
@@ -299,9 +453,9 @@ void initializePlayerRyu( float x, float y, Player *p ) {
 
 }
 
-void initializePlayerKen( float x, float y, Player *p ) {
+void initializePlayerKen( float x, float y, Player *p, bool showDebugInfo ) {
 
-    initializePlayerRyu( x, y, p );
+    initializePlayerRyu( x, y, p, showDebugInfo );
     p->texture = &rm.kenTexture;
 
 }
@@ -313,7 +467,7 @@ void destroyPlayer( Player *player ) {
     free( player );
 }
 
-void drawPlayer( Player *player ) {
+void drawPlayer( Player *player, Camera2D *camera ) {
 
     AnimationFrame *frame = getPlayerCurrentAnimationFrame( player );
 
@@ -338,16 +492,72 @@ void drawPlayer( Player *player ) {
         );
     }
 
+    if ( player->showDebugInfo ) {
 
-    //DrawCircle( player->pos.x, player->pos.y, 2, BLUE );
-    //DrawRectangleLines( player->pos.x - player->dim.x / 2, player->pos.y, player->dim.x, player->dim.y, BLUE );
-    //DrawText( TextFormat( "y: %.2f", player->pos.y ), player->pos.x + 10, player->pos.y, 10, BLACK );
+        //DrawCircle( player->pos.x, player->pos.y, 2, BLUE );
+        //DrawRectangleLines( player->pos.x - player->dim.x / 2, player->pos.y, player->dim.x, player->dim.y, BLUE );
+        //DrawText( TextFormat( "y: %.2f", player->pos.y ), player->pos.x + 10, player->pos.y, 10, BLACK );
+
+        // states
+        int pos = 0;
+        Vector2 base = GetScreenToWorld2D( (Vector2){ 10, 20 }, *camera );
+        float radius = 5;
+        int fontSize = 4;
+
+        DrawRectangle( base.x - 10, base.y - 10, 35, 400, Fade( BLACK, 0.5 ) );
+
+        for ( int i = head; i <= tail; i++ ) {
+
+            Color color = playerStateToColor( states[i%TRACK_STATE_SIZE] );
+
+            Vector2 center = {
+                base.x + 10, 
+                base.y + 215 + (radius * 2 + 6) * -pos
+            };
+
+            DrawCircle( 
+                center.x, 
+                center.y, 
+                radius + 1,
+                ColorBrightness( color, -0.5 )
+            );
+
+            DrawCircle( 
+                center.x, 
+                center.y, 
+                radius,
+                color
+            );
+
+            const char *t = playerStateToText( states[i%TRACK_STATE_SIZE] );
+            int w = MeasureText( t, fontSize );
+
+            DrawText( 
+                t, 
+                center.x - w / 2, 
+                center.y - fontSize, 
+                fontSize, 
+                ColorBrightness( color, -0.5 )
+            );
+
+            DrawLine( 
+                center.x - 15, 
+                center.y + radius + 3,
+                center.x + 15,
+                center.y + radius + 3,
+                LIGHTGRAY
+            );
+            
+            pos++;
+        }
+        
+    }
 
 }
 
 void processInputPlayer( Player *player, Player *opponent, float delta ) {
 
-    // atack in progress: blocks all input
+    // attack in progress: blocks all input
     Animation *activeAnim = NULL;
     switch ( player->state ) {
         case PLAYER_STATE_LP: activeAnim = &player->lpAnim; break;
@@ -362,11 +572,17 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
         case PLAYER_STATE_LK_CLOSE: activeAnim = &player->lkCloseAnim; break;
         case PLAYER_STATE_MK_CLOSE: activeAnim = &player->mkCloseAnim; break;
         case PLAYER_STATE_HK_CLOSE: activeAnim = &player->hkCloseAnim; break;
+        case PLAYER_STATE_LP_CROUCH: activeAnim = &player->lpCrouchAnim; break;
+        case PLAYER_STATE_MP_CROUCH: activeAnim = &player->mpCrouchAnim; break;
+        case PLAYER_STATE_HP_CROUCH: activeAnim = &player->hpCrouchAnim; break;
+        case PLAYER_STATE_LK_CROUCH: activeAnim = &player->lkCrouchAnim; break;
+        case PLAYER_STATE_MK_CROUCH: activeAnim = &player->mkCrouchAnim; break;
+        case PLAYER_STATE_HK_CROUCH: activeAnim = &player->hkCrouchAnim; break;
         default: break;
     }
 
     if ( activeAnim != NULL ) {
-        player->lastState = player->state;   // register stack state vefore transitioning
+        player->lastState = player->state;   // register stack state before transitioning
         updateAnimation( activeAnim, delta );
         if ( activeAnim->finished ) {
             player->state = PLAYER_STATE_IDLE;
@@ -405,13 +621,16 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
         return;
     }
 
-    // atack
+    // attack
     PlayerState attackState = PLAYER_STATE_IDLE;
     Animation *attackAnim = NULL;
     float dist = distancePlayer( player, opponent );
 
     if ( IsKeyPressed( player->kb.lp ) ) {
-        if ( dist > player->lpCloseTriggerDist ) {
+        if ( player->state == PLAYER_STATE_CROUCHING ) {
+            attackState = PLAYER_STATE_LP_CROUCH;
+            attackAnim = &player->lpCrouchAnim;
+        } else if ( dist > player->lpCloseTriggerDist ) {
             attackState = PLAYER_STATE_LP;
             attackAnim = &player->lpAnim;
         } else {
@@ -419,7 +638,10 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
             attackAnim = &player->lpCloseAnim;
         }
     } else if ( IsKeyPressed( player->kb.mp ) ) {
-        if ( dist > player->mpCloseTriggerDist ) {
+        if ( player->state == PLAYER_STATE_CROUCHING ) {
+            attackState = PLAYER_STATE_MP_CROUCH;
+            attackAnim = &player->mpCrouchAnim;
+        } else if ( dist > player->mpCloseTriggerDist ) {
             attackState = PLAYER_STATE_MP;
             attackAnim = &player->mpAnim;
         } else {
@@ -427,7 +649,10 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
             attackAnim = &player->mpCloseAnim;
         }
     } else if ( IsKeyPressed( player->kb.hp ) ) {
-        if ( dist > player->hpCloseTriggerDist ) {
+        if ( player->state == PLAYER_STATE_CROUCHING ) {
+            attackState = PLAYER_STATE_HP_CROUCH;
+            attackAnim = &player->hpCrouchAnim;
+        } else if ( dist > player->hpCloseTriggerDist ) {
             attackState = PLAYER_STATE_HP;
             attackAnim = &player->hpAnim;
         } else {
@@ -435,7 +660,10 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
             attackAnim = &player->hpCloseAnim;
         }
     } else if ( IsKeyPressed( player->kb.lk ) ) {
-        if ( dist > player->lkCloseTriggerDist ) {
+        if ( player->state == PLAYER_STATE_CROUCHING ) {
+            attackState = PLAYER_STATE_LK_CROUCH;
+            attackAnim = &player->lkCrouchAnim;
+        } else if ( dist > player->lkCloseTriggerDist ) {
             attackState = PLAYER_STATE_LK;
             attackAnim = &player->lkAnim;
         } else {
@@ -443,7 +671,10 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
             attackAnim = &player->lkCloseAnim;
         }
     } else if ( IsKeyPressed( player->kb.mk ) ) {
-        if ( dist > player->mkCloseTriggerDist ) {
+        if ( player->state == PLAYER_STATE_CROUCHING ) {
+            attackState = PLAYER_STATE_MK_CROUCH;
+            attackAnim = &player->mkCrouchAnim;
+        } else if ( dist > player->mkCloseTriggerDist ) {
             attackState = PLAYER_STATE_MK;
             attackAnim = &player->mkAnim;
         } else {
@@ -451,7 +682,10 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
             attackAnim = &player->mkCloseAnim;
         }
     } else if ( IsKeyPressed( player->kb.hk ) ) {
-        if ( dist > player->hkCloseTriggerDist ) {
+        if ( player->state == PLAYER_STATE_CROUCHING ) {
+            attackState = PLAYER_STATE_HK_CROUCH;
+            attackAnim = &player->hkCrouchAnim;
+        } else if ( dist > player->hkCloseTriggerDist ) {
             attackState = PLAYER_STATE_HK;
             attackAnim = &player->hkAnim;
         } else {
@@ -492,7 +726,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
         return;
     }
 
-    // 3c. Movimento de chão
+    // floor movement
     if ( IsKeyDown( player->kb.down ) ) {
         if ( player->state != PLAYER_STATE_CROUCHING ) {
             resetAnimation( &player->crouchingAnim );
@@ -510,7 +744,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
         player->state = PLAYER_STATE_IDLE;
     }
 
-    // 3d. Atualiza animação de chão
+    // updates floor animation
     switch ( player->state ) {
         case PLAYER_STATE_IDLE:
             updateAnimation( &player->idleAnim, delta );
@@ -534,6 +768,10 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
             break;
         default:
             break;
+    }
+
+    if ( player->lastState != player->state ) {
+        addState( player->lastState );
     }
 
     player->lastState = player->state;
@@ -615,6 +853,18 @@ AnimationFrame *getPlayerCurrentAnimationFrame( Player *player ) {
             return getAnimationCurrentFrame( &player->mkCloseAnim );
         case PLAYER_STATE_HK_CLOSE:
             return getAnimationCurrentFrame( &player->hkCloseAnim );
+        case PLAYER_STATE_LP_CROUCH:
+            return getAnimationCurrentFrame( &player->lpCrouchAnim );
+        case PLAYER_STATE_MP_CROUCH:
+            return getAnimationCurrentFrame( &player->mpCrouchAnim );
+        case PLAYER_STATE_HP_CROUCH:
+            return getAnimationCurrentFrame( &player->hpCrouchAnim );
+        case PLAYER_STATE_LK_CROUCH:
+            return getAnimationCurrentFrame( &player->lkCrouchAnim );
+        case PLAYER_STATE_MK_CROUCH:
+            return getAnimationCurrentFrame( &player->mkCrouchAnim );
+        case PLAYER_STATE_HK_CROUCH:
+            return getAnimationCurrentFrame( &player->hkCrouchAnim );
     }
 
     return NULL;

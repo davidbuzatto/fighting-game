@@ -1,13 +1,14 @@
 #pragma once
 
+#include <stdbool.h>
 #include "Types.h"
 
 Player *createPlayer();
-void initializePlayerRyu( float x, float y, Player *p );
-void initializePlayerKen( float x, float y, Player *p );
+void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo );
+void initializePlayerKen( float x, float y, Player *p, bool showDebugInfo );
 
 void destroyPlayer( Player *player );
-void drawPlayer( Player *player );
+void drawPlayer( Player *player, Camera2D *camera );
 void processInputPlayer( Player *player, Player *opponent, float delta );
 void updatePlayer( Player *player, Player *opponent, float gravity, float delta );
 void flipPlayerSide( Player *player );

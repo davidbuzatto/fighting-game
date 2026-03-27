@@ -19,7 +19,7 @@ int main( void ) {
         672,             // height
         "Fighting Game", // title
         60,              // target FPS
-        false,           // antialiasing
+        true,           // antialiasing
         false,           // resizable
         false,           // full screen
         false,           // undecorated

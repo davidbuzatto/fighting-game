@@ -22,6 +22,12 @@ typedef enum PlayerState {
     PLAYER_STATE_LK_CLOSE,
     PLAYER_STATE_MK_CLOSE,
     PLAYER_STATE_HK_CLOSE,
+    PLAYER_STATE_LP_CROUCH,
+    PLAYER_STATE_MP_CROUCH,
+    PLAYER_STATE_HP_CROUCH,
+    PLAYER_STATE_LK_CROUCH,
+    PLAYER_STATE_MK_CROUCH,
+    PLAYER_STATE_HK_CROUCH,
 } PlayerState;
 
 typedef struct AnimationFrame {
@@ -86,6 +92,13 @@ typedef struct Player {
     Animation mkCloseAnim;
     Animation hkCloseAnim;
 
+    Animation lpCrouchAnim;
+    Animation mpCrouchAnim;
+    Animation hpCrouchAnim;
+    Animation lkCrouchAnim;
+    Animation mkCrouchAnim;
+    Animation hkCrouchAnim;
+
     int lpCloseTriggerDist;
     int mpCloseTriggerDist;
     int hpCloseTriggerDist;
@@ -102,6 +115,8 @@ typedef struct Player {
     bool lookingRight;
 
     PlayerKeyBindings kb;
+
+    bool showDebugInfo;
 
 } Player;
 
