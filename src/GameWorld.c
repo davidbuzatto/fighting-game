@@ -21,6 +21,9 @@
 #include "Types.h"
 #include "Player.h"
 
+#define SHOW_BOXES true
+#define SHOW_DEBUG_INFO false
+
 static void resolveCollisionPlayerStage( Player *player, GameWorld *gw );
 static void updateCamera( GameWorld *gw );
 static void flipPlayers( GameWorld *gw );
@@ -60,8 +63,8 @@ GameWorld* createGameWorld( void ) {
     Player *player1 = createPlayer();
     Player *player2 = createPlayer();
 
-    initializePlayerRyu( gw->stageTexture->width / 2 - 78, 542, player1, true );
-    initializePlayerKen( gw->stageTexture->width / 2 + 50, 542, player2, false );
+    initializePlayerRyu( gw->stageTexture->width / 2 - 78, 542, player1, SHOW_BOXES, SHOW_DEBUG_INFO );
+    initializePlayerKen( gw->stageTexture->width / 2 + 50, 542, player2, SHOW_BOXES, SHOW_DEBUG_INFO );
     flipPlayerSide( player2 );
 
     player1->kb = (PlayerKeyBindings) {

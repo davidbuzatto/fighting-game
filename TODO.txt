@@ -1,18 +1,5 @@
 Implementar hitboxes;
-    https://doctorguile.github.io/ssf2st/
-    3 para hurbox
-    3 para hitbox
-    1 para colisão (usar pos e dim)
+    Implementar editor.
+    https://doctorguile.github.io/ssf2st/.
 
-// struct para as hit/hurt boxes.
-// adicionar nos frames.
-typedef struct FrameBoxes {
-    Rectangle hurtboxes[3];
-    int hurtboxCount;
-    Rectangle hitboxes[3];
-    int hitboxCount;
-} FrameBoxes;
-
-Golpes pulando;
-
-
+Implementar o fluxo de inputs (gerar imagens).

@@ -17,6 +17,8 @@ static int head = -1;
 static int tail = -1;
 static int count = 0;
 
+static void drawPlayerAnimationFrameBoxes( Player *player );
+
 static void addState( int state ) {
     if ( count == 0 ) {
         states[0] = state;
@@ -33,7 +35,7 @@ static void addState( int state ) {
     }
 }
 
-static const char *playerStateToText( PlayerState state ) {
+/*static const char *playerStateToText( PlayerState state ) {
 
     switch ( state ) {
         case PLAYER_STATE_IDLE: return "I";
@@ -137,14 +139,14 @@ static Color playerStateToColor( PlayerState state ) {
 
     return PINK;
 
-}
+}*/
 
 Player *createPlayer() {
     Player *p = (Player*) malloc( sizeof( Player ) );
     return p;
 }
 
-void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
+void initializePlayerRyu( float x, float y, Player *p, bool showBoxes, bool showDebugInfo ) {
 
     p->pos.x = x;
     p->pos.y = y;
@@ -158,6 +160,7 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->state = PLAYER_STATE_IDLE;
     p->lastState = PLAYER_STATE_IDLE;
     p->lookingRight = true;
+    p->showBoxes = showBoxes;
     p->showDebugInfo = showDebugInfo;
 
     p->lpCloseTriggerDist = 70;
@@ -174,12 +177,48 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->idleAnim.runOnce = false;
     p->idleAnim.finished = false;
     createAnimationFrames( &p->idleAnim, p->idleAnim.frameCount );
-    p->idleAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 142, -64, 96 }, 65, (Vector2) { 0 } };
-    p->idleAnim.frames[1] = (AnimationFrame) { (Rectangle) {  66, 142, -64, 96 }, 65, (Vector2) { 0 } };
-    p->idleAnim.frames[2] = (AnimationFrame) { (Rectangle) { 131, 142, -64, 96 }, 65, (Vector2) { 0 } };
-    p->idleAnim.frames[3] = (AnimationFrame) { (Rectangle) { 196, 142, -64, 96 }, 65, (Vector2) { 0 } };
-    p->idleAnim.frames[4] = (AnimationFrame) { (Rectangle) { 131, 142, -64, 96 }, 65, (Vector2) { 0 } };
-    p->idleAnim.frames[5] = (AnimationFrame) { (Rectangle) {  66, 142, -64, 96 }, 65, (Vector2) { 0 } };
+    p->idleAnim.frames[0] = (AnimationFrame) { {   1, 142, -64, 96 }, 65, { 0, 0 }, {
+        .collisionBox = { -30, 10, 54, 90 },
+        .hitboxCount = 2,
+        .hitboxes[0] = { 0, 10, 20, 15 },
+        .hitboxes[1] = { -20, 20, 40, 80 },
+        .hurtboxCount = 0
+    }};
+    p->idleAnim.frames[1] = (AnimationFrame) { {  66, 142, -64, 96 }, 65, { 0, 0 }, {
+        .collisionBox = { -30, 9, 54, 90 },
+        .hitboxCount = 2,
+        .hitboxes[0] = { 0, 9, 20, 15 },
+        .hitboxes[1] = { -20, 19, 40, 80 },
+        .hurtboxCount = 0
+    }};
+    p->idleAnim.frames[2] = (AnimationFrame) { { 131, 142, -64, 96 }, 65, { 0, 0 }, {
+        .collisionBox = { -30, 7, 54, 90 },
+        .hitboxCount = 2,
+        .hitboxes[0] = { 0, 7, 20, 15 },
+        .hitboxes[1] = { -20, 17, 40, 80 },
+        .hurtboxCount = 0
+    }};
+    p->idleAnim.frames[3] = (AnimationFrame) { { 196, 142, -64, 96 }, 65, { 0, 0 }, {
+        .collisionBox = { -30, 4, 54, 90 },
+        .hitboxCount = 2,
+        .hitboxes[0] = { 0, 4, 20, 15 },
+        .hitboxes[1] = { -20, 14, 40, 80 },
+        .hurtboxCount = 0
+    }};
+    p->idleAnim.frames[4] = (AnimationFrame) { { 131, 142, -64, 96 }, 65, { 0, 0 }, {
+        .collisionBox = { -30, 7, 54, 90 },
+        .hitboxCount = 2,
+        .hitboxes[0] = { 0, 7, 20, 15 },
+        .hitboxes[1] = { -20, 17, 40, 80 },
+        .hurtboxCount = 0
+    }};
+    p->idleAnim.frames[5] = (AnimationFrame) { {  66, 142, -64, 96 }, 65, { 0, 0 }, {
+        .collisionBox = { -30, 9, 54, 90 },
+        .hitboxCount = 2,
+        .hitboxes[0] = { 0, 9, 20, 15 },
+        .hitboxes[1] = { -20, 19, 40, 80 },
+        .hurtboxCount = 0
+    }};
 
     p->forwardAnim.frameCount = 5;
     p->forwardAnim.currentFrame = 0;
@@ -188,11 +227,61 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->forwardAnim.runOnce = false;
     p->forwardAnim.finished = false;
     createAnimationFrames( &p->forwardAnim, p->forwardAnim.frameCount );
-    p->forwardAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 514, -80, 96 }, 70, (Vector2) { 0 } };
-    p->forwardAnim.frames[1] = (AnimationFrame) { (Rectangle) {  82, 514, -80, 96 }, 70, (Vector2) { 0 } };
-    p->forwardAnim.frames[2] = (AnimationFrame) { (Rectangle) { 163, 514, -80, 96 }, 70, (Vector2) { 0 } };
-    p->forwardAnim.frames[3] = (AnimationFrame) { (Rectangle) { 244, 514, -80, 96 }, 70, (Vector2) { 0 } };
-    p->forwardAnim.frames[4] = (AnimationFrame) { (Rectangle) { 325, 514, -80, 96 }, 70, (Vector2) { 0 } };
+    p->forwardAnim.frames[0] = (AnimationFrame) { {   1, 514, -80, 96 }, 70, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->forwardAnim.frames[1] = (AnimationFrame) { {  82, 514, -80, 96 }, 70, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->forwardAnim.frames[2] = (AnimationFrame) { { 163, 514, -80, 96 }, 70, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->forwardAnim.frames[3] = (AnimationFrame) { { 244, 514, -80, 96 }, 70, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->forwardAnim.frames[4] = (AnimationFrame) { { 325, 514, -80, 96 }, 70, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
     p->backwardAnim.frameCount = 6;
     p->backwardAnim.currentFrame = 0;
@@ -201,12 +290,72 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->backwardAnim.runOnce = false;
     p->backwardAnim.finished = false;
     createAnimationFrames( &p->backwardAnim, p->backwardAnim.frameCount );
-    p->backwardAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 611, -80, 96 }, 80, (Vector2) { 0 } };
-    p->backwardAnim.frames[1] = (AnimationFrame) { (Rectangle) {  82, 611, -80, 96 }, 80, (Vector2) { 0 } };
-    p->backwardAnim.frames[2] = (AnimationFrame) { (Rectangle) { 163, 611, -80, 96 }, 80, (Vector2) { 0 } };
-    p->backwardAnim.frames[3] = (AnimationFrame) { (Rectangle) { 244, 611, -80, 96 }, 80, (Vector2) { 0 } };
-    p->backwardAnim.frames[4] = (AnimationFrame) { (Rectangle) { 325, 611, -80, 96 }, 80, (Vector2) { 0 } };
-    p->backwardAnim.frames[5] = (AnimationFrame) { (Rectangle) { 406, 611, -80, 96 }, 80, (Vector2) { 0 } };
+    p->backwardAnim.frames[0] = (AnimationFrame) { {   1, 611, -80, 96 }, 80, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->backwardAnim.frames[1] = (AnimationFrame) { {  82, 611, -80, 96 }, 80, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->backwardAnim.frames[2] = (AnimationFrame) { { 163, 611, -80, 96 }, 80, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->backwardAnim.frames[3] = (AnimationFrame) { { 244, 611, -80, 96 }, 80, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->backwardAnim.frames[4] = (AnimationFrame) { { 325, 611, -80, 96 }, 80, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->backwardAnim.frames[5] = (AnimationFrame) { { 406, 611, -80, 96 }, 80, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
     p->straightJumpAnim.frameCount = 6;
     p->straightJumpAnim.currentFrame = 0;
@@ -215,12 +364,72 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->straightJumpAnim.runOnce = false;
     p->straightJumpAnim.finished = false;
     createAnimationFrames( &p->straightJumpAnim, p->straightJumpAnim.frameCount );
-    p->straightJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 821, -64, 112 }, 250, (Vector2) { 0 } };
-    p->straightJumpAnim.frames[1] = (AnimationFrame) { (Rectangle) {  66, 821, -64, 112 }, 50, (Vector2) { 0 } };
-    p->straightJumpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 131, 821, -64, 112 }, 50, (Vector2) { 0 } };
-    p->straightJumpAnim.frames[3] = (AnimationFrame) { (Rectangle) { 196, 821, -64, 112 }, 50, (Vector2) { 0 } };
-    p->straightJumpAnim.frames[4] = (AnimationFrame) { (Rectangle) { 261, 821, -64, 112 }, 50, (Vector2) { 0 } };
-    p->straightJumpAnim.frames[5] = (AnimationFrame) { (Rectangle) { 326, 821, -64, 112 }, 50, (Vector2) { 0 } };
+    p->straightJumpAnim.frames[0] = (AnimationFrame) { {   1, 821, -64, 112 }, 250, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->straightJumpAnim.frames[1] = (AnimationFrame) { {  66, 821, -64, 112 }, 50, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->straightJumpAnim.frames[2] = (AnimationFrame) { { 131, 821, -64, 112 }, 50, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->straightJumpAnim.frames[3] = (AnimationFrame) { { 196, 821, -64, 112 }, 50, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->straightJumpAnim.frames[4] = (AnimationFrame) { { 261, 821, -64, 112 }, 50, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->straightJumpAnim.frames[5] = (AnimationFrame) { { 326, 821, -64, 112 }, 50, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
     p->forwardJumpAnim.frameCount = 7;
     p->forwardJumpAnim.currentFrame = 0;
@@ -229,13 +438,83 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->forwardJumpAnim.runOnce = false;
     p->forwardJumpAnim.finished = false;
     createAnimationFrames( &p->forwardJumpAnim, p->forwardJumpAnim.frameCount );
-    p->forwardJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 112 }, 250, (Vector2) { 0 } };
-    p->forwardJumpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 130, 708, -128, 112 }, 50, (Vector2) { 0 } };
-    p->forwardJumpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 259, 708, -128, 112 }, 50, (Vector2) { 0 } };
-    p->forwardJumpAnim.frames[3] = (AnimationFrame) { (Rectangle) { 388, 708, -128, 112 }, 50, (Vector2) { 0 } };
-    p->forwardJumpAnim.frames[4] = (AnimationFrame) { (Rectangle) { 517, 708, -128, 112 }, 50, (Vector2) { 0 } };
-    p->forwardJumpAnim.frames[5] = (AnimationFrame) { (Rectangle) { 646, 708, -128, 112 }, 50, (Vector2) { 0 } };
-    p->forwardJumpAnim.frames[6] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 112 }, 50, (Vector2) { 0 } };
+    p->forwardJumpAnim.frames[0] = (AnimationFrame) { {   1, 708, -128, 112 }, 250, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->forwardJumpAnim.frames[1] = (AnimationFrame) { { 130, 708, -128, 112 }, 50, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->forwardJumpAnim.frames[2] = (AnimationFrame) { { 259, 708, -128, 112 }, 50, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->forwardJumpAnim.frames[3] = (AnimationFrame) { { 388, 708, -128, 112 }, 50, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->forwardJumpAnim.frames[4] = (AnimationFrame) { { 517, 708, -128, 112 }, 50, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->forwardJumpAnim.frames[5] = (AnimationFrame) { { 646, 708, -128, 112 }, 50, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->forwardJumpAnim.frames[6] = (AnimationFrame) { {   1, 708, -128, 112 }, 50, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
     p->backwardJumpAnim.frameCount = 7;
     p->backwardJumpAnim.currentFrame = 0;
@@ -244,13 +523,83 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->backwardJumpAnim.runOnce = false;
     p->backwardJumpAnim.finished = false;
     createAnimationFrames( &p->backwardJumpAnim, p->backwardJumpAnim.frameCount );
-    p->backwardJumpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 112 }, 250, (Vector2) { 0 } };
-    p->backwardJumpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 646, 708, -128, 112 }, 50, (Vector2) { 0 } };
-    p->backwardJumpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 517, 708, -128, 112 }, 50, (Vector2) { 0 } };
-    p->backwardJumpAnim.frames[3] = (AnimationFrame) { (Rectangle) { 388, 708, -128, 112 }, 50, (Vector2) { 0 } };
-    p->backwardJumpAnim.frames[4] = (AnimationFrame) { (Rectangle) { 259, 708, -128, 112 }, 50, (Vector2) { 0 } };
-    p->backwardJumpAnim.frames[5] = (AnimationFrame) { (Rectangle) { 130, 708, -128, 112 }, 50, (Vector2) { 0 } };
-    p->backwardJumpAnim.frames[6] = (AnimationFrame) { (Rectangle) {   1, 708, -128, 112 }, 50, (Vector2) { 0 } };
+    p->backwardJumpAnim.frames[0] = (AnimationFrame) { {   1, 708, -128, 112 }, 250, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->backwardJumpAnim.frames[1] = (AnimationFrame) { { 646, 708, -128, 112 }, 50, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->backwardJumpAnim.frames[2] = (AnimationFrame) { { 517, 708, -128, 112 }, 50, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->backwardJumpAnim.frames[3] = (AnimationFrame) { { 388, 708, -128, 112 }, 50, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->backwardJumpAnim.frames[4] = (AnimationFrame) { { 259, 708, -128, 112 }, 50, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->backwardJumpAnim.frames[5] = (AnimationFrame) { { 130, 708, -128, 112 }, 50, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->backwardJumpAnim.frames[6] = (AnimationFrame) { {   1, 708, -128, 112 }, 50, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
     p->jumpCooldownAnim.frameCount = 1;
     p->jumpCooldownAnim.currentFrame = 0;
@@ -259,7 +608,17 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->jumpCooldownAnim.runOnce = true;
     p->jumpCooldownAnim.finished = false;
     createAnimationFrames( &p->jumpCooldownAnim, p->jumpCooldownAnim.frameCount );
-    p->jumpCooldownAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 934, -64, 96 }, 60, (Vector2) { 0 } };
+    p->jumpCooldownAnim.frames[0] = (AnimationFrame) { {   1, 934, -64, 96 }, 60, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
     p->crouchingAnim.frameCount = 3;
     p->crouchingAnim.currentFrame = 0;
@@ -268,9 +627,39 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->crouchingAnim.runOnce = false;
     p->crouchingAnim.finished = false;
     createAnimationFrames( &p->crouchingAnim, p->crouchingAnim.frameCount );
-    p->crouchingAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 352, -80, 96 }, 30, (Vector2) { 0 } };
-    p->crouchingAnim.frames[1] = (AnimationFrame) { (Rectangle) {  82, 352, -80, 96 }, 30, (Vector2) { 0 } };
-    p->crouchingAnim.frames[2] = (AnimationFrame) { (Rectangle) { 163, 352, -80, 96 }, 30, (Vector2) { 0 } };
+    p->crouchingAnim.frames[0] = (AnimationFrame) { {   1, 352, -80, 96 }, 30, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->crouchingAnim.frames[1] = (AnimationFrame) { {  82, 352, -80, 96 }, 30, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->crouchingAnim.frames[2] = (AnimationFrame) { { 163, 352, -80, 96 }, 30, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
     p->lpAnim.frameCount = 3;
     p->lpAnim.currentFrame = 0;
@@ -279,9 +668,28 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->lpAnim.runOnce = true;
     p->lpAnim.finished = false;
     createAnimationFrames( &p->lpAnim, p->lpAnim.frameCount );
-    p->lpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1031, -112, 96 }, 50, (Vector2) { 22, 0 } };
-    p->lpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1031, -112, 96 }, 50, (Vector2) { 22, 0 } };
-    p->lpAnim.frames[2] = (AnimationFrame) { (Rectangle) {   1, 1031, -112, 96 }, 50, (Vector2) { 22, 0 } };
+    p->lpAnim.frames[0] = (AnimationFrame) { {   1, 1031, -112, 96 }, 1000, { 22, 0 }, {
+        .collisionBox = { -30, 8, 54, 90 },
+        .hitboxCount = 2,
+        .hitboxes[0] = { 0, 8, 20, 15 },
+        .hitboxes[1] = { -20, 18, 40, 80 },
+        .hurtboxCount = 0
+    }};
+    p->lpAnim.frames[1] = (AnimationFrame) { { 114, 1031, -112, 96 }, 1000, { 22, 0 }, {
+        .collisionBox = { -30, 8, 54, 90 },
+        .hitboxCount = 2,
+        .hitboxes[0] = { 0, 8, 20, 15 },
+        .hitboxes[1] = { -20, 18, 40, 80 },
+        .hurtboxCount = 1,
+        .hurtboxes[0] = { 16, 23, 47, 10 },
+    }};
+    p->lpAnim.frames[2] = (AnimationFrame) { {   1, 1031, -112, 96 }, 1000, { 22, 0 }, {
+        .collisionBox = { -30, 8, 54, 90 },
+        .hitboxCount = 2,
+        .hitboxes[0] = { 0, 8, 20, 15 },
+        .hitboxes[1] = { -20, 18, 40, 80 },
+        .hurtboxCount = 0
+    }};
     
     p->mpAnim.frameCount = 5;
     p->mpAnim.currentFrame = 0;
@@ -290,11 +698,61 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->mpAnim.runOnce = true;
     p->mpAnim.finished = false;
     createAnimationFrames( &p->mpAnim, p->mpAnim.frameCount );
-    p->mpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1128, -128, 96 }, 50, (Vector2) { 30, 0 } };
-    p->mpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 130, 1128, -128, 96 }, 50, (Vector2) { 30, 0 } };
-    p->mpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 259, 1128, -128, 96 }, 50, (Vector2) { 30, 0 } };
-    p->mpAnim.frames[3] = (AnimationFrame) { (Rectangle) { 130, 1128, -128, 96 }, 50, (Vector2) { 30, 0 } };
-    p->mpAnim.frames[4] = (AnimationFrame) { (Rectangle) {   1, 1128, -128, 96 }, 50, (Vector2) { 30, 0 } };
+    p->mpAnim.frames[0] = (AnimationFrame) { {   1, 1128, -128, 96 }, 50, { 30, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->mpAnim.frames[1] = (AnimationFrame) { { 130, 1128, -128, 96 }, 50, { 30, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->mpAnim.frames[2] = (AnimationFrame) { { 259, 1128, -128, 96 }, 50, { 30, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->mpAnim.frames[3] = (AnimationFrame) { { 130, 1128, -128, 96 }, 50, { 30, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->mpAnim.frames[4] = (AnimationFrame) { {   1, 1128, -128, 96 }, 50, { 30, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
     p->hpAnim.frameCount = 5;
     p->hpAnim.currentFrame = 0;
@@ -303,11 +761,61 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->hpAnim.runOnce = true;
     p->hpAnim.finished = false;
     createAnimationFrames( &p->hpAnim, p->hpAnim.frameCount );
-    p->hpAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1128, -128, 96 }, 90, (Vector2) { 30, 0 } };
-    p->hpAnim.frames[1] = (AnimationFrame) { (Rectangle) { 130, 1128, -128, 96 }, 90, (Vector2) { 30, 0 } };
-    p->hpAnim.frames[2] = (AnimationFrame) { (Rectangle) { 259, 1128, -128, 96 }, 90, (Vector2) { 30, 0 } };
-    p->hpAnim.frames[3] = (AnimationFrame) { (Rectangle) { 130, 1128, -128, 96 }, 90, (Vector2) { 30, 0 } };
-    p->hpAnim.frames[4] = (AnimationFrame) { (Rectangle) {   1, 1128, -128, 96 }, 90, (Vector2) { 30, 0 } };
+    p->hpAnim.frames[0] = (AnimationFrame) { {   1, 1128, -128, 96 }, 90, { 30, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hpAnim.frames[1] = (AnimationFrame) { { 130, 1128, -128, 96 }, 90, { 30, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hpAnim.frames[2] = (AnimationFrame) { { 259, 1128, -128, 96 }, 90, { 30, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hpAnim.frames[3] = (AnimationFrame) { { 130, 1128, -128, 96 }, 90, { 30, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hpAnim.frames[4] = (AnimationFrame) { {   1, 1128, -128, 96 }, 90, { 30, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
     
     p->lkAnim.frameCount = 3;
     p->lkAnim.currentFrame = 0;
@@ -316,9 +824,39 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->lkAnim.runOnce = true;
     p->lkAnim.finished = false;
     createAnimationFrames( &p->lkAnim, p->lkAnim.frameCount );
-    p->lkAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 2001, -128, 96 }, 60, (Vector2) { 0, -5 } };
-    p->lkAnim.frames[1] = (AnimationFrame) { (Rectangle) { 130, 2001, -128, 96 }, 60, (Vector2) { 0, -5 } };
-    p->lkAnim.frames[2] = (AnimationFrame) { (Rectangle) {   1, 2001, -128, 96 }, 60, (Vector2) { 0, -5 } };
+    p->lkAnim.frames[0] = (AnimationFrame) { {   1, 2001, -128, 96 }, 60, { 0, -5 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->lkAnim.frames[1] = (AnimationFrame) { { 130, 2001, -128, 96 }, 60, { 0, -5 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->lkAnim.frames[2] = (AnimationFrame) { {   1, 2001, -128, 96 }, 60, { 0, -5 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
     
     p->mkAnim.frameCount = 3;
     p->mkAnim.currentFrame = 0;
@@ -327,9 +865,39 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->mkAnim.runOnce = true;
     p->mkAnim.finished = false;
     createAnimationFrames( &p->mkAnim, p->mkAnim.frameCount );
-    p->mkAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 2001, -128, 96 }, 90, (Vector2) { 0, -5 } };
-    p->mkAnim.frames[1] = (AnimationFrame) { (Rectangle) { 130, 2001, -128, 96 }, 90, (Vector2) { 0, -5 } };
-    p->mkAnim.frames[2] = (AnimationFrame) { (Rectangle) {   1, 2001, -128, 96 }, 90, (Vector2) { 0, -5 } };
+    p->mkAnim.frames[0] = (AnimationFrame) { {   1, 2001, -128, 96 }, 90, { 0, -5 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->mkAnim.frames[1] = (AnimationFrame) { { 130, 2001, -128, 96 }, 90, { 0, -5 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->mkAnim.frames[2] = (AnimationFrame) { {   1, 2001, -128, 96 }, 90, { 0, -5 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
     p->hkAnim.frameCount = 5;
     p->hkAnim.currentFrame = 0;
@@ -338,11 +906,61 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->hkAnim.runOnce = true;
     p->hkAnim.finished = false;
     createAnimationFrames( &p->hkAnim, p->hkAnim.frameCount );
-    p->hkAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 2098, -128, 96 }, 90, (Vector2) { 20, 0 } };
-    p->hkAnim.frames[1] = (AnimationFrame) { (Rectangle) { 130, 2098, -128, 96 }, 90, (Vector2) { 20, 0 } };
-    p->hkAnim.frames[2] = (AnimationFrame) { (Rectangle) { 259, 2098, -128, 96 }, 90, (Vector2) { 20, 0 } };
-    p->hkAnim.frames[3] = (AnimationFrame) { (Rectangle) { 388, 2098, -128, 96 }, 90, (Vector2) { 20, 0 } };
-    p->hkAnim.frames[4] = (AnimationFrame) { (Rectangle) { 517, 2098, -128, 96 }, 90, (Vector2) { 20, 0 } };
+    p->hkAnim.frames[0] = (AnimationFrame) { {   1, 2098, -128, 96 }, 90, { 20, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hkAnim.frames[1] = (AnimationFrame) { { 130, 2098, -128, 96 }, 90, { 20, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hkAnim.frames[2] = (AnimationFrame) { { 259, 2098, -128, 96 }, 90, { 20, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hkAnim.frames[3] = (AnimationFrame) { { 388, 2098, -128, 96 }, 90, { 20, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hkAnim.frames[4] = (AnimationFrame) { { 517, 2098, -128, 96 }, 90, { 20, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
     p->lpCloseAnim.frameCount = 1;
     p->lpCloseAnim.currentFrame = 0;
@@ -351,7 +969,17 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->lpCloseAnim.runOnce = true;
     p->lpCloseAnim.finished = false;
     createAnimationFrames( &p->lpCloseAnim, p->lpCloseAnim.frameCount );
-    p->lpCloseAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1225, -80, 112 }, 150, (Vector2) { 5, 0 } };
+    p->lpCloseAnim.frames[0] = (AnimationFrame) { { 1, 1225, -80, 112 }, 150, { 5, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
     
     p->mpCloseAnim.frameCount = 5;
     p->mpCloseAnim.currentFrame = 0;
@@ -360,11 +988,61 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->mpCloseAnim.runOnce = true;
     p->mpCloseAnim.finished = false;
     createAnimationFrames( &p->mpCloseAnim, p->mpCloseAnim.frameCount );
-    p->mpCloseAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1338, -96, 96 }, 65, (Vector2) { 7, -1 } };
-    p->mpCloseAnim.frames[1] = (AnimationFrame) { (Rectangle) {  98, 1338, -96, 96 }, 65, (Vector2) { 7, -1 } };
-    p->mpCloseAnim.frames[2] = (AnimationFrame) { (Rectangle) { 195, 1338, -96, 96 }, 65, (Vector2) { 7, -1 } };
-    p->mpCloseAnim.frames[3] = (AnimationFrame) { (Rectangle) {  98, 1338, -96, 96 }, 65, (Vector2) { 7, -1 } };
-    p->mpCloseAnim.frames[4] = (AnimationFrame) { (Rectangle) {   1, 1338, -96, 96 }, 65, (Vector2) { 7, -1 } };
+    p->mpCloseAnim.frames[0] = (AnimationFrame) { {   1, 1338, -96, 96 }, 65, { 7, -1 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->mpCloseAnim.frames[1] = (AnimationFrame) { {  98, 1338, -96, 96 }, 65, { 7, -1 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->mpCloseAnim.frames[2] = (AnimationFrame) { { 195, 1338, -96, 96 }, 65, { 7, -1 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->mpCloseAnim.frames[3] = (AnimationFrame) { {  98, 1338, -96, 96 }, 65, { 7, -1 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->mpCloseAnim.frames[4] = (AnimationFrame) { {   1, 1338, -96, 96 }, 65, { 7, -1 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
     p->hpCloseAnim.frameCount = 5;
     p->hpCloseAnim.currentFrame = 0;
@@ -373,11 +1051,61 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->hpCloseAnim.runOnce = true;
     p->hpCloseAnim.finished = false;
     createAnimationFrames( &p->hpCloseAnim, p->hpCloseAnim.frameCount );
-    p->hpCloseAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1435, -112, 128 }, 65, (Vector2) { 20, 0 } };
-    p->hpCloseAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1435, -112, 128 }, 65, (Vector2) { 20, 0 } };
-    p->hpCloseAnim.frames[2] = (AnimationFrame) { (Rectangle) { 227, 1435, -112, 128 }, 65, (Vector2) { 20, 0 } };
-    p->hpCloseAnim.frames[3] = (AnimationFrame) { (Rectangle) { 114, 1435, -112, 128 }, 65, (Vector2) { 20, 0 } };
-    p->hpCloseAnim.frames[4] = (AnimationFrame) { (Rectangle) {   1, 1435, -112, 128 }, 65, (Vector2) { 20, 0 } };
+    p->hpCloseAnim.frames[0] = (AnimationFrame) { {   1, 1435, -112, 128 }, 65, { 20, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hpCloseAnim.frames[1] = (AnimationFrame) { { 114, 1435, -112, 128 }, 65, { 20, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hpCloseAnim.frames[2] = (AnimationFrame) { { 227, 1435, -112, 128 }, 65, { 20, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hpCloseAnim.frames[3] = (AnimationFrame) { { 114, 1435, -112, 128 }, 65, { 20, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hpCloseAnim.frames[4] = (AnimationFrame) { {   1, 1435, -112, 128 }, 65, { 20, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
     
     p->lkCloseAnim.frameCount = 3;
     p->lkCloseAnim.currentFrame = 0;
@@ -386,9 +1114,39 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->lkCloseAnim.runOnce = true;
     p->lkCloseAnim.finished = false;
     createAnimationFrames( &p->lkCloseAnim, p->lkCloseAnim.frameCount );
-    p->lkCloseAnim.frames[0] = (AnimationFrame) { (Rectangle) {  1, 2195, -96, 96 },  60, (Vector2) { 42, 0 } };
-    p->lkCloseAnim.frames[1] = (AnimationFrame) { (Rectangle) { 98, 2195, -96, 96 }, 120, (Vector2) { 42, 0 } };
-    p->lkCloseAnim.frames[2] = (AnimationFrame) { (Rectangle) {  1, 2195, -96, 96 },  60, (Vector2) { 42, 0 } };
+    p->lkCloseAnim.frames[0] = (AnimationFrame) { {  1, 2195, -96, 96 },  60, { 42, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->lkCloseAnim.frames[1] = (AnimationFrame) { { 98, 2195, -96, 96 }, 120, { 42, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->lkCloseAnim.frames[2] = (AnimationFrame) { {  1, 2195, -96, 96 },  60, { 42, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
     
     p->mkCloseAnim.frameCount = 3;
     p->mkCloseAnim.currentFrame = 0;
@@ -397,9 +1155,39 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->mkCloseAnim.runOnce = true;
     p->mkCloseAnim.finished = false;
     createAnimationFrames( &p->mkCloseAnim, p->mkCloseAnim.frameCount );
-    p->mkCloseAnim.frames[0] = (AnimationFrame) { (Rectangle) {  1, 2292, -80, 112 },  60, (Vector2) { 30, 0 } };
-    p->mkCloseAnim.frames[1] = (AnimationFrame) { (Rectangle) { 82, 2292, -80, 112 }, 120, (Vector2) { 30, 0 } };
-    p->mkCloseAnim.frames[2] = (AnimationFrame) { (Rectangle) {  1, 2292, -80, 112 },  60, (Vector2) { 30, 0 } };
+    p->mkCloseAnim.frames[0] = (AnimationFrame) { {  1, 2292, -80, 112 },  60, { 30, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->mkCloseAnim.frames[1] = (AnimationFrame) { { 82, 2292, -80, 112 }, 120, { 30, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->mkCloseAnim.frames[2] = (AnimationFrame) { {  1, 2292, -80, 112 },  60, { 30, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
     p->hkCloseAnim.frameCount = 4;
     p->hkCloseAnim.currentFrame = 0;
@@ -408,10 +1196,50 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->hkCloseAnim.runOnce = true;
     p->hkCloseAnim.finished = false;
     createAnimationFrames( &p->hkCloseAnim, p->hkCloseAnim.frameCount );
-    p->hkCloseAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 2405, -112, 128 },  60, (Vector2) { 47, 0 } };
-    p->hkCloseAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 2405, -112, 128 }, 120, (Vector2) { 47, 0 } };
-    p->hkCloseAnim.frames[2] = (AnimationFrame) { (Rectangle) { 227, 2405, -112, 128 }, 120, (Vector2) { 47, 0 } };
-    p->hkCloseAnim.frames[3] = (AnimationFrame) { (Rectangle) {   1, 2405, -112, 128 },  60, (Vector2) { 47, 0 } };
+    p->hkCloseAnim.frames[0] = (AnimationFrame) { {   1, 2405, -112, 128 },  60, { 47, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hkCloseAnim.frames[1] = (AnimationFrame) { { 114, 2405, -112, 128 }, 120, { 47, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hkCloseAnim.frames[2] = (AnimationFrame) { { 227, 2405, -112, 128 }, 120, { 47, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hkCloseAnim.frames[3] = (AnimationFrame) { {   1, 2405, -112, 128 },  60, { 47, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
     p->lpCrouchAnim.frameCount = 2;
     p->lpCrouchAnim.currentFrame = 0;
@@ -420,8 +1248,28 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->lpCrouchAnim.runOnce = true;
     p->lpCrouchAnim.finished = false;
     createAnimationFrames( &p->lpCrouchAnim, p->lpCrouchAnim.frameCount );
-    p->lpCrouchAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1564, -112, 64 }, 60, (Vector2) { 16, 0 } };
-    p->lpCrouchAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1564, -112, 64 }, 60, (Vector2) { 16, 0 } };
+    p->lpCrouchAnim.frames[0] = (AnimationFrame) { {   1, 1564, -112, 64 }, 60, { 16, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->lpCrouchAnim.frames[1] = (AnimationFrame) { { 114, 1564, -112, 64 }, 60, { 16, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
     p->mpCrouchAnim.frameCount = 3;
     p->mpCrouchAnim.currentFrame = 0;
@@ -430,9 +1278,39 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->mpCrouchAnim.runOnce = true;
     p->mpCrouchAnim.finished = false;
     createAnimationFrames( &p->mpCrouchAnim, p->mpCrouchAnim.frameCount );
-    p->mpCrouchAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1629, -112, 64 }, 60, (Vector2) { 16, 0 } };
-    p->mpCrouchAnim.frames[1] = (AnimationFrame) { (Rectangle) { 114, 1629, -112, 64 }, 60, (Vector2) { 16, 0 } };
-    p->mpCrouchAnim.frames[2] = (AnimationFrame) { (Rectangle) { 227, 1629, -112, 64 }, 60, (Vector2) { 16, 0 } };
+    p->mpCrouchAnim.frames[0] = (AnimationFrame) { {   1, 1629, -112, 64 }, 60, { 16, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->mpCrouchAnim.frames[1] = (AnimationFrame) { { 114, 1629, -112, 64 }, 60, { 16, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->mpCrouchAnim.frames[2] = (AnimationFrame) { { 227, 1629, -112, 64 }, 60, { 16, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
     p->hpCrouchAnim.frameCount = 3;
     p->hpCrouchAnim.currentFrame = 0;
@@ -441,9 +1319,39 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->hpCrouchAnim.runOnce = true;
     p->hpCrouchAnim.finished = false;
     createAnimationFrames( &p->hpCrouchAnim, p->hpCrouchAnim.frameCount );
-    p->hpCrouchAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 1694, -96, 128 }, 60, (Vector2) { 8, 0 } };
-    p->hpCrouchAnim.frames[1] = (AnimationFrame) { (Rectangle) {  98, 1694, -96, 128 }, 60, (Vector2) { 8, 0 } };
-    p->hpCrouchAnim.frames[2] = (AnimationFrame) { (Rectangle) { 195, 1694, -96, 128 }, 60, (Vector2) { 8, 0 } };
+    p->hpCrouchAnim.frames[0] = (AnimationFrame) { {   1, 1694, -96, 128 }, 60, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hpCrouchAnim.frames[1] = (AnimationFrame) { {  98, 1694, -96, 128 }, 60, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hpCrouchAnim.frames[2] = (AnimationFrame) { { 195, 1694, -96, 128 }, 60, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
     p->lkCrouchAnim.frameCount = 1;
     p->lkCrouchAnim.currentFrame = 0;
@@ -452,7 +1360,17 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->lkCrouchAnim.runOnce = true;
     p->lkCrouchAnim.finished = false;
     createAnimationFrames( &p->lkCrouchAnim, p->lkCrouchAnim.frameCount );
-    p->lkCrouchAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 2534, -160, 64 }, 60, (Vector2) { 40, 0 } };
+    p->lkCrouchAnim.frames[0] = (AnimationFrame) { { 1, 2534, -160, 64 }, 60, { 40, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
     p->mkCrouchAnim.frameCount = 2;
     p->mkCrouchAnim.currentFrame = 0;
@@ -461,8 +1379,28 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->mkCrouchAnim.runOnce = true;
     p->mkCrouchAnim.finished = false;
     createAnimationFrames( &p->mkCrouchAnim, p->mkCrouchAnim.frameCount );
-    p->mkCrouchAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 2534, -160, 64 }, 60, (Vector2) { 40, 0 } };
-    p->mkCrouchAnim.frames[1] = (AnimationFrame) { (Rectangle) { 162, 2534, -160, 64 }, 60, (Vector2) { 40, 0 } };
+    p->mkCrouchAnim.frames[0] = (AnimationFrame) { {   1, 2534, -160, 64 }, 60, { 40, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->mkCrouchAnim.frames[1] = (AnimationFrame) { { 162, 2534, -160, 64 }, 60, { 40, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
     p->hkCrouchAnim.frameCount = 4;
     p->hkCrouchAnim.currentFrame = 0;
@@ -471,38 +1409,140 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->hkCrouchAnim.runOnce = true;
     p->hkCrouchAnim.finished = false;
     createAnimationFrames( &p->hkCrouchAnim, p->hkCrouchAnim.frameCount );
-    p->hkCrouchAnim.frames[0] = (AnimationFrame) { (Rectangle) {   1, 2599, -144, 64 }, 60, (Vector2) { 32, 0 } };
-    p->hkCrouchAnim.frames[1] = (AnimationFrame) { (Rectangle) { 146, 2599, -144, 64 }, 60, (Vector2) { 32, 0 } };
-    p->hkCrouchAnim.frames[2] = (AnimationFrame) { (Rectangle) { 291, 2599, -144, 64 }, 60, (Vector2) { 32, 0 } };
-    p->hkCrouchAnim.frames[3] = (AnimationFrame) { (Rectangle) { 436, 2599, -144, 64 }, 60, (Vector2) { 32, 0 } };
+    p->hkCrouchAnim.frames[0] = (AnimationFrame) { {   1, 2599, -144, 64 }, 60, { 32, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hkCrouchAnim.frames[1] = (AnimationFrame) { { 146, 2599, -144, 64 }, 60, { 32, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hkCrouchAnim.frames[2] = (AnimationFrame) { { 291, 2599, -144, 64 }, 60, { 32, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hkCrouchAnim.frames[3] = (AnimationFrame) { { 436, 2599, -144, 64 }, 60, { 32, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
-    // jump straight attacks (dummy frames)
-    p->lpJumpStraightAnim.frameCount = 1;
+    p->lpJumpStraightAnim.frameCount = 2;
     p->lpJumpStraightAnim.currentFrame = 0;
     p->lpJumpStraightAnim.frameTimeCounter = 0.0f;
     p->lpJumpStraightAnim.stopAtLastFrame = false;
     p->lpJumpStraightAnim.runOnce = true;
     p->lpJumpStraightAnim.finished = false;
     createAnimationFrames( &p->lpJumpStraightAnim, p->lpJumpStraightAnim.frameCount );
-    p->lpJumpStraightAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+    p->lpJumpStraightAnim.frames[0] = (AnimationFrame) { {  1, 1823, -96, 80 }, 60, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->lpJumpStraightAnim.frames[1] = (AnimationFrame) { { 98, 1823, -96, 80 }, 100, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
-    p->mpJumpStraightAnim.frameCount = 1;
+    p->mpJumpStraightAnim.frameCount = 2;
     p->mpJumpStraightAnim.currentFrame = 0;
     p->mpJumpStraightAnim.frameTimeCounter = 0.0f;
     p->mpJumpStraightAnim.stopAtLastFrame = false;
     p->mpJumpStraightAnim.runOnce = true;
     p->mpJumpStraightAnim.finished = false;
     createAnimationFrames( &p->mpJumpStraightAnim, p->mpJumpStraightAnim.frameCount );
-    p->mpJumpStraightAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+    p->mpJumpStraightAnim.frames[0] = (AnimationFrame) { {  1, 1904, -96, 80 }, 60, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->mpJumpStraightAnim.frames[1] = (AnimationFrame) { { 98, 1904, -96, 80 }, 100, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
-    p->hpJumpStraightAnim.frameCount = 1;
+    p->hpJumpStraightAnim.frameCount = 2;
     p->hpJumpStraightAnim.currentFrame = 0;
     p->hpJumpStraightAnim.frameTimeCounter = 0.0f;
     p->hpJumpStraightAnim.stopAtLastFrame = false;
     p->hpJumpStraightAnim.runOnce = true;
     p->hpJumpStraightAnim.finished = false;
     createAnimationFrames( &p->hpJumpStraightAnim, p->hpJumpStraightAnim.frameCount );
-    p->hpJumpStraightAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+    p->hpJumpStraightAnim.frames[0] = (AnimationFrame) { {  1, 1904, -96, 80 }, 60, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hpJumpStraightAnim.frames[1] = (AnimationFrame) { { 98, 1904, -96, 80 }, 100, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
     p->lkJumpStraightAnim.frameCount = 1;
     p->lkJumpStraightAnim.currentFrame = 0;
@@ -511,7 +1551,17 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->lkJumpStraightAnim.runOnce = true;
     p->lkJumpStraightAnim.finished = false;
     createAnimationFrames( &p->lkJumpStraightAnim, p->lkJumpStraightAnim.frameCount );
-    p->lkJumpStraightAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+    p->lkJumpStraightAnim.frames[0] = (AnimationFrame) { { 1, 2664, -80, 96 }, 100, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
     p->mkJumpStraightAnim.frameCount = 1;
     p->mkJumpStraightAnim.currentFrame = 0;
@@ -520,126 +1570,451 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
     p->mkJumpStraightAnim.runOnce = true;
     p->mkJumpStraightAnim.finished = false;
     createAnimationFrames( &p->mkJumpStraightAnim, p->mkJumpStraightAnim.frameCount );
-    p->mkJumpStraightAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+    p->mkJumpStraightAnim.frames[0] = (AnimationFrame) { { 1, 2664, -80, 96 }, 100, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
-    p->hkJumpStraightAnim.frameCount = 1;
+    p->hkJumpStraightAnim.frameCount = 4;
     p->hkJumpStraightAnim.currentFrame = 0;
     p->hkJumpStraightAnim.frameTimeCounter = 0.0f;
     p->hkJumpStraightAnim.stopAtLastFrame = false;
     p->hkJumpStraightAnim.runOnce = true;
     p->hkJumpStraightAnim.finished = false;
     createAnimationFrames( &p->hkJumpStraightAnim, p->hkJumpStraightAnim.frameCount );
-    p->hkJumpStraightAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+    p->hkJumpStraightAnim.frames[0] = (AnimationFrame) { {   1, 2761, -96, 112 }, 60, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hkJumpStraightAnim.frames[1] = (AnimationFrame) { {  98, 2761, -96, 112 }, 60, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hkJumpStraightAnim.frames[2] = (AnimationFrame) { { 195, 2761, -96, 112 }, 60, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hkJumpStraightAnim.frames[3] = (AnimationFrame) { { 292, 2761, -96, 112 }, 60, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
-    // jump forward attacks (dummy frames)
-    p->lpJumpForwardAnim.frameCount = 1;
+    p->lpJumpForwardAnim.frameCount = 2;
     p->lpJumpForwardAnim.currentFrame = 0;
     p->lpJumpForwardAnim.frameTimeCounter = 0.0f;
     p->lpJumpForwardAnim.stopAtLastFrame = false;
     p->lpJumpForwardAnim.runOnce = true;
     p->lpJumpForwardAnim.finished = false;
     createAnimationFrames( &p->lpJumpForwardAnim, p->lpJumpForwardAnim.frameCount );
-    p->lpJumpForwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+    p->lpJumpForwardAnim.frames[0] = (AnimationFrame) { {  1, 1823, -96, 80 }, 60, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->lpJumpForwardAnim.frames[1] = (AnimationFrame) { { 98, 1823, -96, 80 }, 100, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
-    p->mpJumpForwardAnim.frameCount = 1;
+    p->mpJumpForwardAnim.frameCount = 2;
     p->mpJumpForwardAnim.currentFrame = 0;
     p->mpJumpForwardAnim.frameTimeCounter = 0.0f;
     p->mpJumpForwardAnim.stopAtLastFrame = false;
     p->mpJumpForwardAnim.runOnce = true;
     p->mpJumpForwardAnim.finished = false;
     createAnimationFrames( &p->mpJumpForwardAnim, p->mpJumpForwardAnim.frameCount );
-    p->mpJumpForwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+    p->mpJumpForwardAnim.frames[0] = (AnimationFrame) { {  1, 1904, -96, 80 }, 60, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->mpJumpForwardAnim.frames[1] = (AnimationFrame) { { 98, 1904, -96, 80 }, 100, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
-    p->hpJumpForwardAnim.frameCount = 1;
+    p->hpJumpForwardAnim.frameCount = 2;
     p->hpJumpForwardAnim.currentFrame = 0;
     p->hpJumpForwardAnim.frameTimeCounter = 0.0f;
     p->hpJumpForwardAnim.stopAtLastFrame = false;
     p->hpJumpForwardAnim.runOnce = true;
     p->hpJumpForwardAnim.finished = false;
     createAnimationFrames( &p->hpJumpForwardAnim, p->hpJumpForwardAnim.frameCount );
-    p->hpJumpForwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+    p->hpJumpForwardAnim.frames[0] = (AnimationFrame) { {  1, 1904, -96, 80 }, 60, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hpJumpForwardAnim.frames[1] = (AnimationFrame) { { 98, 1904, -96, 80 }, 100, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
-    p->lkJumpForwardAnim.frameCount = 1;
+    p->lkJumpForwardAnim.frameCount = 3;
     p->lkJumpForwardAnim.currentFrame = 0;
     p->lkJumpForwardAnim.frameTimeCounter = 0.0f;
     p->lkJumpForwardAnim.stopAtLastFrame = false;
     p->lkJumpForwardAnim.runOnce = true;
     p->lkJumpForwardAnim.finished = false;
     createAnimationFrames( &p->lkJumpForwardAnim, p->lkJumpForwardAnim.frameCount );
-    p->lkJumpForwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+    p->lkJumpForwardAnim.frames[0] = (AnimationFrame) { {   1, 2874, -80, 80 }, 60, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->lkJumpForwardAnim.frames[1] = (AnimationFrame) { {  82, 2874, -80, 80 }, 60, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->lkJumpForwardAnim.frames[2] = (AnimationFrame) { { 163, 2874, -80, 80 }, 60, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
-    p->mkJumpForwardAnim.frameCount = 1;
+    p->mkJumpForwardAnim.frameCount = 2;
     p->mkJumpForwardAnim.currentFrame = 0;
     p->mkJumpForwardAnim.frameTimeCounter = 0.0f;
     p->mkJumpForwardAnim.stopAtLastFrame = false;
     p->mkJumpForwardAnim.runOnce = true;
     p->mkJumpForwardAnim.finished = false;
     createAnimationFrames( &p->mkJumpForwardAnim, p->mkJumpForwardAnim.frameCount );
-    p->mkJumpForwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+    p->mkJumpForwardAnim.frames[0] = (AnimationFrame) { {   1, 2955, -128, 80 }, 60, { 24, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->mkJumpForwardAnim.frames[1] = (AnimationFrame) { { 130, 2955, -128, 80 }, 120, { 24, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
-    p->hkJumpForwardAnim.frameCount = 1;
+    p->hkJumpForwardAnim.frameCount = 2;
     p->hkJumpForwardAnim.currentFrame = 0;
     p->hkJumpForwardAnim.frameTimeCounter = 0.0f;
     p->hkJumpForwardAnim.stopAtLastFrame = false;
     p->hkJumpForwardAnim.runOnce = true;
     p->hkJumpForwardAnim.finished = false;
     createAnimationFrames( &p->hkJumpForwardAnim, p->hkJumpForwardAnim.frameCount );
-    p->hkJumpForwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+    p->hkJumpForwardAnim.frames[0] = (AnimationFrame) { {   1, 2955, -128, 80 }, 60, { 24, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hkJumpForwardAnim.frames[1] = (AnimationFrame) { { 130, 2955, -128, 80 }, 120, { 24, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
-    // jump backward attacks (dummy frames)
-    p->lpJumpBackwardAnim.frameCount = 1;
+    p->lpJumpBackwardAnim.frameCount = 2;
     p->lpJumpBackwardAnim.currentFrame = 0;
     p->lpJumpBackwardAnim.frameTimeCounter = 0.0f;
     p->lpJumpBackwardAnim.stopAtLastFrame = false;
     p->lpJumpBackwardAnim.runOnce = true;
     p->lpJumpBackwardAnim.finished = false;
     createAnimationFrames( &p->lpJumpBackwardAnim, p->lpJumpBackwardAnim.frameCount );
-    p->lpJumpBackwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+    p->lpJumpBackwardAnim.frames[0] = (AnimationFrame) { {  1, 1823, -96, 80 }, 60, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->lpJumpBackwardAnim.frames[1] = (AnimationFrame) { { 98, 1823, -96, 80 }, 100, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
-    p->mpJumpBackwardAnim.frameCount = 1;
+    p->mpJumpBackwardAnim.frameCount = 2;
     p->mpJumpBackwardAnim.currentFrame = 0;
     p->mpJumpBackwardAnim.frameTimeCounter = 0.0f;
     p->mpJumpBackwardAnim.stopAtLastFrame = false;
     p->mpJumpBackwardAnim.runOnce = true;
     p->mpJumpBackwardAnim.finished = false;
     createAnimationFrames( &p->mpJumpBackwardAnim, p->mpJumpBackwardAnim.frameCount );
-    p->mpJumpBackwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+    p->mpJumpBackwardAnim.frames[0] = (AnimationFrame) { {  1, 1904, -96, 80 }, 60, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->mpJumpBackwardAnim.frames[1] = (AnimationFrame) { { 98, 1904, -96, 80 }, 100, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
-    p->hpJumpBackwardAnim.frameCount = 1;
+    p->hpJumpBackwardAnim.frameCount = 2;
     p->hpJumpBackwardAnim.currentFrame = 0;
     p->hpJumpBackwardAnim.frameTimeCounter = 0.0f;
     p->hpJumpBackwardAnim.stopAtLastFrame = false;
     p->hpJumpBackwardAnim.runOnce = true;
     p->hpJumpBackwardAnim.finished = false;
     createAnimationFrames( &p->hpJumpBackwardAnim, p->hpJumpBackwardAnim.frameCount );
-    p->hpJumpBackwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+    p->hpJumpBackwardAnim.frames[0] = (AnimationFrame) { {  1, 1904, -96, 80 }, 60, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hpJumpBackwardAnim.frames[1] = (AnimationFrame) { { 98, 1904, -96, 80 }, 100, { 8, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
-    p->lkJumpBackwardAnim.frameCount = 1;
+    p->lkJumpBackwardAnim.frameCount = 3;
     p->lkJumpBackwardAnim.currentFrame = 0;
     p->lkJumpBackwardAnim.frameTimeCounter = 0.0f;
     p->lkJumpBackwardAnim.stopAtLastFrame = false;
     p->lkJumpBackwardAnim.runOnce = true;
     p->lkJumpBackwardAnim.finished = false;
     createAnimationFrames( &p->lkJumpBackwardAnim, p->lkJumpBackwardAnim.frameCount );
-    p->lkJumpBackwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+    p->lkJumpBackwardAnim.frames[0] = (AnimationFrame) { {   1, 2874, -80, 80 }, 60, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->lkJumpBackwardAnim.frames[1] = (AnimationFrame) { {  82, 2874, -80, 80 }, 60, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->lkJumpBackwardAnim.frames[2] = (AnimationFrame) { { 163, 2874, -80, 80 }, 60, { 0, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
-    p->mkJumpBackwardAnim.frameCount = 1;
+    p->mkJumpBackwardAnim.frameCount = 2;
     p->mkJumpBackwardAnim.currentFrame = 0;
     p->mkJumpBackwardAnim.frameTimeCounter = 0.0f;
     p->mkJumpBackwardAnim.stopAtLastFrame = false;
     p->mkJumpBackwardAnim.runOnce = true;
     p->mkJumpBackwardAnim.finished = false;
     createAnimationFrames( &p->mkJumpBackwardAnim, p->mkJumpBackwardAnim.frameCount );
-    p->mkJumpBackwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+    p->mkJumpBackwardAnim.frames[0] = (AnimationFrame) { {   1, 2955, -128, 80 }, 60, { 24, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->mkJumpBackwardAnim.frames[1] = (AnimationFrame) { { 130, 2955, -128, 80 }, 120, { 24, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
-    p->hkJumpBackwardAnim.frameCount = 1;
+    p->hkJumpBackwardAnim.frameCount = 2;
     p->hkJumpBackwardAnim.currentFrame = 0;
     p->hkJumpBackwardAnim.frameTimeCounter = 0.0f;
     p->hkJumpBackwardAnim.stopAtLastFrame = false;
     p->hkJumpBackwardAnim.runOnce = true;
     p->hkJumpBackwardAnim.finished = false;
     createAnimationFrames( &p->hkJumpBackwardAnim, p->hkJumpBackwardAnim.frameCount );
-    p->hkJumpBackwardAnim.frames[0] = (AnimationFrame) { (Rectangle) { 1, 1031, -112, 96 }, 150, (Vector2) { 22, 0 } };
+    p->hkJumpBackwardAnim.frames[0] = (AnimationFrame) { {   1, 2955, -128, 80 }, 60, { 24, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
+    p->hkJumpBackwardAnim.frames[1] = (AnimationFrame) { { 130, 2955, -128, 80 }, 120, { 24, 0 }, {
+        .collisionBox = { 0 },
+        .hurtboxCount = 0,
+        .hurtboxes[0] = { 0 },
+        .hurtboxes[1] = { 0 },
+        .hurtboxes[2] = { 0 },
+        .hitboxCount = 0,
+        .hitboxes[0] = { 0 },
+        .hitboxes[1] = { 0 },
+        .hitboxes[2] = { 0 },
+    }};
 
     int animationCount = 0;
     p->animations[animationCount++] = &p->idleAnim;
@@ -690,9 +2065,9 @@ void initializePlayerRyu( float x, float y, Player *p, bool showDebugInfo ) {
 
 }
 
-void initializePlayerKen( float x, float y, Player *p, bool showDebugInfo ) {
+void initializePlayerKen( float x, float y, Player *p, bool showBoxes, bool showDebugInfo ) {
 
-    initializePlayerRyu( x, y, p, showDebugInfo );
+    initializePlayerRyu( x, y, p, showBoxes, showDebugInfo );
     p->texture = &rm.kenTexture;
 
 }
@@ -731,12 +2106,12 @@ void drawPlayer( Player *player, Camera2D *camera ) {
 
     if ( player->showDebugInfo ) {
 
-        //DrawCircle( player->pos.x, player->pos.y, 2, BLUE );
-        //DrawRectangleLines( player->pos.x - player->dim.x / 2, player->pos.y, player->dim.x, player->dim.y, BLUE );
-        //DrawText( TextFormat( "y: %.2f", player->pos.y ), player->pos.x + 10, player->pos.y, 10, BLACK );
+        DrawCircle( player->pos.x, player->pos.y, 2, BLUE );
+        DrawRectangleLines( player->pos.x - player->dim.x / 2, player->pos.y, player->dim.x, player->dim.y, BLUE );
+        DrawText( TextFormat( "y: %.2f", player->pos.y ), player->pos.x + 10, player->pos.y, 10, BLACK );
 
-        // states
-        int pos = 0;
+        // states - will be removed!
+        /*int pos = 0;
         Vector2 base = GetScreenToWorld2D( (Vector2){ 10, 20 }, *camera );
         float radius = 5;
         int fontSize = 4;
@@ -786,8 +2161,121 @@ void drawPlayer( Player *player, Camera2D *camera ) {
             );
             
             pos++;
-        }
+
+        }*/
         
+    }
+
+    if ( player->showBoxes ) {
+        drawPlayerAnimationFrameBoxes( player );
+    }
+
+}
+
+static void drawPlayerAnimationFrameBoxes( Player *player ) {
+
+    AnimationFrame *af = getPlayerCurrentAnimationFrame( player );
+
+    if ( player->lookingRight ) {
+        DrawRectangle( 
+            player->pos.x + af->boxes.collisionBox.x, 
+            player->pos.y + af->boxes.collisionBox.y,
+            af->boxes.collisionBox.width,
+            af->boxes.collisionBox.height,
+            Fade( GREEN, 0.4 )
+        );
+        DrawRectangleLines( 
+            player->pos.x + af->boxes.collisionBox.x, 
+            player->pos.y + af->boxes.collisionBox.y,
+            af->boxes.collisionBox.width,
+            af->boxes.collisionBox.height,
+            GREEN
+        );
+    } else {
+        DrawRectangle(
+            player->pos.x - af->boxes.collisionBox.x - af->boxes.collisionBox.width,
+            player->pos.y + af->boxes.collisionBox.y,
+            af->boxes.collisionBox.width,
+            af->boxes.collisionBox.height,
+            Fade( GREEN, 0.4 )
+        );
+        DrawRectangleLines(
+            player->pos.x - af->boxes.collisionBox.x - af->boxes.collisionBox.width,
+            player->pos.y + af->boxes.collisionBox.y,
+            af->boxes.collisionBox.width,
+            af->boxes.collisionBox.height,
+            GREEN
+        );
+    }
+
+    for ( int i = 0; i < af->boxes.hitboxCount; i++ ) {
+        Rectangle *r = &af->boxes.hitboxes[i];
+        if ( player->lookingRight ) {
+            DrawRectangle( 
+                player->pos.x + r->x, 
+                player->pos.y + r->y,
+                r->width,
+                r->height,
+                Fade( BLUE, 0.4 )
+            );
+            DrawRectangleLines( 
+                player->pos.x + r->x, 
+                player->pos.y + r->y,
+                r->width,
+                r->height,
+                BLUE
+            );
+        } else {
+            DrawRectangle(
+                player->pos.x - r->x - r->width,
+                player->pos.y + r->y,
+                r->width,
+                r->height,
+                Fade( BLUE, 0.4 )
+            );
+            DrawRectangleLines(
+                player->pos.x - r->x - r->width,
+                player->pos.y + r->y,
+                r->width,
+                r->height,
+                BLUE
+            );
+        }
+    }
+
+    for ( int i = 0; i < af->boxes.hurtboxCount; i++ ) {
+        Rectangle *r = &af->boxes.hurtboxes[i];
+        if ( player->lookingRight ) {
+            DrawRectangle( 
+                player->pos.x + r->x, 
+                player->pos.y + r->y,
+                r->width,
+                r->height,
+                Fade( RED, 0.4 )
+            );
+            DrawRectangleLines( 
+                player->pos.x + r->x, 
+                player->pos.y + r->y,
+                r->width,
+                r->height,
+                RED
+            );
+        } else {
+            DrawRectangle(
+                player->pos.x - r->x - r->width,
+                player->pos.y + r->y,
+                r->width,
+                r->height,
+                Fade( RED, 0.4 )
+            );
+            DrawRectangleLines(
+                player->pos.x - r->x - r->width,
+                player->pos.y + r->y,
+                r->width,
+                r->height,
+                RED
+            );
+        }
     }
 
 }

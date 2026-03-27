@@ -49,10 +49,19 @@ typedef enum PlayerState {
     PLAYER_STATE_HK_JUMP_BACKWARD,
 } PlayerState;
 
+typedef struct AnimationFrameBoxes {
+    Rectangle collisionBox;
+    int hitboxCount;
+    Rectangle hitboxes[3];
+    int hurtboxCount;
+    Rectangle hurtboxes[3];
+} AnimationFrameBoxes;
+
 typedef struct AnimationFrame {
     Rectangle source;
     int duration;      // milliseconds
     Vector2 offset;
+    AnimationFrameBoxes boxes;
 } AnimationFrame;
 
 typedef struct Animation {
@@ -157,6 +166,7 @@ typedef struct Player {
 
     PlayerKeyBindings kb;
 
+    bool showBoxes;
     bool showDebugInfo;
 
 } Player;
