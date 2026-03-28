@@ -6,5 +6,6 @@ Implementar hitboxes;
         Tratar personagem à direita.
         Help (mostrar comandos)
     https://doctorguile.github.io/ssf2st/.
+    Ajustar os tempos dos frames de animação.
 
 Implementar o fluxo de inputs (gerar imagens).
