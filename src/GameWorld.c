@@ -20,14 +20,29 @@
 #include "ResourceManager.h"
 #include "Types.h"
 #include "Player.h"
+#include "Utils.h"
 
 #define SHOW_BOXES true
-#define SHOW_DEBUG_INFO false
+#define SHOW_DEBUG_INFO true
+#define INITIAL_GAME_MODE GAME_MODE_EDITING
+
+static void drawGameWorldPlaying( GameWorld *gw );
+static void drawGameWorldEditing( GameWorld *gw );
+static void updateGameWorldPlaying( GameWorld *gw, float delta );
+static void updateGameWorldEditing( GameWorld *gw, float delta );
+static void editAnimationFrameBox( Rectangle *box );
+static void showAnimationFrameBoxDetail( Player *p, Rectangle *box, Color color );
+
+static void updateCameraPlaying( GameWorld *gw );
+static void updateCameraEditing( GameWorld *gw );
 
 static void resolveCollisionPlayerStage( Player *player, GameWorld *gw );
-static void updateCamera( GameWorld *gw );
 static void flipPlayers( GameWorld *gw );
 
+// editor
+static EditorMode editorMode = EDITOR_MODE_COLLISION_BOX;
+
+// for camera target on playing
 static float playerDist = 0.0f;
 
 // flip players logic
@@ -96,6 +111,8 @@ GameWorld* createGameWorld( void ) {
     gw->player1 = player1;
     gw->player2 = player2;
 
+    gw->mode = INITIAL_GAME_MODE;
+
     return gw;
 
 }
@@ -113,6 +130,66 @@ void destroyGameWorld( GameWorld *gw ) {
  * @brief Reads user input and updates the state of the game.
  */
 void updateGameWorld( GameWorld *gw, float delta ) {
+
+    if ( IsKeyPressed( KEY_F1 ) ) {
+        if ( gw->mode == GAME_MODE_PLAYING ) {
+            gw->mode = GAME_MODE_EDITING;
+        } else {
+            gw->mode = GAME_MODE_PLAYING;
+        }
+        gw->player1->state = PLAYER_STATE_IDLE;
+        resetPlayerAnimations( gw->player1 );
+    }
+
+    if ( IsKeyPressed( KEY_F2 ) ) {
+        gw->player1->showBoxes = !gw->player1->showBoxes;
+        gw->player2->showBoxes = !gw->player2->showBoxes;
+    }
+
+    if ( IsKeyPressed( KEY_F3 ) ) {
+        gw->player1->showDebugInfo = !gw->player1->showDebugInfo;
+        gw->player2->showDebugInfo = !gw->player2->showDebugInfo;
+    }
+
+    if ( gw->mode == GAME_MODE_PLAYING ) {
+        updateGameWorldPlaying( gw, delta );
+    } else {
+        updateGameWorldEditing( gw, delta );
+    }
+}
+
+/**
+ * @brief Draws the state of the game.
+ */
+void drawGameWorld( GameWorld *gw ) {
+
+    BeginDrawing();
+
+    if ( gw->mode == GAME_MODE_PLAYING ) {
+        drawGameWorldPlaying( gw );
+    } else {
+        drawGameWorldEditing( gw );
+    }
+
+    EndDrawing();
+
+}
+
+static void drawGameWorldPlaying( GameWorld *gw ) {
+
+    ClearBackground( WHITE );
+    
+    BeginMode2D( gw->camera );
+
+    DrawTexture( *gw->stageTexture, 0, GetScreenHeight() - gw->stageTexture->height, WHITE );
+    drawPlayer( gw->player2, &gw->camera );
+    drawPlayer( gw->player1, &gw->camera );
+
+    EndMode2D();
+
+}
+
+static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
 
     if ( IsKeyPressed( KEY_ONE ) ) {
         gw->stageTexture = &rm.kenStageTexture;
@@ -162,27 +239,264 @@ void updateGameWorld( GameWorld *gw, float delta ) {
 
     flipPlayers( gw );
 
-    updateCamera( gw );
+    updateCameraPlaying( gw );
 
 }
 
-/**
- * @brief Draws the state of the game.
- */
-void drawGameWorld( GameWorld *gw ) {
+static void drawGameWorldEditing( GameWorld *gw ) {
 
-    BeginDrawing();
-    ClearBackground( WHITE );
-    
+    ClearBackground( RAYWHITE );
+
     BeginMode2D( gw->camera );
 
-    DrawTexture( *gw->stageTexture, 0, GetScreenHeight() - gw->stageTexture->height, WHITE );
-    drawPlayer( gw->player2, &gw->camera );
+    Vector2 basePos = GetScreenToWorld2D( (Vector2) { 0, 0 }, gw->camera );
+
+    // grid
+    int gridSpacing = (int) ( 2.5f * gw->camera.zoom );
+    int gridX = 0;
+    int gridY = 0;
+    int gridC = 0;
+
+    while ( true ) {
+
+        gridX = (int) ( basePos.x + gridC * gridSpacing );
+        gridY = (int) ( basePos.y + gridC * gridSpacing );
+        gridC++;
+
+        Color color = gridC % 5 == 0 ? GRAY : LIGHTGRAY;
+
+        DrawLine( gridX, basePos.y, gridX, basePos.y + GetScreenHeight(), color );
+        DrawLine( basePos.x, gridY, basePos.x + GetScreenWidth(), gridY, color );
+
+        if ( gridX > GetScreenWidth() ) {
+            break;
+        }
+
+    }
+
     drawPlayer( gw->player1, &gw->camera );
+
+    DrawText( "Animation Frame Box Editor", basePos.x + 5, basePos.y + 5, 10, BLACK );
+    DrawText( TextFormat( "Mode: %s", utilsEditorModeToText( editorMode ) ), basePos.x + 5, basePos.y + 20, 10, BLACK );
+    DrawText( TextFormat( "State: %s", utilsPlayerStateToText( gw->player1->state ) ), basePos.x + 5, basePos.y + 30, 10, BLACK );
+    DrawText( TextFormat( "Frame: %d", getPlayerCurrentAnimation( gw->player1 )->currentFrame ), basePos.x + 5, basePos.y + 40, 10, BLACK );
+
+    AnimationFrame *af = getPlayerCurrentAnimationFrame( gw->player1 );
+
+    switch ( editorMode ) {
+        case EDITOR_MODE_COLLISION_BOX: showAnimationFrameBoxDetail( gw->player1, &af->boxes.collisionBox, GREEN ); break;
+        case EDITOR_MODE_HIT_BOX_0: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hitboxes[0], BLUE ); break;
+        case EDITOR_MODE_HIT_BOX_1: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hitboxes[1], BLUE ); break;
+        case EDITOR_MODE_HIT_BOX_2: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hitboxes[2], BLUE ); break;
+        case EDITOR_MODE_HURT_BOX_0: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hurtboxes[0], RED ); break;
+        case EDITOR_MODE_HURT_BOX_1: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hurtboxes[1], RED ); break;
+        case EDITOR_MODE_HURT_BOX_2: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hurtboxes[2], RED ); break;
+        default: break;
+    }
 
     EndMode2D();
 
-    EndDrawing();
+}
+
+static void updateGameWorldEditing( GameWorld *gw, float delta ) {
+
+    if ( IsKeyUp( KEY_M ) && IsKeyUp( KEY_SPACE ) ) {
+        if ( IsKeyPressed( KEY_UP ) ) {
+            int state = (int) gw->player1->state;
+            state--;
+            if ( state == -1 ) {
+                gw->player1->state = PLAYER_STATE_LAST - 1;
+            } else {
+                gw->player1->state = state;
+            }
+        } else if ( IsKeyPressed( KEY_DOWN ) ) {
+            gw->player1->state++;
+            if ( gw->player1->state == PLAYER_STATE_LAST ) {
+                gw->player1->state = PLAYER_STATE_IDLE;
+            }
+        }
+    }
+
+    Animation *anim = getPlayerCurrentAnimation( gw->player1 );
+
+    if ( IsKeyUp( KEY_M ) && IsKeyUp( KEY_SPACE ) ) {
+        if ( IsKeyPressed( KEY_LEFT ) ) {
+            anim->currentFrame--;
+            if ( anim->currentFrame < 0 ) {
+                anim->currentFrame = anim->frameCount - 1;
+            }
+        } else if ( IsKeyPressed( KEY_RIGHT ) ) {
+            anim->currentFrame++;
+            if ( anim->currentFrame >= anim->frameCount ) {
+                anim->currentFrame = 0;
+            }
+        }
+    }
+
+    if ( IsKeyDown( KEY_LEFT_CONTROL ) ) {
+        if ( IsKeyPressed( KEY_A ) ) {
+            gw->player1->pos.x--;
+        } else if ( IsKeyPressed( KEY_D ) ) {
+            gw->player1->pos.x++;
+        } else if ( IsKeyPressed( KEY_W ) ) {
+            gw->player1->pos.y--;
+        } else if ( IsKeyPressed( KEY_S ) ) {
+            gw->player1->pos.y++;
+        }
+    } else {
+        if ( IsKeyDown( KEY_A ) ) {
+            gw->player1->pos.x--;
+        } else if ( IsKeyDown( KEY_D ) ) {
+            gw->player1->pos.x++;
+        } else if ( IsKeyDown( KEY_W ) ) {
+            gw->player1->pos.y--;
+        } else if ( IsKeyDown( KEY_S ) ) {
+            gw->player1->pos.y++;
+        }
+    }
+
+    if ( IsKeyPressed( KEY_ONE ) ) {
+        editorMode = EDITOR_MODE_COLLISION_BOX;
+    } else if ( IsKeyPressed( KEY_TWO ) ) {
+        editorMode = EDITOR_MODE_HIT_BOX_0;
+    } else if ( IsKeyPressed( KEY_THREE ) ) {
+        editorMode = EDITOR_MODE_HIT_BOX_1;
+    } else if ( IsKeyPressed( KEY_FOUR ) ) {
+        editorMode = EDITOR_MODE_HIT_BOX_2;
+    } else if ( IsKeyPressed( KEY_FIVE ) ) {
+        editorMode = EDITOR_MODE_HURT_BOX_0;
+    } else if ( IsKeyPressed( KEY_SIX ) ) {
+        editorMode = EDITOR_MODE_HURT_BOX_1;
+    } else if ( IsKeyPressed( KEY_SEVEN ) ) {
+        editorMode = EDITOR_MODE_HURT_BOX_2;
+    }
+
+    AnimationFrame *af = getPlayerCurrentAnimationFrame( gw->player1 );
+
+    switch ( editorMode ) {
+        case EDITOR_MODE_COLLISION_BOX: editAnimationFrameBox( &af->boxes.collisionBox ); break;
+        case EDITOR_MODE_HIT_BOX_0: editAnimationFrameBox( &af->boxes.hitboxes[0] ); break;
+        case EDITOR_MODE_HIT_BOX_1: editAnimationFrameBox( &af->boxes.hitboxes[1] ); break;
+        case EDITOR_MODE_HIT_BOX_2: editAnimationFrameBox( &af->boxes.hitboxes[2] ); break;
+        case EDITOR_MODE_HURT_BOX_0: editAnimationFrameBox( &af->boxes.hurtboxes[0] ); break;
+        case EDITOR_MODE_HURT_BOX_1: editAnimationFrameBox( &af->boxes.hurtboxes[1] ); break;
+        case EDITOR_MODE_HURT_BOX_2: editAnimationFrameBox( &af->boxes.hurtboxes[2] ); break;
+        default: break;
+    }
+
+    updateCameraEditing( gw );
+
+}
+
+static void editAnimationFrameBox( Rectangle *box ) {
+
+    if ( IsKeyDown( KEY_M ) ) {
+        if ( IsKeyDown( KEY_RIGHT_CONTROL ) ) {
+            if ( IsKeyPressed( KEY_LEFT ) ) {
+                box->x--;
+            } else if ( IsKeyPressed( KEY_RIGHT ) ) {
+                box->x++;
+            } else if ( IsKeyPressed( KEY_UP ) ) {
+                box->y--;
+            } else if ( IsKeyPressed( KEY_DOWN ) ) {
+                box->y++;
+            }
+        } else {
+            if ( IsKeyDown( KEY_LEFT ) ) {
+                box->x--;
+            } else if ( IsKeyDown( KEY_RIGHT ) ) {
+                box->x++;
+            } else if ( IsKeyDown( KEY_UP ) ) {
+                box->y--;
+            } else if ( IsKeyDown( KEY_DOWN ) ) {
+                box->y++;
+            }
+        }
+    } else if ( IsKeyDown( KEY_SPACE ) ) {
+        if ( IsKeyDown( KEY_RIGHT_CONTROL ) ) {
+            if ( IsKeyPressed( KEY_LEFT ) ) {
+                box->width--;
+            } else if ( IsKeyPressed( KEY_RIGHT ) ) {
+                box->width++;
+            } else if ( IsKeyPressed( KEY_UP ) ) {
+                box->height--;
+            } else if ( IsKeyPressed( KEY_DOWN ) ) {
+                box->height++;
+            }
+        } else {
+            if ( IsKeyDown( KEY_LEFT ) ) {
+                box->width--;
+            } else if ( IsKeyDown( KEY_RIGHT ) ) {
+                box->width++;
+            } else if ( IsKeyDown( KEY_UP ) ) {
+                box->height--;
+            } else if ( IsKeyDown( KEY_DOWN ) ) {
+                box->height++;
+            }
+        }
+    }
+
+}
+
+static void showAnimationFrameBoxDetail( Player *p, Rectangle *box, Color color ) {
+
+    color = ColorBrightness( color, -0.5f );
+
+    int x = (int) box->x;
+    int y = (int) box->y;
+    int w = (int) box->width;
+    int h = (int) box->height;
+
+    if ( !( x == 0 && y == 0 && w == 0 && h == 0 ) ) {
+        DrawText( "offsets", p->pos.x + box->x, p->pos.y + box->y - 50, 5, color );
+        DrawText( TextFormat( "x: %d", x ), p->pos.x + box->x, p->pos.y + box->y - 40, 5, color );
+        DrawText( TextFormat( "y: %d", y ), p->pos.x + box->x, p->pos.y + box->y - 30, 5, color );
+        DrawText( TextFormat( "w: %d", w ), p->pos.x + box->x, p->pos.y + box->y - 20, 5, color );
+        DrawText( TextFormat( "h: %d", h ), p->pos.x + box->x, p->pos.y + box->y - 10, 5, color );
+    } else {
+        DrawText( "disabled", p->pos.x + box->x, p->pos.y + box->y - 10, 5, Fade( color, 0.5f ) );
+    }
+
+}
+
+static void updateCameraPlaying( GameWorld *gw ) {
+
+    gw->camera.target.x = fabs( ( gw->player1->pos.x + gw->player2->pos.x ) / 2 );
+
+    float worldWidth = gw->stageTexture->width;
+    float zoom = gw->camera.zoom;
+    float offsetX = gw->camera.offset.x;
+    float screenWidth = GetScreenWidth();
+
+    float minTargetX = offsetX / zoom;
+    float maxTargetX = worldWidth - ( screenWidth - offsetX ) / zoom;
+
+    if ( gw->camera.target.x < minTargetX ) {
+        gw->camera.target.x = minTargetX;
+    } else if ( gw->camera.target.x > maxTargetX ) {
+        gw->camera.target.x = maxTargetX;
+    }
+
+}
+
+static void updateCameraEditing( GameWorld *gw ) {
+
+    gw->camera.target.x = fabs( ( gw->player1->pos.x + gw->player2->pos.x ) / 2 );
+    //gw->camera.target.x = GetScreenWidth() / 2 - 100;
+
+    float worldWidth = gw->stageTexture->width;
+    float zoom = gw->camera.zoom;
+    float offsetX = gw->camera.offset.x;
+    float screenWidth = GetScreenWidth();
+
+    float minTargetX = offsetX / zoom;
+    float maxTargetX = worldWidth - ( screenWidth - offsetX ) / zoom;
+
+    if ( gw->camera.target.x < minTargetX ) {
+        gw->camera.target.x = minTargetX;
+    } else if ( gw->camera.target.x > maxTargetX ) {
+        gw->camera.target.x = maxTargetX;
+    }
 
 }
 
@@ -204,26 +518,6 @@ static void resolveCollisionPlayerStage( Player *player, GameWorld *gw ) {
             player->vel.x = 0.0f;
             player->state = PLAYER_STATE_JUMP_COOLDOWN;
         }
-    }
-
-}
-
-static void updateCamera( GameWorld *gw ) {
-
-    gw->camera.target.x = fabs( ( gw->player1->pos.x + gw->player2->pos.x ) / 2 );
-
-    float worldWidth = gw->stageTexture->width;
-    float zoom = gw->camera.zoom;
-    float offsetX = gw->camera.offset.x;
-    float screenWidth = GetScreenWidth();
-
-    float minTargetX = offsetX / zoom;
-    float maxTargetX = worldWidth - ( screenWidth - offsetX ) / zoom;
-
-    if ( gw->camera.target.x < minTargetX ) {
-        gw->camera.target.x = minTargetX;
-    } else if ( gw->camera.target.x > maxTargetX ) {
-        gw->camera.target.x = maxTargetX;
     }
 
 }

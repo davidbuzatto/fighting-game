@@ -1,5 +1,6 @@
 Implementar hitboxes;
-    Implementar editor.
+    Implementar editor:
+        Exportar configurações para copiar/colar.
     https://doctorguile.github.io/ssf2st/.
 
 Implementar o fluxo de inputs (gerar imagens).

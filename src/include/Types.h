@@ -2,6 +2,21 @@
 
 #include "raylib/raylib.h"
 
+typedef enum GameMode {
+    GAME_MODE_PLAYING,
+    GAME_MODE_EDITING,
+} GameMode;
+
+typedef enum EditorMode {
+    EDITOR_MODE_COLLISION_BOX,
+    EDITOR_MODE_HIT_BOX_0,
+    EDITOR_MODE_HIT_BOX_1,
+    EDITOR_MODE_HIT_BOX_2,
+    EDITOR_MODE_HURT_BOX_0,
+    EDITOR_MODE_HURT_BOX_1,
+    EDITOR_MODE_HURT_BOX_2,
+} EditorMode;
+
 typedef enum PlayerState {
     PLAYER_STATE_IDLE,
     PLAYER_STATE_WALKING_FORWARD,
@@ -47,6 +62,7 @@ typedef enum PlayerState {
     PLAYER_STATE_LK_JUMP_BACKWARD,
     PLAYER_STATE_MK_JUMP_BACKWARD,
     PLAYER_STATE_HK_JUMP_BACKWARD,
+    PLAYER_STATE_LAST,
 } PlayerState;
 
 typedef struct AnimationFrameBoxes {
@@ -182,5 +198,7 @@ typedef struct GameWorld {
 
     Player *player1;
     Player *player2;
+
+    GameMode mode;
 
 } GameWorld;

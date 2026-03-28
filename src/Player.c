@@ -2106,9 +2106,10 @@ void drawPlayer( Player *player, Camera2D *camera ) {
 
     if ( player->showDebugInfo ) {
 
-        DrawCircle( player->pos.x, player->pos.y, 2, BLUE );
-        DrawRectangleLines( player->pos.x - player->dim.x / 2, player->pos.y, player->dim.x, player->dim.y, BLUE );
-        DrawText( TextFormat( "y: %.2f", player->pos.y ), player->pos.x + 10, player->pos.y, 10, BLACK );
+        DrawCircle( player->pos.x, player->pos.y, 1, ORANGE );
+        DrawRectangleLines( player->pos.x - player->dim.x / 2, player->pos.y, player->dim.x, player->dim.y, ORANGE );
+        DrawText( TextFormat( "x: %.2f", player->pos.x ), player->pos.x + 5, player->pos.y - 20, 10, BLACK );
+        DrawText( TextFormat( "y: %.2f", player->pos.y ), player->pos.x + 5, player->pos.y - 10, 10, BLACK );
 
         // states - will be removed!
         /*int pos = 0;
@@ -2209,73 +2210,35 @@ static void drawPlayerAnimationFrameBoxes( Player *player ) {
     }
 
     for ( int i = 0; i < af->boxes.hitboxCount; i++ ) {
+
         Rectangle *r = &af->boxes.hitboxes[i];
-        if ( player->lookingRight ) {
-            DrawRectangle( 
-                player->pos.x + r->x, 
-                player->pos.y + r->y,
-                r->width,
-                r->height,
-                Fade( BLUE, 0.4 )
-            );
-            DrawRectangleLines( 
-                player->pos.x + r->x, 
-                player->pos.y + r->y,
-                r->width,
-                r->height,
-                BLUE
-            );
-        } else {
-            DrawRectangle(
-                player->pos.x - r->x - r->width,
-                player->pos.y + r->y,
-                r->width,
-                r->height,
-                Fade( BLUE, 0.4 )
-            );
-            DrawRectangleLines(
-                player->pos.x - r->x - r->width,
-                player->pos.y + r->y,
-                r->width,
-                r->height,
-                BLUE
-            );
+        int x = player->pos.x + r->x;
+        int y = player->pos.y + r->y;
+
+        if ( !player->lookingRight ) {
+            x = player->pos.x - r->x - r->width;
         }
+
+        DrawText( TextFormat( "%d", i ), x + 1, y, 5, ColorBrightness( BLUE, -0.7 ) );
+        DrawRectangle( x, y, r->width, r->height, Fade( BLUE, 0.4 ) );
+        DrawRectangleLines( x, y, r->width, r->height, BLUE );
+
     }
 
     for ( int i = 0; i < af->boxes.hurtboxCount; i++ ) {
+
         Rectangle *r = &af->boxes.hurtboxes[i];
-        if ( player->lookingRight ) {
-            DrawRectangle( 
-                player->pos.x + r->x, 
-                player->pos.y + r->y,
-                r->width,
-                r->height,
-                Fade( RED, 0.4 )
-            );
-            DrawRectangleLines( 
-                player->pos.x + r->x, 
-                player->pos.y + r->y,
-                r->width,
-                r->height,
-                RED
-            );
-        } else {
-            DrawRectangle(
-                player->pos.x - r->x - r->width,
-                player->pos.y + r->y,
-                r->width,
-                r->height,
-                Fade( RED, 0.4 )
-            );
-            DrawRectangleLines(
-                player->pos.x - r->x - r->width,
-                player->pos.y + r->y,
-                r->width,
-                r->height,
-                RED
-            );
+        int x = player->pos.x + r->x;
+        int y = player->pos.y + r->y;
+
+        if ( !player->lookingRight ) {
+            x = player->pos.x - r->x - r->width;
         }
+
+        DrawText( TextFormat( "%d", i ), x + 1, y, 5, ColorBrightness( RED, -0.7 ) );
+        DrawRectangle( x, y, r->width, r->height, Fade( RED, 0.4 ) );
+        DrawRectangleLines( x, y, r->width, r->height, RED );
+
     }
 
 }
@@ -2764,9 +2727,118 @@ AnimationFrame *getPlayerCurrentAnimationFrame( Player *player ) {
             return getAnimationCurrentFrame( &player->mkJumpBackwardAnim );
         case PLAYER_STATE_HK_JUMP_BACKWARD:
             return getAnimationCurrentFrame( &player->hkJumpBackwardAnim );
+        default:
+            return NULL;
     }
 
-    return NULL;
+}
+
+Animation *getPlayerCurrentAnimation( Player *player ) {
+
+    switch ( player->state ) {
+        case PLAYER_STATE_IDLE:
+            return &player->idleAnim;
+        case PLAYER_STATE_WALKING_FORWARD:
+            if ( player->lookingRight ) {
+                return &player->forwardAnim;
+            }
+            return &player->backwardAnim;
+        case PLAYER_STATE_WALKING_BACKWARD:
+            if ( player->lookingRight ) {
+                return &player->backwardAnim;
+            }
+            return &player->forwardAnim;
+        case PLAYER_STATE_CROUCHING:
+            return &player->crouchingAnim;
+        case PLAYER_STATE_JUMPING_STRAIGHT:
+            return &player->straightJumpAnim;
+        case PLAYER_STATE_JUMPING_FORWARD:
+            if ( player->lookingRight ) {
+                return &player->forwardJumpAnim;
+            }
+            return &player->backwardJumpAnim;
+        case PLAYER_STATE_JUMPING_BACKWARD:
+            if ( player->lookingRight ) {
+                return &player->backwardJumpAnim;
+            }
+            return &player->forwardJumpAnim;
+        case PLAYER_STATE_LP:
+            return &player->lpAnim;
+        case PLAYER_STATE_MP:
+            return &player->mpAnim;
+        case PLAYER_STATE_HP:
+            return &player->hpAnim;
+        case PLAYER_STATE_LK:
+            return &player->lkAnim;
+        case PLAYER_STATE_MK:
+            return &player->mkAnim;
+        case PLAYER_STATE_HK:
+            return &player->hkAnim;
+        case PLAYER_STATE_LP_CLOSE:
+            return &player->lpCloseAnim;
+        case PLAYER_STATE_MP_CLOSE:
+            return &player->mpCloseAnim;
+        case PLAYER_STATE_HP_CLOSE:
+            return &player->hpCloseAnim;
+        case PLAYER_STATE_LK_CLOSE:
+            return &player->lkCloseAnim;
+        case PLAYER_STATE_MK_CLOSE:
+            return &player->mkCloseAnim;
+        case PLAYER_STATE_HK_CLOSE:
+            return &player->hkCloseAnim;
+        case PLAYER_STATE_LP_CROUCH:
+            return &player->lpCrouchAnim;
+        case PLAYER_STATE_MP_CROUCH:
+            return &player->mpCrouchAnim;
+        case PLAYER_STATE_HP_CROUCH:
+            return &player->hpCrouchAnim;
+        case PLAYER_STATE_LK_CROUCH:
+            return &player->lkCrouchAnim;
+        case PLAYER_STATE_MK_CROUCH:
+            return &player->mkCrouchAnim;
+        case PLAYER_STATE_HK_CROUCH:
+            return &player->hkCrouchAnim;
+        case PLAYER_STATE_JUMP_COOLDOWN:
+            return &player->jumpCooldownAnim;
+        case PLAYER_STATE_LP_JUMP_STRAIGHT:
+            return &player->lpJumpStraightAnim;
+        case PLAYER_STATE_MP_JUMP_STRAIGHT:
+            return &player->mpJumpStraightAnim;
+        case PLAYER_STATE_HP_JUMP_STRAIGHT:
+            return &player->hpJumpStraightAnim;
+        case PLAYER_STATE_LK_JUMP_STRAIGHT:
+            return &player->lkJumpStraightAnim;
+        case PLAYER_STATE_MK_JUMP_STRAIGHT:
+            return &player->mkJumpStraightAnim;
+        case PLAYER_STATE_HK_JUMP_STRAIGHT:
+            return &player->hkJumpStraightAnim;
+        case PLAYER_STATE_LP_JUMP_FORWARD:
+            return &player->lpJumpForwardAnim;
+        case PLAYER_STATE_MP_JUMP_FORWARD:
+            return &player->mpJumpForwardAnim;
+        case PLAYER_STATE_HP_JUMP_FORWARD:
+            return &player->hpJumpForwardAnim;
+        case PLAYER_STATE_LK_JUMP_FORWARD:
+            return &player->lkJumpForwardAnim;
+        case PLAYER_STATE_MK_JUMP_FORWARD:
+            return &player->mkJumpForwardAnim;
+        case PLAYER_STATE_HK_JUMP_FORWARD:
+            return &player->hkJumpForwardAnim;
+        case PLAYER_STATE_LP_JUMP_BACKWARD:
+            return &player->lpJumpBackwardAnim;
+        case PLAYER_STATE_MP_JUMP_BACKWARD:
+            return &player->mpJumpBackwardAnim;
+        case PLAYER_STATE_HP_JUMP_BACKWARD:
+            return &player->hpJumpBackwardAnim;
+        case PLAYER_STATE_LK_JUMP_BACKWARD:
+            return &player->lkJumpBackwardAnim;
+        case PLAYER_STATE_MK_JUMP_BACKWARD:
+            return &player->mkJumpBackwardAnim;
+        case PLAYER_STATE_HK_JUMP_BACKWARD:
+            return &player->hkJumpBackwardAnim;
+        default:
+            return NULL;
+    }
 
 }
 

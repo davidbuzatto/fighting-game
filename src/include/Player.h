@@ -15,4 +15,5 @@ void flipPlayerSide( Player *player );
 float distancePlayer( Player *player1, Player *player2 );
 
 AnimationFrame *getPlayerCurrentAnimationFrame( Player *player );
+Animation *getPlayerCurrentAnimation( Player *player );
 void resetPlayerAnimations( Player *player );
