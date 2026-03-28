@@ -172,7 +172,7 @@ typedef struct Player {
     int mkCloseTriggerDist;
     int hkCloseTriggerDist;
 
-    Animation *animations[50];
+    Animation *animations[80];
     int animationCount;
 
     PlayerState state;

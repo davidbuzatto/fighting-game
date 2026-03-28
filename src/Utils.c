@@ -1,4 +1,9 @@
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "raylib/raylib.h"
+#include "parson/parson.h"
+
 #include "Types.h"
 
 const char *utilsPlayerStateToText( PlayerState state ) {
@@ -66,5 +71,222 @@ const char *utilsEditorModeToText( EditorMode mode ) {
         case EDITOR_MODE_HURT_BOX_2: return "EDITOR_MODE_HURT_BOX_2";
         default: return "";
     }
+
+}
+
+void storePlayerAnimations( Player *p, bool prettyPrint, bool printOut, const char *filename ) {
+
+    JSON_Value *rootValue = json_value_init_object();
+    JSON_Object *rootObj = json_value_get_object( rootValue );
+
+    JSON_Value *animationsArrayValue = json_value_init_array();
+    JSON_Array *animationsArray = json_value_get_array( animationsArrayValue );
+
+    for ( int s = 0; s < p->animationCount; s++ ) {
+
+        Animation *a = p->animations[s];
+        if ( a == NULL ) continue;
+
+        JSON_Value *animationValue = json_value_init_object();
+        JSON_Object *animationObj = json_value_get_object( animationValue );
+
+        json_object_set_number( animationObj, "frameCount", a->frameCount );
+        json_object_set_number( animationObj, "currentFrame", a->currentFrame );
+        json_object_set_number( animationObj, "frameTimeCounter", a->frameTimeCounter );
+        json_object_set_boolean( animationObj, "stopAtLastFrame", a->stopAtLastFrame );
+        json_object_set_boolean( animationObj, "runOnce", a->runOnce );
+        json_object_set_boolean( animationObj, "finished", a->finished );
+
+        JSON_Value *framesArrayValue = json_value_init_array();
+        JSON_Array *framesArray = json_value_get_array( framesArrayValue );
+
+        for ( int f = 0; f < a->frameCount; f++ ) {
+
+            AnimationFrame *af = &a->frames[f];
+            AnimationFrameBoxes *afb = &af->boxes;
+
+            JSON_Value *frameValue = json_value_init_object();
+            JSON_Object *frameObj = json_value_get_object( frameValue );
+
+            JSON_Value *sourceValue = json_value_init_object();
+            JSON_Object *sourceObj = json_value_get_object( sourceValue );
+            json_object_set_number( sourceObj, "x", af->source.x );
+            json_object_set_number( sourceObj, "y", af->source.y );
+            json_object_set_number( sourceObj, "width", af->source.width );
+            json_object_set_number( sourceObj, "height", af->source.height );
+            json_object_set_value( frameObj, "source", sourceValue );
+
+            json_object_set_number( frameObj, "duration", af->duration );
+
+            JSON_Value *offsetValue = json_value_init_object();
+            JSON_Object *offsetObj = json_value_get_object( offsetValue );
+            json_object_set_number( offsetObj, "x", af->offset.x );
+            json_object_set_number( offsetObj, "y", af->offset.y );
+            json_object_set_value( frameObj, "offset", offsetValue );
+
+            JSON_Value *boxesValue = json_value_init_object();
+            JSON_Object *boxesObj = json_value_get_object( boxesValue );
+
+            JSON_Value *collisionBoxValue = json_value_init_object();
+            JSON_Object *collisionBoxObj = json_value_get_object( collisionBoxValue );
+            json_object_set_number( collisionBoxObj, "x", afb->collisionBox.x );
+            json_object_set_number( collisionBoxObj, "y", afb->collisionBox.y );
+            json_object_set_number( collisionBoxObj, "width", afb->collisionBox.width );
+            json_object_set_number( collisionBoxObj, "height", afb->collisionBox.height );
+            json_object_set_value( boxesObj, "collisionBox", collisionBoxValue );
+
+            json_object_set_number( boxesObj, "hitboxCount", afb->hitboxCount );
+            JSON_Value *hitboxArrayValue = json_value_init_array();
+            JSON_Array *hitboxArray = json_value_get_array( hitboxArrayValue );
+            for ( int i = 0; i < afb->hitboxCount; i++ ) {
+                Rectangle *r = &afb->hitboxes[i];
+                JSON_Value *rectValue = json_value_init_object();
+                JSON_Object *rectObj = json_value_get_object( rectValue );
+                json_object_set_number( rectObj, "x", r->x );
+                json_object_set_number( rectObj, "y", r->y );
+                json_object_set_number( rectObj, "width", r->width );
+                json_object_set_number( rectObj, "height", r->height );
+                json_array_append_value( hitboxArray, rectValue );
+            }
+            json_object_set_value( boxesObj, "hitboxes", hitboxArrayValue );
+
+            json_object_set_number( boxesObj, "hurtboxCount", afb->hurtboxCount );
+            JSON_Value *hurtboxArrayValue = json_value_init_array();
+            JSON_Array *hurtboxArray = json_value_get_array( hurtboxArrayValue );
+            for ( int i = 0; i < afb->hurtboxCount; i++ ) {
+                Rectangle *r = &afb->hurtboxes[i];
+                JSON_Value *rectValue = json_value_init_object();
+                JSON_Object *rectObj = json_value_get_object( rectValue );
+                json_object_set_number( rectObj, "x", r->x );
+                json_object_set_number( rectObj, "y", r->y );
+                json_object_set_number( rectObj, "width", r->width );
+                json_object_set_number( rectObj, "height", r->height );
+                json_array_append_value( hurtboxArray, rectValue );
+            }
+            json_object_set_value( boxesObj, "hurtboxes", hurtboxArrayValue );
+
+            json_object_set_value( frameObj, "boxes", boxesValue );
+            json_array_append_value( framesArray, frameValue );
+
+        }
+
+        json_object_set_value( animationObj, "frames", framesArrayValue );
+        json_array_append_value( animationsArray, animationValue );
+
+    }
+
+    json_object_set_value( rootObj, "animations", animationsArrayValue );
+
+    if ( filename != NULL ) {
+        if ( prettyPrint ) {
+            json_serialize_to_file_pretty( rootValue, filename );
+        } else {
+            json_serialize_to_file( rootValue, filename );
+        }
+    }
+
+    if ( printOut ) {
+        char *serialized_string = NULL;
+        if ( prettyPrint ) {
+            serialized_string = json_serialize_to_string_pretty( rootValue );
+        } else {
+            serialized_string = json_serialize_to_string( rootValue );
+        }
+        puts( serialized_string );
+        json_free_serialized_string( serialized_string );    
+    }
+    
+    json_value_free( rootValue );
+
+}
+
+void loadPlayerAnimationFrameBoxes( Player *p, const char *filename ) {
+
+    JSON_Value *rootValue = json_parse_file( filename );
+    if ( rootValue == NULL ) {
+        printf( "loadPlayerAnimationFrameBoxes: falha ao carregar \"%s\"\n", filename );
+        return;
+    }
+
+    JSON_Object *rootObj = json_value_get_object( rootValue );
+    JSON_Array *animationsArray = json_object_get_array( rootObj, "animations" );
+    if ( animationsArray == NULL ) {
+        printf( "loadPlayerAnimationFrameBoxes: array \"animations\" nao encontrado em \"%s\"\n", filename );
+        json_value_free( rootValue );
+        return;
+    }
+
+    int animCount = (int) json_array_get_count( animationsArray );
+    if ( animCount > p->animationCount ) {
+        animCount = p->animationCount;
+    }
+
+    for ( int s = 0; s < animCount; s++ ) {
+
+        Animation *a = p->animations[s];
+        if ( a == NULL ) continue;
+
+        JSON_Object *animationObj = json_array_get_object( animationsArray, s );
+        if ( animationObj == NULL ) continue;
+
+        JSON_Array *framesArray = json_object_get_array( animationObj, "frames" );
+        if ( framesArray == NULL ) continue;
+
+        int frameCount = (int) json_array_get_count( framesArray );
+        if ( frameCount > a->frameCount ) {
+            frameCount = a->frameCount;
+        }
+
+        for ( int f = 0; f < frameCount; f++ ) {
+
+            JSON_Object *frameObj = json_array_get_object( framesArray, f );
+            if ( frameObj == NULL ) continue;
+
+            JSON_Object *boxesObj = json_object_get_object( frameObj, "boxes" );
+            if ( boxesObj == NULL ) continue;
+
+            AnimationFrameBoxes *afb = &a->frames[f].boxes;
+
+            JSON_Object *collisionBoxObj = json_object_get_object( boxesObj, "collisionBox" );
+            if ( collisionBoxObj != NULL ) {
+                afb->collisionBox.x      = (float) json_object_get_number( collisionBoxObj, "x" );
+                afb->collisionBox.y      = (float) json_object_get_number( collisionBoxObj, "y" );
+                afb->collisionBox.width  = (float) json_object_get_number( collisionBoxObj, "width" );
+                afb->collisionBox.height = (float) json_object_get_number( collisionBoxObj, "height" );
+            }
+
+            afb->hitboxCount = (int) json_object_get_number( boxesObj, "hitboxCount" );
+            if ( afb->hitboxCount > 3 ) afb->hitboxCount = 3;
+            JSON_Array *hitboxArray = json_object_get_array( boxesObj, "hitboxes" );
+            if ( hitboxArray != NULL ) {
+                for ( int i = 0; i < afb->hitboxCount; i++ ) {
+                    JSON_Object *rectObj = json_array_get_object( hitboxArray, i );
+                    if ( rectObj == NULL ) continue;
+                    afb->hitboxes[i].x      = (float) json_object_get_number( rectObj, "x" );
+                    afb->hitboxes[i].y      = (float) json_object_get_number( rectObj, "y" );
+                    afb->hitboxes[i].width  = (float) json_object_get_number( rectObj, "width" );
+                    afb->hitboxes[i].height = (float) json_object_get_number( rectObj, "height" );
+                }
+            }
+
+            afb->hurtboxCount = (int) json_object_get_number( boxesObj, "hurtboxCount" );
+            if ( afb->hurtboxCount > 3 ) afb->hurtboxCount = 3;
+            JSON_Array *hurtboxArray = json_object_get_array( boxesObj, "hurtboxes" );
+            if ( hurtboxArray != NULL ) {
+                for ( int i = 0; i < afb->hurtboxCount; i++ ) {
+                    JSON_Object *rectObj = json_array_get_object( hurtboxArray, i );
+                    if ( rectObj == NULL ) continue;
+                    afb->hurtboxes[i].x      = (float) json_object_get_number( rectObj, "x" );
+                    afb->hurtboxes[i].y      = (float) json_object_get_number( rectObj, "y" );
+                    afb->hurtboxes[i].width  = (float) json_object_get_number( rectObj, "width" );
+                    afb->hurtboxes[i].height = (float) json_object_get_number( rectObj, "height" );
+                }
+            }
+
+        }
+
+    }
+
+    json_value_free( rootValue );
 
 }

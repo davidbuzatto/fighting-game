@@ -1,7 +1,10 @@
 Implementar hitboxes;
     Implementar editor:
+        Opção para rodar a animação 1 vez com 1 segundo;
+        Opção para copiar os dados das caixas para o próximo frame;
+        Opcão para resetar a caixa atual;
+        Opção para persistir;
         Tratar personagem à direita.
-        Exportar configurações para copiar/colar.
     https://doctorguile.github.io/ssf2st/.
 
 Implementar o fluxo de inputs (gerar imagens).

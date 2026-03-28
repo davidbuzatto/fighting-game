@@ -23,8 +23,11 @@
 #include "Utils.h"
 
 #define SHOW_BOXES true
-#define SHOW_DEBUG_INFO true
+#define SHOW_DEBUG_INFO false
 #define INITIAL_GAME_MODE GAME_MODE_EDITING
+
+#define PLAYER_1_FILE "resources/animations/ryu.json"
+#define PLAYER_2_FILE "resources/animations/ken.json"
 
 static void drawGameWorldPlaying( GameWorld *gw );
 static void drawGameWorldEditing( GameWorld *gw );
@@ -112,6 +115,12 @@ GameWorld* createGameWorld( void ) {
     gw->player2 = player2;
 
     gw->mode = INITIAL_GAME_MODE;
+
+    //storePlayerAnimations( gw->player1, true, false, PLAYER_1_FILE );
+    //storePlayerAnimations( gw->player2, true, false, PLAYER_2_FILE );
+
+    loadPlayerAnimationFrameBoxes( gw->player1, PLAYER_1_FILE );
+    loadPlayerAnimationFrameBoxes( gw->player2, PLAYER_2_FILE );
 
     return gw;
 
