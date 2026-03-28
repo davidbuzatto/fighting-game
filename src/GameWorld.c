@@ -347,21 +347,27 @@ static void updateGameWorldEditing( GameWorld *gw, float delta ) {
     if ( IsKeyDown( KEY_LEFT_CONTROL ) ) {
         if ( IsKeyPressed( KEY_A ) ) {
             gw->player1->pos.x--;
-        } else if ( IsKeyPressed( KEY_D ) ) {
+        }
+        if ( IsKeyPressed( KEY_D ) ) {
             gw->player1->pos.x++;
-        } else if ( IsKeyPressed( KEY_W ) ) {
+        }
+        if ( IsKeyPressed( KEY_W ) ) {
             gw->player1->pos.y--;
-        } else if ( IsKeyPressed( KEY_S ) ) {
+        }
+        if ( IsKeyPressed( KEY_S ) ) {
             gw->player1->pos.y++;
         }
     } else {
         if ( IsKeyDown( KEY_A ) ) {
             gw->player1->pos.x--;
-        } else if ( IsKeyDown( KEY_D ) ) {
+        }
+        if ( IsKeyDown( KEY_D ) ) {
             gw->player1->pos.x++;
-        } else if ( IsKeyDown( KEY_W ) ) {
+        }
+        if ( IsKeyDown( KEY_W ) ) {
             gw->player1->pos.y--;
-        } else if ( IsKeyDown( KEY_S ) ) {
+        }
+        if ( IsKeyDown( KEY_S ) ) {
             gw->player1->pos.y++;
         }
     }
@@ -405,21 +411,27 @@ static void editAnimationFrameBox( Rectangle *box ) {
         if ( IsKeyDown( KEY_RIGHT_CONTROL ) ) {
             if ( IsKeyPressed( KEY_LEFT ) ) {
                 box->x--;
-            } else if ( IsKeyPressed( KEY_RIGHT ) ) {
+            }
+            if ( IsKeyPressed( KEY_RIGHT ) ) {
                 box->x++;
-            } else if ( IsKeyPressed( KEY_UP ) ) {
+            }
+            if ( IsKeyPressed( KEY_UP ) ) {
                 box->y--;
-            } else if ( IsKeyPressed( KEY_DOWN ) ) {
+            }
+            if ( IsKeyPressed( KEY_DOWN ) ) {
                 box->y++;
             }
         } else {
             if ( IsKeyDown( KEY_LEFT ) ) {
                 box->x--;
-            } else if ( IsKeyDown( KEY_RIGHT ) ) {
+            }
+            if ( IsKeyDown( KEY_RIGHT ) ) {
                 box->x++;
-            } else if ( IsKeyDown( KEY_UP ) ) {
+            }
+            if ( IsKeyDown( KEY_UP ) ) {
                 box->y--;
-            } else if ( IsKeyDown( KEY_DOWN ) ) {
+            }
+            if ( IsKeyDown( KEY_DOWN ) ) {
                 box->y++;
             }
         }
@@ -430,14 +442,17 @@ static void editAnimationFrameBox( Rectangle *box ) {
                 if ( box->width < 0 ) {
                     box->width = 0;
                 }
-            } else if ( IsKeyPressed( KEY_RIGHT ) ) {
+            }
+            if ( IsKeyPressed( KEY_RIGHT ) ) {
                 box->width++;
-            } else if ( IsKeyPressed( KEY_UP ) ) {
+            }
+            if ( IsKeyPressed( KEY_UP ) ) {
                 box->height--;
                 if ( box->height < 0 ) {
                     box->height = 0;
                 }
-            } else if ( IsKeyPressed( KEY_DOWN ) ) {
+            }
+            if ( IsKeyPressed( KEY_DOWN ) ) {
                 box->height++;
             }
         } else {
@@ -446,17 +461,27 @@ static void editAnimationFrameBox( Rectangle *box ) {
                 if ( box->width < 0 ) {
                     box->width = 0;
                 }
-            } else if ( IsKeyDown( KEY_RIGHT ) ) {
+            }
+            if ( IsKeyDown( KEY_RIGHT ) ) {
                 box->width++;
-            } else if ( IsKeyDown( KEY_UP ) ) {
+            }
+            if ( IsKeyDown( KEY_UP ) ) {
                 box->height--;
                 if ( box->height < 0 ) {
                     box->height = 0;
                 }
-            } else if ( IsKeyDown( KEY_DOWN ) ) {
+            }
+            if ( IsKeyDown( KEY_DOWN ) ) {
                 box->height++;
             }
         }
+    }
+
+    if ( IsKeyPressed( KEY_R ) ) {
+        box->x = 0;
+        box->y = 0;
+        box->width = 0;
+        box->height = 0;
     }
 
 }
