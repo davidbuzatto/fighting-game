@@ -1,5 +1,6 @@
 Implementar hitboxes;
     Implementar editor:
+        Tratar personagem à direita.
         Exportar configurações para copiar/colar.
     https://doctorguile.github.io/ssf2st/.
 

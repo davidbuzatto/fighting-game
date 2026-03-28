@@ -309,11 +309,13 @@ static void updateGameWorldEditing( GameWorld *gw, float delta ) {
             } else {
                 gw->player1->state = state;
             }
+            editorMode = EDITOR_MODE_COLLISION_BOX;
         } else if ( IsKeyPressed( KEY_DOWN ) ) {
             gw->player1->state++;
             if ( gw->player1->state == PLAYER_STATE_LAST ) {
                 gw->player1->state = PLAYER_STATE_IDLE;
             }
+            editorMode = EDITOR_MODE_COLLISION_BOX;
         }
     }
 
@@ -355,23 +357,23 @@ static void updateGameWorldEditing( GameWorld *gw, float delta ) {
         }
     }
 
+    AnimationFrame *af = getPlayerCurrentAnimationFrame( gw->player1 );
+
     if ( IsKeyPressed( KEY_ONE ) ) {
         editorMode = EDITOR_MODE_COLLISION_BOX;
-    } else if ( IsKeyPressed( KEY_TWO ) ) {
+    } else if ( IsKeyPressed( KEY_TWO ) && af->boxes.hitboxCount >= 1 ) {
         editorMode = EDITOR_MODE_HIT_BOX_0;
-    } else if ( IsKeyPressed( KEY_THREE ) ) {
+    } else if ( IsKeyPressed( KEY_THREE ) && af->boxes.hitboxCount >= 2 ) {
         editorMode = EDITOR_MODE_HIT_BOX_1;
-    } else if ( IsKeyPressed( KEY_FOUR ) ) {
+    } else if ( IsKeyPressed( KEY_FOUR ) && af->boxes.hitboxCount >= 3 ) {
         editorMode = EDITOR_MODE_HIT_BOX_2;
-    } else if ( IsKeyPressed( KEY_FIVE ) ) {
+    } else if ( IsKeyPressed( KEY_FIVE ) && af->boxes.hurtboxCount >= 1 ) {
         editorMode = EDITOR_MODE_HURT_BOX_0;
-    } else if ( IsKeyPressed( KEY_SIX ) ) {
+    } else if ( IsKeyPressed( KEY_SIX ) && af->boxes.hurtboxCount >= 2 ) {
         editorMode = EDITOR_MODE_HURT_BOX_1;
-    } else if ( IsKeyPressed( KEY_SEVEN ) ) {
+    } else if ( IsKeyPressed( KEY_SEVEN && af->boxes.hurtboxCount >= 3 ) ) {
         editorMode = EDITOR_MODE_HURT_BOX_2;
     }
-
-    AnimationFrame *af = getPlayerCurrentAnimationFrame( gw->player1 );
 
     switch ( editorMode ) {
         case EDITOR_MODE_COLLISION_BOX: editAnimationFrameBox( &af->boxes.collisionBox ); break;
@@ -416,20 +418,32 @@ static void editAnimationFrameBox( Rectangle *box ) {
         if ( IsKeyDown( KEY_RIGHT_CONTROL ) ) {
             if ( IsKeyPressed( KEY_LEFT ) ) {
                 box->width--;
+                if ( box->width < 0 ) {
+                    box->width = 0;
+                }
             } else if ( IsKeyPressed( KEY_RIGHT ) ) {
                 box->width++;
             } else if ( IsKeyPressed( KEY_UP ) ) {
                 box->height--;
+                if ( box->height < 0 ) {
+                    box->height = 0;
+                }
             } else if ( IsKeyPressed( KEY_DOWN ) ) {
                 box->height++;
             }
         } else {
             if ( IsKeyDown( KEY_LEFT ) ) {
                 box->width--;
+                if ( box->width < 0 ) {
+                    box->width = 0;
+                }
             } else if ( IsKeyDown( KEY_RIGHT ) ) {
                 box->width++;
             } else if ( IsKeyDown( KEY_UP ) ) {
                 box->height--;
+                if ( box->height < 0 ) {
+                    box->height = 0;
+                }
             } else if ( IsKeyDown( KEY_DOWN ) ) {
                 box->height++;
             }
@@ -447,7 +461,7 @@ static void showAnimationFrameBoxDetail( Player *p, Rectangle *box, Color color 
     int w = (int) box->width;
     int h = (int) box->height;
 
-    if ( !( x == 0 && y == 0 && w == 0 && h == 0 ) ) {
+    if ( !( w == 0 && h == 0 ) ) {
         DrawText( "offsets", p->pos.x + box->x, p->pos.y + box->y - 50, 5, color );
         DrawText( TextFormat( "x: %d", x ), p->pos.x + box->x, p->pos.y + box->y - 40, 5, color );
         DrawText( TextFormat( "y: %d", y ), p->pos.x + box->x, p->pos.y + box->y - 30, 5, color );
