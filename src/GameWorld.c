@@ -39,6 +39,8 @@ static void editAnimationFrameBox( Rectangle *box );
 static void showAnimationFrameBoxDetail( Player *p, Rectangle *box, Camera2D camera, Color color );
 static void copyAnimationFrameBoxesPrevious( Player *p );
 static void copyAnimationFrameBoxesNext( Player *p );
+static void copyAllFrameBoxesToPreviousAnimation( Player *p );
+static void copyAllFrameBoxesToNextAnimation( Player *p );
 
 static void updateCameraPlaying( GameWorld *gw );
 static void updateCameraEditing( GameWorld *gw );
@@ -325,17 +327,26 @@ static void drawGameWorldEditing( GameWorld *gw ) {
 static void updateGameWorldEditing( GameWorld *gw, float delta ) {
 
     if ( IsKeyDown( KEY_LEFT_CONTROL ) && IsKeyPressed( KEY_S ) ) {
+        resetPlayerAnimations( gw->player1 );
         storePlayerAnimations( gw->player1, true, false, PLAYER_1_FILE );
         return;
     }
 
     if ( IsKeyDown( KEY_LEFT_CONTROL ) && IsKeyPressed( KEY_X ) ) {
-        copyAnimationFrameBoxesPrevious( gw->player1 );
+        if ( IsKeyDown( KEY_LEFT_ALT ) ) {
+            copyAllFrameBoxesToPreviousAnimation( gw->player1 );
+        } else {
+            copyAnimationFrameBoxesPrevious( gw->player1 );
+        }
         return;
     }
 
     if ( IsKeyDown( KEY_LEFT_CONTROL ) && IsKeyPressed( KEY_C ) ) {
-        copyAnimationFrameBoxesNext( gw->player1 );
+        if ( IsKeyDown( KEY_LEFT_ALT ) ) {
+            copyAllFrameBoxesToNextAnimation( gw->player1 );
+        } else {
+            copyAnimationFrameBoxesNext( gw->player1 );
+        }
         return;
     }
 
@@ -591,6 +602,75 @@ static void copyAnimationFrameBoxesNext( Player *p ) {
             destAf->boxes = sourceAf->boxes;
             break;
         }
+    }
+
+}
+
+static void copyAllFrameBoxesToPreviousAnimation( Player *p ) {
+
+    Animation *sourceA = getPlayerCurrentAnimation( p );
+    Animation *destA = NULL;
+
+    for ( int i = 0; i < p->animationCount; i++ ) {
+        if ( p->animations[i] == sourceA ) {
+            int prev = i - 1;
+            if ( prev < 0 ) {
+                prev = p->animationCount - 1;
+            }
+            destA = p->animations[prev];
+            break;
+        }
+    }
+
+    if ( destA != NULL ) {
+
+        int quant = 0;
+
+        if ( sourceA->frameCount <= destA->frameCount ) {
+            quant = sourceA->frameCount;
+        } else {
+            quant = destA->frameCount;
+        }
+
+        for ( int i = 0; i < quant; i++ ) {
+            AnimationFrame *sourceAf = &sourceA->frames[i];
+            AnimationFrame *destAf = &destA->frames[i];
+            destAf->boxes = sourceAf->boxes;
+        }
+
+    }
+
+}
+
+static void copyAllFrameBoxesToNextAnimation( Player *p ) {
+        
+    Animation *sourceA = getPlayerCurrentAnimation( p );
+    Animation *destA = NULL;
+
+    for ( int i = 0; i < p->animationCount; i++ ) {
+        if ( p->animations[i] == sourceA ) {
+            int next = ( i + 1 ) % p->animationCount;
+            destA = p->animations[next];
+            break;
+        }
+    }
+
+    if ( destA != NULL ) {
+
+        int quant = 0;
+
+        if ( sourceA->frameCount <= destA->frameCount ) {
+            quant = sourceA->frameCount;
+        } else {
+            quant = destA->frameCount;
+        }
+
+        for ( int i = 0; i < quant; i++ ) {
+            AnimationFrame *sourceAf = &sourceA->frames[i];
+            AnimationFrame *destAf = &destA->frames[i];
+            destAf->boxes = sourceAf->boxes;
+        }
+
     }
 
 }
