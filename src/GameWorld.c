@@ -340,10 +340,18 @@ static void updateGameWorldEditing( GameWorld *gw, float delta ) {
     }
 
     if ( IsKeyDown( KEY_O ) ) {
-        if ( IsKeyPressed( KEY_LEFT ) ) {
-            onionOffset--;
-        } else if ( IsKeyPressed( KEY_RIGHT ) ) {
-            onionOffset++;
+        if ( IsKeyDown( KEY_RIGHT_CONTROL ) ) {
+            if ( IsKeyPressed( KEY_LEFT ) ) {
+                onionOffset--;
+            } else if ( IsKeyPressed( KEY_RIGHT ) ) {
+                onionOffset++;
+            }
+        } else {
+            if ( IsKeyDown( KEY_LEFT ) ) {
+                onionOffset--;
+            } else if ( IsKeyDown( KEY_RIGHT ) ) {
+                onionOffset++;
+            }
         }
         return;
     }
