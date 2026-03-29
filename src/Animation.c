@@ -12,7 +12,7 @@ void destroyAnimationFrames( Animation *anim ) {
     free( anim->frames );
 }
 
-void updateAnimation( Animation *anim, float delta ) {
+void updateAnimation( Animation *anim, DurationMode durationMode, float delta ) {
 
     if ( anim->finished ) {
         return;
@@ -22,7 +22,15 @@ void updateAnimation( Animation *anim, float delta ) {
 
     AnimationFrame *frame = getAnimationCurrentFrame( anim );
 
-    if ( anim->frameTimeCounter >= frame->duration ) {
+    int actualDuration = 0;
+
+    if ( durationMode == DURATION_MODE_MILLISECONDS ) {
+        actualDuration = frame->duration;
+    } else { // DURATION_MODE_FRAMES
+        actualDuration = (int) ( frame->duration * 16.67f );
+    }
+
+    if ( anim->frameTimeCounter >= actualDuration ) {
         anim->frameTimeCounter = 0;
         anim->currentFrame++;
 

@@ -146,7 +146,7 @@ Player *createPlayer() {
     return p;
 }
 
-void initializePlayerRyu( float x, float y, Player *p, bool showBoxes, bool showDebugInfo ) {
+void initializePlayerRyu( float x, float y, Player *p, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo ) {
 
     p->pos.x = x;
     p->pos.y = y;
@@ -157,6 +157,7 @@ void initializePlayerRyu( float x, float y, Player *p, bool showBoxes, bool show
     p->forwardSpeed = 150;
     p->backwardSpeed = 120;
     p->jumpSpeed = 420;
+    p->animationDurationMode = animationDurationMode;
     p->state = PLAYER_STATE_IDLE;
     p->lastState = PLAYER_STATE_IDLE;
     p->lookingRight = true;
@@ -177,12 +178,12 @@ void initializePlayerRyu( float x, float y, Player *p, bool showBoxes, bool show
     p->idleAnim.runOnce = false;
     p->idleAnim.finished = false;
     createAnimationFrames( &p->idleAnim, p->idleAnim.frameCount );
-    p->idleAnim.frames[0] = (AnimationFrame) { {   1, 142, -64, 96 }, 65, { 0, 0 }, .boxes = { 0 } };
-    p->idleAnim.frames[1] = (AnimationFrame) { {  66, 142, -64, 96 }, 65, { 0, 0 }, .boxes = { 0 } };
-    p->idleAnim.frames[2] = (AnimationFrame) { { 131, 142, -64, 96 }, 65, { 0, 0 }, .boxes = { 0 } };
-    p->idleAnim.frames[3] = (AnimationFrame) { { 196, 142, -64, 96 }, 65, { 0, 0 }, .boxes = { 0 } };
-    p->idleAnim.frames[4] = (AnimationFrame) { { 131, 142, -64, 96 }, 65, { 0, 0 }, .boxes = { 0 } };
-    p->idleAnim.frames[5] = (AnimationFrame) { {  66, 142, -64, 96 }, 65, { 0, 0 }, .boxes = { 0 } };
+    p->idleAnim.frames[0] = (AnimationFrame) { {   1, 142, -64, 96 }, 50, { 0, 0 }, .boxes = { 0 } };
+    p->idleAnim.frames[1] = (AnimationFrame) { {  66, 142, -64, 96 }, 50, { 0, 0 }, .boxes = { 0 } };
+    p->idleAnim.frames[2] = (AnimationFrame) { { 131, 142, -64, 96 }, 50, { 0, 0 }, .boxes = { 0 } };
+    p->idleAnim.frames[3] = (AnimationFrame) { { 196, 142, -64, 96 }, 50, { 0, 0 }, .boxes = { 0 } };
+    p->idleAnim.frames[4] = (AnimationFrame) { { 131, 142, -64, 96 }, 50, { 0, 0 }, .boxes = { 0 } };
+    p->idleAnim.frames[5] = (AnimationFrame) { {  66, 142, -64, 96 }, 50, { 0, 0 }, .boxes = { 0 } };
 
     p->forwardAnim.frameCount = 5;
     p->forwardAnim.currentFrame = 0;
@@ -710,9 +711,9 @@ void initializePlayerRyu( float x, float y, Player *p, bool showBoxes, bool show
 
 }
 
-void initializePlayerKen( float x, float y, Player *p, bool showBoxes, bool showDebugInfo ) {
+void initializePlayerKen( float x, float y, Player *p, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo ) {
 
-    initializePlayerRyu( x, y, p, showBoxes, showDebugInfo );
+    initializePlayerRyu( x, y, p, animationDurationMode, showBoxes, showDebugInfo );
     p->texture = &rm.kenTexture;
 
 }
@@ -922,7 +923,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
     }
 
     if ( activeAnim != NULL ) {
-        updateAnimation( activeAnim, delta );
+        updateAnimation( activeAnim, player->animationDurationMode, delta );
         if ( activeAnim->finished ) {
             bool isCrouchAttack = (
                 player->state == PLAYER_STATE_LP_CROUCH ||
@@ -970,20 +971,20 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
          player->state == PLAYER_STATE_JUMPING_BACKWARD ) {
         switch ( player->state ) {
             case PLAYER_STATE_JUMPING_STRAIGHT:
-                updateAnimation( &player->straightJumpAnim, delta );
+                updateAnimation( &player->straightJumpAnim, player->animationDurationMode, delta );
                 break;
             case PLAYER_STATE_JUMPING_FORWARD:
                 if ( player->lookingRight ) {
-                    updateAnimation( &player->forwardJumpAnim, delta );
+                    updateAnimation( &player->forwardJumpAnim, player->animationDurationMode, delta );
                 } else {
-                    updateAnimation( &player->backwardJumpAnim, delta );
+                    updateAnimation( &player->backwardJumpAnim, player->animationDurationMode, delta );
                 }
                 break;
             case PLAYER_STATE_JUMPING_BACKWARD:
                 if ( player->lookingRight ) {
-                    updateAnimation( &player->backwardJumpAnim, delta );
+                    updateAnimation( &player->backwardJumpAnim, player->animationDurationMode, delta );
                 } else {
-                    updateAnimation( &player->forwardJumpAnim, delta );
+                    updateAnimation( &player->forwardJumpAnim, player->animationDurationMode, delta );
                 }
                 break;
             default:
@@ -1072,7 +1073,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
 
     // jump cooldown in progress: blocks input until animation finishes
     if ( player->state == PLAYER_STATE_JUMP_COOLDOWN ) {
-        updateAnimation( &player->jumpCooldownAnim, delta );
+        updateAnimation( &player->jumpCooldownAnim, player->animationDurationMode, delta );
         if ( player->jumpCooldownAnim.finished ) {
             player->state = PLAYER_STATE_IDLE;
             resetAnimation( &player->jumpCooldownAnim );
@@ -1205,24 +1206,24 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
     // updates floor animation
     switch ( player->state ) {
         case PLAYER_STATE_IDLE:
-            updateAnimation( &player->idleAnim, delta );
+            updateAnimation( &player->idleAnim, player->animationDurationMode, delta );
             break;
         case PLAYER_STATE_WALKING_FORWARD:
             if ( player->lookingRight ) {
-                updateAnimation( &player->forwardAnim, delta );
+                updateAnimation( &player->forwardAnim, player->animationDurationMode, delta );
             } else {
-                updateAnimation( &player->backwardAnim, delta );
+                updateAnimation( &player->backwardAnim, player->animationDurationMode, delta );
             }
             break;
         case PLAYER_STATE_WALKING_BACKWARD:
             if ( player->lookingRight ) {
-                updateAnimation( &player->backwardAnim, delta );
+                updateAnimation( &player->backwardAnim, player->animationDurationMode, delta );
             } else {
-                updateAnimation( &player->forwardAnim, delta );
+                updateAnimation( &player->forwardAnim, player->animationDurationMode, delta );
             }
             break;
         case PLAYER_STATE_CROUCHING:
-            updateAnimation( &player->crouchingAnim, delta );
+            updateAnimation( &player->crouchingAnim, player->animationDurationMode, delta );
             break;
         default:
             break;

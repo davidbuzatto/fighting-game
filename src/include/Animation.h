@@ -4,7 +4,7 @@
 
 void createAnimationFrames( Animation *anim, int frameCount );
 void destroyAnimationFrames( Animation *anim );
-void updateAnimation( Animation *anim, float delta );
+void updateAnimation( Animation *anim, DurationMode durationMode, float delta );
 
 int getAnimationCurrentFrameNumber( Animation *anim );
 AnimationFrame *getAnimationCurrentFrame( Animation *anim );

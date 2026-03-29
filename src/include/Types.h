@@ -17,6 +17,11 @@ typedef enum EditorMode {
     EDITOR_MODE_HURT_BOX_2,
 } EditorMode;
 
+typedef enum DurationMode {
+    DURATION_MODE_MILLISECONDS,
+    DURATION_MODE_FRAMES,
+} DurationMode;
+
 typedef enum PlayerState {
     PLAYER_STATE_IDLE,
     PLAYER_STATE_WALKING_FORWARD,
@@ -75,7 +80,7 @@ typedef struct AnimationFrameBoxes {
 
 typedef struct AnimationFrame {
     Rectangle source;
-    int duration;      // milliseconds
+    int duration;      // milliseconds OR frames (see updateAnimation)
     Vector2 offset;
     AnimationFrameBoxes boxes;
 } AnimationFrame;
@@ -113,6 +118,8 @@ typedef struct Player {
     float forwardSpeed;
     float backwardSpeed;
     float jumpSpeed;
+
+    DurationMode animationDurationMode;
 
     Animation idleAnim;
     Animation forwardAnim;

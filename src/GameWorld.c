@@ -24,6 +24,7 @@
 
 #define SHOW_BOXES true
 #define SHOW_DEBUG_INFO false
+#define DURATION_MODE DURATION_MODE_MILLISECONDS
 #define INITIAL_GAME_MODE GAME_MODE_EDITING
 
 #define PLAYER_1_FILE "resources/animations/ryu.json"
@@ -34,7 +35,9 @@ static void drawGameWorldEditing( GameWorld *gw );
 static void updateGameWorldPlaying( GameWorld *gw, float delta );
 static void updateGameWorldEditing( GameWorld *gw, float delta );
 static void editAnimationFrameBox( Rectangle *box );
-static void showAnimationFrameBoxDetail( Player *p, Rectangle *box, Color color );
+static void showAnimationFrameBoxDetail( Player *p, Rectangle *box, Camera2D camera, Color color );
+static void copyAnimationFrameBoxesPrevious( Player *p );
+static void copyAnimationFrameBoxesNext( Player *p );
 
 static void updateCameraPlaying( GameWorld *gw );
 static void updateCameraEditing( GameWorld *gw );
@@ -81,8 +84,8 @@ GameWorld* createGameWorld( void ) {
     Player *player1 = createPlayer();
     Player *player2 = createPlayer();
 
-    initializePlayerRyu( gw->stageTexture->width / 2 - 78, 542, player1, SHOW_BOXES, SHOW_DEBUG_INFO );
-    initializePlayerKen( gw->stageTexture->width / 2 + 50, 542, player2, SHOW_BOXES, SHOW_DEBUG_INFO );
+    initializePlayerRyu( gw->stageTexture->width / 2 - 78, 542, player1, DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
+    initializePlayerKen( gw->stageTexture->width / 2 + 50, 542, player2, DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
     flipPlayerSide( player2 );
 
     player1->kb = (PlayerKeyBindings) {
@@ -219,7 +222,7 @@ static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
     processInputPlayer( gw->player1, gw->player2, delta );
     processInputPlayer( gw->player2, gw->player1, delta );
 
-    // TODO: improve
+    // camera
     playerDist = fabs( gw->player1->pos.x - gw->player2->pos.x ) * gw->camera.zoom;
     float width = ( gw->player1->dim.x + gw->player2->dim.x ) / 2 * gw->camera.zoom;
     bool adjust = false;
@@ -232,7 +235,7 @@ static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
     updatePlayer( gw->player1, gw->player2, gw->gravity, delta );
     updatePlayer( gw->player2, gw->player1, gw->gravity, delta );
 
-    // TODO: improve
+    // camera
     if ( adjust ) {
         if ( !player1RightPlayer2 ) {
             gw->player1->pos.x += 0.1f;
@@ -285,29 +288,45 @@ static void drawGameWorldEditing( GameWorld *gw ) {
 
     drawPlayer( gw->player1, &gw->camera );
 
-    DrawText( "Animation Frame Box Editor", basePos.x + 5, basePos.y + 5, 10, BLACK );
-    DrawText( TextFormat( "Mode: %s", utilsEditorModeToText( editorMode ) ), basePos.x + 5, basePos.y + 20, 10, BLACK );
-    DrawText( TextFormat( "State: %s", utilsPlayerStateToText( gw->player1->state ) ), basePos.x + 5, basePos.y + 30, 10, BLACK );
-    DrawText( TextFormat( "Frame: %d", getPlayerCurrentAnimation( gw->player1 )->currentFrame ), basePos.x + 5, basePos.y + 40, 10, BLACK );
+    EndMode2D();
+
+    DrawRectangle( 0, 0, GetScreenWidth(), 100, Fade( BLACK, 0.2f ) );
+    DrawText( "Animation Frame Box Editor", 5, 5, 20, BLACK );
+    DrawText( TextFormat( "Mode: %s", utilsEditorModeToText( editorMode ) ), 5, 35, 20, BLACK );
+    DrawText( TextFormat( "State: %s", utilsPlayerStateToText( gw->player1->state ) ), 5, 55, 20, BLACK );
+    DrawText( TextFormat( "Frame: %d", getPlayerCurrentAnimation( gw->player1 )->currentFrame ), 5, 75, 20, BLACK );
 
     AnimationFrame *af = getPlayerCurrentAnimationFrame( gw->player1 );
 
     switch ( editorMode ) {
-        case EDITOR_MODE_COLLISION_BOX: showAnimationFrameBoxDetail( gw->player1, &af->boxes.collisionBox, GREEN ); break;
-        case EDITOR_MODE_HIT_BOX_0: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hitboxes[0], BLUE ); break;
-        case EDITOR_MODE_HIT_BOX_1: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hitboxes[1], BLUE ); break;
-        case EDITOR_MODE_HIT_BOX_2: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hitboxes[2], BLUE ); break;
-        case EDITOR_MODE_HURT_BOX_0: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hurtboxes[0], RED ); break;
-        case EDITOR_MODE_HURT_BOX_1: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hurtboxes[1], RED ); break;
-        case EDITOR_MODE_HURT_BOX_2: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hurtboxes[2], RED ); break;
+        case EDITOR_MODE_COLLISION_BOX: showAnimationFrameBoxDetail( gw->player1, &af->boxes.collisionBox, gw->camera, GREEN ); break;
+        case EDITOR_MODE_HIT_BOX_0: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hitboxes[0], gw->camera, BLUE ); break;
+        case EDITOR_MODE_HIT_BOX_1: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hitboxes[1], gw->camera, BLUE ); break;
+        case EDITOR_MODE_HIT_BOX_2: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hitboxes[2], gw->camera, BLUE ); break;
+        case EDITOR_MODE_HURT_BOX_0: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hurtboxes[0], gw->camera, RED ); break;
+        case EDITOR_MODE_HURT_BOX_1: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hurtboxes[1], gw->camera, RED ); break;
+        case EDITOR_MODE_HURT_BOX_2: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hurtboxes[2], gw->camera, RED ); break;
         default: break;
     }
-
-    EndMode2D();
 
 }
 
 static void updateGameWorldEditing( GameWorld *gw, float delta ) {
+
+    if ( IsKeyDown( KEY_LEFT_CONTROL ) && IsKeyPressed( KEY_S ) ) {
+        storePlayerAnimations( gw->player1, true, false, PLAYER_1_FILE );
+        return;
+    }
+
+    if ( IsKeyDown( KEY_LEFT_CONTROL ) && IsKeyPressed( KEY_X ) ) {
+        copyAnimationFrameBoxesPrevious( gw->player1 );
+        return;
+    }
+
+    if ( IsKeyDown( KEY_LEFT_CONTROL ) && IsKeyPressed( KEY_C ) ) {
+        copyAnimationFrameBoxesNext( gw->player1 );
+        return;
+    }
 
     if ( IsKeyUp( KEY_M ) && IsKeyUp( KEY_SPACE ) ) {
         if ( IsKeyPressed( KEY_UP ) ) {
@@ -486,7 +505,7 @@ static void editAnimationFrameBox( Rectangle *box ) {
 
 }
 
-static void showAnimationFrameBoxDetail( Player *p, Rectangle *box, Color color ) {
+static void showAnimationFrameBoxDetail( Player *p, Rectangle *box, Camera2D camera, Color color ) {
 
     color = ColorBrightness( color, -0.5f );
 
@@ -495,14 +514,55 @@ static void showAnimationFrameBoxDetail( Player *p, Rectangle *box, Color color 
     int w = (int) box->width;
     int h = (int) box->height;
 
+    Vector2 pos = GetWorldToScreen2D( p->pos, camera );
+    Rectangle box2 = { 
+        box->x * camera.zoom, box->y * camera.zoom, 
+        box->width * camera.zoom, box->height * camera.zoom
+    };
+
     if ( !( w == 0 && h == 0 ) ) {
-        DrawText( "offsets", p->pos.x + box->x, p->pos.y + box->y - 50, 5, color );
-        DrawText( TextFormat( "x: %d", x ), p->pos.x + box->x, p->pos.y + box->y - 40, 5, color );
-        DrawText( TextFormat( "y: %d", y ), p->pos.x + box->x, p->pos.y + box->y - 30, 5, color );
-        DrawText( TextFormat( "w: %d", w ), p->pos.x + box->x, p->pos.y + box->y - 20, 5, color );
-        DrawText( TextFormat( "h: %d", h ), p->pos.x + box->x, p->pos.y + box->y - 10, 5, color );
+        DrawText( "offsets", pos.x + box2.x, pos.y + box2.y - 100, 20, color );
+        DrawText( TextFormat( "x: %d", x ), pos.x + box2.x, pos.y + box2.y - 80, 20, color );
+        DrawText( TextFormat( "y: %d", y ), pos.x + box2.x, pos.y + box2.y - 60, 20, color );
+        DrawText( TextFormat( "w: %d", w ), pos.x + box2.x, pos.y + box2.y - 40, 20, color );
+        DrawText( TextFormat( "h: %d", h ), pos.x + box2.x, pos.y + box2.y - 20, 20, color );
     } else {
-        DrawText( "disabled", p->pos.x + box->x, p->pos.y + box->y - 10, 5, Fade( color, 0.5f ) );
+        DrawText( "disabled", pos.x + box2.x, pos.y + box2.y - 20, 20, Fade( color, 0.5f ) );
+    }
+
+}
+
+static void copyAnimationFrameBoxesPrevious( Player *p ) {
+        
+    Animation *a = getPlayerCurrentAnimation( p );
+    AnimationFrame *sourceAf = getPlayerCurrentAnimationFrame( p );
+
+    for ( int i = 0; i < a->frameCount; i++ ) {
+        if ( &a->frames[i] == sourceAf ) {
+            int prev = i - 1;
+            if ( i == -1 ) {
+                prev = a->frameCount - 1;
+            }
+            AnimationFrame *destAf = &a->frames[prev];
+            destAf->boxes = sourceAf->boxes;
+            break;
+        }
+    }
+
+}
+
+static void copyAnimationFrameBoxesNext( Player *p ) {
+        
+    Animation *a = getPlayerCurrentAnimation( p );
+    AnimationFrame *sourceAf = getPlayerCurrentAnimationFrame( p );
+
+    for ( int i = 0; i < a->frameCount; i++ ) {
+        if ( &a->frames[i] == sourceAf ) {
+            int next = ( i + 1 ) % a->frameCount;
+            AnimationFrame *destAf = &a->frames[next];
+            destAf->boxes = sourceAf->boxes;
+            break;
+        }
     }
 
 }
