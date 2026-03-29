@@ -444,7 +444,7 @@ static void updateGameWorldEditing( GameWorld *gw, float delta ) {
         editorMode = EDITOR_MODE_HURT_BOX_0;
     } else if ( IsKeyPressed( KEY_SIX ) && af->boxes.hurtboxCount >= 2 ) {
         editorMode = EDITOR_MODE_HURT_BOX_1;
-    } else if ( IsKeyPressed( KEY_SEVEN && af->boxes.hurtboxCount >= 3 ) ) {
+    } else if ( IsKeyPressed( KEY_SEVEN ) && af->boxes.hurtboxCount >= 3 ) {
         editorMode = EDITOR_MODE_HURT_BOX_2;
     }
 
@@ -579,7 +579,7 @@ static void copyAnimationFrameBoxesPrevious( Player *p ) {
     for ( int i = 0; i < a->frameCount; i++ ) {
         if ( &a->frames[i] == sourceAf ) {
             int prev = i - 1;
-            if ( i == -1 ) {
+            if ( prev == -1 ) {
                 prev = a->frameCount - 1;
             }
             AnimationFrame *destAf = &a->frames[prev];
@@ -614,7 +614,7 @@ static void copyAllFrameBoxesToPreviousAnimation( Player *p ) {
     for ( int i = 0; i < p->animationCount; i++ ) {
         if ( p->animations[i] == sourceA ) {
             int prev = i - 1;
-            if ( prev < 0 ) {
+            if ( prev == -1 ) {
                 prev = p->animationCount - 1;
             }
             destA = p->animations[prev];

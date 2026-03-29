@@ -332,7 +332,7 @@ void initializePlayerRyu( float x, float y, Player *p, DurationMode animationDur
     p->mpCrouchAnim.frames[1] = (AnimationFrame) { { 114, 1629, -112, 64 }, 60, { 16, 0 }, .boxes = { 0 } };
     p->mpCrouchAnim.frames[2] = (AnimationFrame) { { 227, 1629, -112, 64 }, 60, { 16, 0 }, .boxes = { 0 } };
 
-    p->hpCrouchAnim.frameCount = 3;
+    p->hpCrouchAnim.frameCount = 4;
     p->hpCrouchAnim.currentFrame = 0;
     p->hpCrouchAnim.frameTimeCounter = 0.0f;
     p->hpCrouchAnim.stopAtLastFrame = false;
@@ -342,6 +342,7 @@ void initializePlayerRyu( float x, float y, Player *p, DurationMode animationDur
     p->hpCrouchAnim.frames[0] = (AnimationFrame) { {   1, 1694, -96, 128 }, 60, { 8, 0 }, .boxes = { 0 } };
     p->hpCrouchAnim.frames[1] = (AnimationFrame) { {  98, 1694, -96, 128 }, 60, { 8, 0 }, .boxes = { 0 } };
     p->hpCrouchAnim.frames[2] = (AnimationFrame) { { 195, 1694, -96, 128 }, 60, { 8, 0 }, .boxes = { 0 } };
+    p->hpCrouchAnim.frames[3] = (AnimationFrame) { {  98, 1694, -96, 128 }, 60, { 8, 0 }, .boxes = { 0 } };
 
     p->lkCrouchAnim.frameCount = 1;
     p->lkCrouchAnim.currentFrame = 0;
