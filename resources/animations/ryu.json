@@ -5648,16 +5648,16 @@
                         "hitboxCount": 3,
                         "hitboxes": [
                             {
-                                "x": 0,
-                                "y": 0,
-                                "width": 0,
-                                "height": 0
+                                "x": 4,
+                                "y": 37,
+                                "width": 23,
+                                "height": 17
                             },
                             {
-                                "x": 0,
-                                "y": 0,
-                                "width": 0,
-                                "height": 0
+                                "x": -14,
+                                "y": 48,
+                                "width": 38,
+                                "height": 51
                             },
                             {
                                 "x": 0,
@@ -5711,16 +5711,16 @@
                         "hitboxCount": 3,
                         "hitboxes": [
                             {
-                                "x": 0,
-                                "y": 0,
-                                "width": 0,
-                                "height": 0
+                                "x": 4,
+                                "y": 37,
+                                "width": 25,
+                                "height": 17
                             },
                             {
-                                "x": 0,
-                                "y": 0,
-                                "width": 0,
-                                "height": 0
+                                "x": -14,
+                                "y": 48,
+                                "width": 38,
+                                "height": 51
                             },
                             {
                                 "x": 0,
@@ -5732,10 +5732,10 @@
                         "hurtboxCount": 3,
                         "hurtboxes": [
                             {
-                                "x": 0,
-                                "y": 0,
-                                "width": 0,
-                                "height": 0
+                                "x": 7,
+                                "y": 47,
+                                "width": 59,
+                                "height": 13
                             },
                             {
                                 "x": 0,
