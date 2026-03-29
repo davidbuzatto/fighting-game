@@ -307,19 +307,24 @@ static void drawGameWorldEditing( GameWorld *gw ) {
     DrawText( "Animation Frame Box Editor", 5, 5, 20, BLACK );
     DrawText( TextFormat( "Mode: %s", utilsEditorModeToText( editorMode ) ), 5, 35, 20, BLACK );
     DrawText( TextFormat( "State: %s", utilsPlayerStateToText( gw->player1->state ) ), 5, 55, 20, BLACK );
-    DrawText( TextFormat( "Frame: %d", getPlayerCurrentAnimation( gw->player1 )->currentFrame ), 5, 75, 20, BLACK );
+
+    Animation *anim = getPlayerCurrentAnimation( gw->player1 );
+    if ( anim != NULL ) {
+        DrawText( TextFormat( "Frame: %d", anim->currentFrame ), 5, 75, 20, BLACK );
+    }
 
     AnimationFrame *af = getPlayerCurrentAnimationFrame( gw->player1 );
-
-    switch ( editorMode ) {
-        case EDITOR_MODE_COLLISION_BOX: showAnimationFrameBoxDetail( gw->player1, &af->boxes.collisionBox, gw->camera, GREEN ); break;
-        case EDITOR_MODE_HIT_BOX_0: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hitboxes[0], gw->camera, BLUE ); break;
-        case EDITOR_MODE_HIT_BOX_1: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hitboxes[1], gw->camera, BLUE ); break;
-        case EDITOR_MODE_HIT_BOX_2: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hitboxes[2], gw->camera, BLUE ); break;
-        case EDITOR_MODE_HURT_BOX_0: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hurtboxes[0], gw->camera, RED ); break;
-        case EDITOR_MODE_HURT_BOX_1: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hurtboxes[1], gw->camera, RED ); break;
-        case EDITOR_MODE_HURT_BOX_2: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hurtboxes[2], gw->camera, RED ); break;
-        default: break;
+    if ( af != NULL ) {
+        switch ( editorMode ) {
+            case EDITOR_MODE_COLLISION_BOX: showAnimationFrameBoxDetail( gw->player1, &af->boxes.collisionBox, gw->camera, GREEN ); break;
+            case EDITOR_MODE_HIT_BOX_0: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hitboxes[0], gw->camera, BLUE ); break;
+            case EDITOR_MODE_HIT_BOX_1: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hitboxes[1], gw->camera, BLUE ); break;
+            case EDITOR_MODE_HIT_BOX_2: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hitboxes[2], gw->camera, BLUE ); break;
+            case EDITOR_MODE_HURT_BOX_0: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hurtboxes[0], gw->camera, RED ); break;
+            case EDITOR_MODE_HURT_BOX_1: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hurtboxes[1], gw->camera, RED ); break;
+            case EDITOR_MODE_HURT_BOX_2: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hurtboxes[2], gw->camera, RED ); break;
+            default: break;
+        }
     }
 
 }
@@ -388,16 +393,18 @@ static void updateGameWorldEditing( GameWorld *gw, float delta ) {
 
     Animation *anim = getPlayerCurrentAnimation( gw->player1 );
 
-    if ( IsKeyUp( KEY_M ) && IsKeyUp( KEY_SPACE ) ) {
-        if ( IsKeyPressed( KEY_LEFT ) ) {
-            anim->currentFrame--;
-            if ( anim->currentFrame < 0 ) {
-                anim->currentFrame = anim->frameCount - 1;
-            }
-        } else if ( IsKeyPressed( KEY_RIGHT ) ) {
-            anim->currentFrame++;
-            if ( anim->currentFrame >= anim->frameCount ) {
-                anim->currentFrame = 0;
+    if ( anim != NULL ) {
+        if ( IsKeyUp( KEY_M ) && IsKeyUp( KEY_SPACE ) ) {
+            if ( IsKeyPressed( KEY_LEFT ) ) {
+                anim->currentFrame--;
+                if ( anim->currentFrame < 0 ) {
+                    anim->currentFrame = anim->frameCount - 1;
+                }
+            } else if ( IsKeyPressed( KEY_RIGHT ) ) {
+                anim->currentFrame++;
+                if ( anim->currentFrame >= anim->frameCount ) {
+                    anim->currentFrame = 0;
+                }
             }
         }
     }

@@ -718,7 +718,7 @@ static void drawPlayerAnimationFrameBoxes( Player *player, AnimationFrame *af, V
         int h = (int) r->height;
 
         if ( !player->lookingRight ) {
-            x = (int) ( player->pos.x - r->x - r->width + offset.y );
+            x = (int) ( player->pos.x - r->x - r->width + offset.x );
         }
 
         if ( !( w == 0 && h == 0 ) ) {
@@ -1129,7 +1129,8 @@ void flipPlayerSide( Player *player ) {
 }
 
 float distancePlayer( Player *player1, Player *player2 ) {
-    return hypotf( player1->pos.x - player2->pos.x, player1->pos.y - player2->pos.y );
+    //return hypotf( player1->pos.x - player2->pos.x, player1->pos.y - player2->pos.y );
+    return fabs( player1->pos.x - player2->pos.x ); // only x axis
 }
 
 AnimationFrame *getPlayerCurrentAnimationFrame( Player *player ) {
