@@ -357,13 +357,13 @@ static void updateGameWorldEditing( GameWorld *gw, float delta ) {
             } else {
                 gw->player1->state = state;
             }
-            editorMode = EDITOR_MODE_COLLISION_BOX;
+            //editorMode = EDITOR_MODE_COLLISION_BOX;
         } else if ( IsKeyPressed( KEY_DOWN ) ) {
             gw->player1->state++;
             if ( gw->player1->state == PLAYER_STATE_LAST ) {
                 gw->player1->state = PLAYER_STATE_IDLE;
             }
-            editorMode = EDITOR_MODE_COLLISION_BOX;
+            //editorMode = EDITOR_MODE_COLLISION_BOX;
         }
     }
 
