@@ -24,6 +24,7 @@
 
 #define SHOW_BOXES true
 #define SHOW_DEBUG_INFO false
+#define DRAW_PLAYER_ONION true
 #define DURATION_MODE DURATION_MODE_MILLISECONDS
 #define INITIAL_GAME_MODE GAME_MODE_EDITING
 
@@ -47,6 +48,8 @@ static void flipPlayers( GameWorld *gw );
 
 // editor
 static EditorMode editorMode = EDITOR_MODE_COLLISION_BOX;
+static bool drawPlayerOnion = DRAW_PLAYER_ONION;
+static int onionOffset = 40;
 
 // for camera target on playing
 static float playerDist = 0.0f;
@@ -163,6 +166,10 @@ void updateGameWorld( GameWorld *gw, float delta ) {
         gw->player2->showDebugInfo = !gw->player2->showDebugInfo;
     }
 
+    if ( IsKeyPressed( KEY_F4 ) ) {
+        drawPlayerOnion = !drawPlayerOnion;
+    }
+
     if ( gw->mode == GAME_MODE_PLAYING ) {
         updateGameWorldPlaying( gw, delta );
     } else {
@@ -194,8 +201,8 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
     BeginMode2D( gw->camera );
 
     DrawTexture( *gw->stageTexture, 0, GetScreenHeight() - gw->stageTexture->height, WHITE );
-    drawPlayer( gw->player2, &gw->camera );
-    drawPlayer( gw->player1, &gw->camera );
+    drawPlayer( gw->player2 );
+    drawPlayer( gw->player1 );
 
     EndMode2D();
 
@@ -286,7 +293,11 @@ static void drawGameWorldEditing( GameWorld *gw ) {
 
     }
 
-    drawPlayer( gw->player1, &gw->camera );
+    if ( drawPlayerOnion ) {
+        drawPlayerOnionLayers( gw->player1, onionOffset );
+    } else {
+        drawPlayer( gw->player1 );
+    }
 
     EndMode2D();
 
@@ -325,6 +336,15 @@ static void updateGameWorldEditing( GameWorld *gw, float delta ) {
 
     if ( IsKeyDown( KEY_LEFT_CONTROL ) && IsKeyPressed( KEY_C ) ) {
         copyAnimationFrameBoxesNext( gw->player1 );
+        return;
+    }
+
+    if ( IsKeyDown( KEY_O ) ) {
+        if ( IsKeyPressed( KEY_LEFT ) ) {
+            onionOffset--;
+        } else if ( IsKeyPressed( KEY_RIGHT ) ) {
+            onionOffset++;
+        }
         return;
     }
 

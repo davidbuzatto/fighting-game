@@ -35,112 +35,6 @@ static void addState( int state ) {
     }
 }
 
-/*static const char *playerStateToText( PlayerState state ) {
-
-    switch ( state ) {
-        case PLAYER_STATE_IDLE: return "I";
-        case PLAYER_STATE_WALKING_FORWARD: return "F";
-        case PLAYER_STATE_WALKING_BACKWARD: return "B";
-        case PLAYER_STATE_CROUCHING: return "C";
-        case PLAYER_STATE_JUMPING_STRAIGHT: return "J";
-        case PLAYER_STATE_JUMPING_FORWARD: return "J";
-        case PLAYER_STATE_JUMPING_BACKWARD: return "J";
-        case PLAYER_STATE_LP: return "P";
-        case PLAYER_STATE_MP: return "P";
-        case PLAYER_STATE_HP: return "P";
-        case PLAYER_STATE_LK: return "K";
-        case PLAYER_STATE_MK: return "K";
-        case PLAYER_STATE_HK: return "K";
-        case PLAYER_STATE_LP_CLOSE: return "P";
-        case PLAYER_STATE_MP_CLOSE: return "P";
-        case PLAYER_STATE_HP_CLOSE: return "P";
-        case PLAYER_STATE_LK_CLOSE: return "K";
-        case PLAYER_STATE_MK_CLOSE: return "K";
-        case PLAYER_STATE_HK_CLOSE: return "K";
-        case PLAYER_STATE_LP_CROUCH: return "P";
-        case PLAYER_STATE_MP_CROUCH: return "P";
-        case PLAYER_STATE_HP_CROUCH: return "P";
-        case PLAYER_STATE_LK_CROUCH: return "K";
-        case PLAYER_STATE_MK_CROUCH: return "K";
-        case PLAYER_STATE_HK_CROUCH: return "K";
-        case PLAYER_STATE_JUMP_COOLDOWN: return "L";
-        case PLAYER_STATE_LP_JUMP_STRAIGHT: return "P";
-        case PLAYER_STATE_MP_JUMP_STRAIGHT: return "P";
-        case PLAYER_STATE_HP_JUMP_STRAIGHT: return "P";
-        case PLAYER_STATE_LK_JUMP_STRAIGHT: return "K";
-        case PLAYER_STATE_MK_JUMP_STRAIGHT: return "K";
-        case PLAYER_STATE_HK_JUMP_STRAIGHT: return "K";
-        case PLAYER_STATE_LP_JUMP_FORWARD: return "P";
-        case PLAYER_STATE_MP_JUMP_FORWARD: return "P";
-        case PLAYER_STATE_HP_JUMP_FORWARD: return "P";
-        case PLAYER_STATE_LK_JUMP_FORWARD: return "K";
-        case PLAYER_STATE_MK_JUMP_FORWARD: return "K";
-        case PLAYER_STATE_HK_JUMP_FORWARD: return "K";
-        case PLAYER_STATE_LP_JUMP_BACKWARD: return "P";
-        case PLAYER_STATE_MP_JUMP_BACKWARD: return "P";
-        case PLAYER_STATE_HP_JUMP_BACKWARD: return "P";
-        case PLAYER_STATE_LK_JUMP_BACKWARD: return "K";
-        case PLAYER_STATE_MK_JUMP_BACKWARD: return "K";
-        case PLAYER_STATE_HK_JUMP_BACKWARD: return "K";
-    }
-
-    return "";
-
-}
-
-static Color playerStateToColor( PlayerState state ) {
-
-    switch ( state ) {
-        case PLAYER_STATE_IDLE: return LIGHTGRAY;
-        case PLAYER_STATE_WALKING_FORWARD: return LIGHTGRAY;
-        case PLAYER_STATE_WALKING_BACKWARD: return LIGHTGRAY;
-        case PLAYER_STATE_CROUCHING: return LIGHTGRAY;
-        case PLAYER_STATE_JUMPING_STRAIGHT: return LIGHTGRAY;
-        case PLAYER_STATE_JUMPING_FORWARD: return LIGHTGRAY;
-        case PLAYER_STATE_JUMPING_BACKWARD: return LIGHTGRAY;
-        case PLAYER_STATE_LP: return SKYBLUE;
-        case PLAYER_STATE_MP: return YELLOW;
-        case PLAYER_STATE_HP: return RED;
-        case PLAYER_STATE_LK: return SKYBLUE;
-        case PLAYER_STATE_MK: return YELLOW;
-        case PLAYER_STATE_HK: return RED;
-        case PLAYER_STATE_LP_CLOSE: return SKYBLUE;
-        case PLAYER_STATE_MP_CLOSE: return YELLOW;
-        case PLAYER_STATE_HP_CLOSE: return RED;
-        case PLAYER_STATE_LK_CLOSE: return SKYBLUE;
-        case PLAYER_STATE_MK_CLOSE: return YELLOW;
-        case PLAYER_STATE_HK_CLOSE: return RED;
-        case PLAYER_STATE_LP_CROUCH: return SKYBLUE;
-        case PLAYER_STATE_MP_CROUCH: return YELLOW;
-        case PLAYER_STATE_HP_CROUCH: return RED;
-        case PLAYER_STATE_LK_CROUCH: return SKYBLUE;
-        case PLAYER_STATE_MK_CROUCH: return YELLOW;
-        case PLAYER_STATE_HK_CROUCH: return RED;
-        case PLAYER_STATE_JUMP_COOLDOWN: return ORANGE;
-        case PLAYER_STATE_LP_JUMP_STRAIGHT: return SKYBLUE;
-        case PLAYER_STATE_MP_JUMP_STRAIGHT: return YELLOW;
-        case PLAYER_STATE_HP_JUMP_STRAIGHT: return RED;
-        case PLAYER_STATE_LK_JUMP_STRAIGHT: return SKYBLUE;
-        case PLAYER_STATE_MK_JUMP_STRAIGHT: return YELLOW;
-        case PLAYER_STATE_HK_JUMP_STRAIGHT: return RED;
-        case PLAYER_STATE_LP_JUMP_FORWARD: return SKYBLUE;
-        case PLAYER_STATE_MP_JUMP_FORWARD: return YELLOW;
-        case PLAYER_STATE_HP_JUMP_FORWARD: return RED;
-        case PLAYER_STATE_LK_JUMP_FORWARD: return SKYBLUE;
-        case PLAYER_STATE_MK_JUMP_FORWARD: return YELLOW;
-        case PLAYER_STATE_HK_JUMP_FORWARD: return RED;
-        case PLAYER_STATE_LP_JUMP_BACKWARD: return SKYBLUE;
-        case PLAYER_STATE_MP_JUMP_BACKWARD: return YELLOW;
-        case PLAYER_STATE_HP_JUMP_BACKWARD: return RED;
-        case PLAYER_STATE_LK_JUMP_BACKWARD: return SKYBLUE;
-        case PLAYER_STATE_MK_JUMP_BACKWARD: return YELLOW;
-        case PLAYER_STATE_HK_JUMP_BACKWARD: return RED;
-    }
-
-    return PINK;
-
-}*/
-
 Player *createPlayer() {
     Player *p = (Player*) malloc( sizeof( Player ) );
     return p;
@@ -725,9 +619,45 @@ void destroyPlayer( Player *player ) {
     free( player );
 }
 
-void drawPlayer( Player *player, Camera2D *camera ) {
+void drawPlayer( Player *player ) {
 
-    AnimationFrame *frame = getPlayerCurrentAnimationFrame( player );
+    drawPlayerAnimationFrame( player, getPlayerCurrentAnimationFrame( player ), (Vector2) { 0 }, WHITE );
+
+    if ( player->showDebugInfo ) {
+
+        DrawCircle( player->pos.x, player->pos.y, 1, ORANGE );
+        DrawRectangleLines( player->pos.x - player->dim.x / 2, player->pos.y, player->dim.x, player->dim.y, ORANGE );
+        DrawText( TextFormat( "x: %.2f", player->pos.x ), player->pos.x + 5, player->pos.y - 20, 10, BLACK );
+        DrawText( TextFormat( "y: %.2f", player->pos.y ), player->pos.x + 5, player->pos.y - 10, 10, BLACK );
+        
+    }
+
+    if ( player->showBoxes ) {
+        drawPlayerAnimationFrameBoxes( player );
+    }
+
+}
+
+void drawPlayerOnionLayers( Player *player, int xOffset ) {
+
+    Animation *a = getPlayerCurrentAnimation( player );
+    AnimationFrame *af = getPlayerCurrentAnimationFrame( player );
+
+    drawPlayer( player );
+
+    // search
+    for ( int i = 0; i < a->frameCount; i++ ) {
+        if ( af == &a->frames[i] ) {
+            for ( int j = 1; j < a->frameCount; j++ ) {
+                int next = ( i + j ) % a->frameCount;
+                drawPlayerAnimationFrame( player, &(getPlayerCurrentAnimation( player )->frames[next]), (Vector2) { xOffset * j, 0 }, Fade( WHITE, 0.5f ) );
+            }
+        }
+    }
+    
+}
+
+void drawPlayerAnimationFrame( Player *player, AnimationFrame *frame, Vector2 offset, Color tint ) {
 
     if ( frame != NULL ) {
         DrawTexturePro( 
@@ -739,82 +669,15 @@ void drawPlayer( Player *player, Camera2D *camera ) {
                 frame->source.height
             },
             (Rectangle) { 
-                player->pos.x - fabs( frame->source.width ) / 2 + ( player->lookingRight ? frame->offset.x : -frame->offset.x ),
-                player->pos.y + player->dim.y - frame->source.height + frame->offset.y,
+                offset.x + player->pos.x - fabs( frame->source.width ) / 2 + ( player->lookingRight ? frame->offset.x : -frame->offset.x ),
+                offset.y + player->pos.y + player->dim.y - frame->source.height + frame->offset.y,
                 frame->source.width,
                 frame->source.height
             },
             (Vector2) { 0 },
             0.0f,
-            WHITE
+            tint
         );
-    }
-
-    if ( player->showDebugInfo ) {
-
-        DrawCircle( player->pos.x, player->pos.y, 1, ORANGE );
-        DrawRectangleLines( player->pos.x - player->dim.x / 2, player->pos.y, player->dim.x, player->dim.y, ORANGE );
-        DrawText( TextFormat( "x: %.2f", player->pos.x ), player->pos.x + 5, player->pos.y - 20, 10, BLACK );
-        DrawText( TextFormat( "y: %.2f", player->pos.y ), player->pos.x + 5, player->pos.y - 10, 10, BLACK );
-
-        // states - will be removed!
-        /*int pos = 0;
-        Vector2 base = GetScreenToWorld2D( (Vector2){ 10, 20 }, *camera );
-        float radius = 5;
-        int fontSize = 4;
-
-        DrawRectangle( base.x - 10, base.y - 10, 35, 400, Fade( BLACK, 0.5 ) );
-
-        for ( int i = head; i <= tail; i++ ) {
-
-            Color color = playerStateToColor( states[i%TRACK_STATE_SIZE] );
-
-            Vector2 center = {
-                base.x + 10, 
-                base.y + 215 + (radius * 2 + 6) * -pos
-            };
-
-            DrawCircle( 
-                center.x, 
-                center.y, 
-                radius + 1,
-                ColorBrightness( color, -0.5 )
-            );
-
-            DrawCircle( 
-                center.x, 
-                center.y, 
-                radius,
-                color
-            );
-
-            const char *t = playerStateToText( states[i%TRACK_STATE_SIZE] );
-            int w = MeasureText( t, fontSize );
-
-            DrawText( 
-                t, 
-                center.x - w / 2, 
-                center.y - fontSize, 
-                fontSize, 
-                ColorBrightness( color, -0.5 )
-            );
-
-            DrawLine( 
-                center.x - 15, 
-                center.y + radius + 3,
-                center.x + 15,
-                center.y + radius + 3,
-                LIGHTGRAY
-            );
-            
-            pos++;
-
-        }*/
-        
-    }
-
-    if ( player->showBoxes ) {
-        drawPlayerAnimationFrameBoxes( player );
     }
 
 }
