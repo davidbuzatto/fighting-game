@@ -7532,16 +7532,16 @@
                         "hitboxCount": 3,
                         "hitboxes": [
                             {
-                                "x": 0,
-                                "y": 0,
-                                "width": 0,
-                                "height": 0
+                                "x": -11,
+                                "y": 18,
+                                "width": 25,
+                                "height": 18
                             },
                             {
-                                "x": 0,
-                                "y": 0,
-                                "width": 0,
-                                "height": 0
+                                "x": -29,
+                                "y": 34,
+                                "width": 42,
+                                "height": 61
                             },
                             {
                                 "x": 0,
@@ -7595,16 +7595,16 @@
                         "hitboxCount": 3,
                         "hitboxes": [
                             {
-                                "x": 0,
-                                "y": 0,
-                                "width": 0,
-                                "height": 0
+                                "x": -11,
+                                "y": 18,
+                                "width": 25,
+                                "height": 18
                             },
                             {
-                                "x": 0,
-                                "y": 0,
-                                "width": 0,
-                                "height": 0
+                                "x": -29,
+                                "y": 34,
+                                "width": 42,
+                                "height": 61
                             },
                             {
                                 "x": 0,
@@ -7616,10 +7616,10 @@
                         "hurtboxCount": 3,
                         "hurtboxes": [
                             {
-                                "x": 0,
-                                "y": 0,
-                                "width": 0,
-                                "height": 0
+                                "x": 6,
+                                "y": 25,
+                                "width": 43,
+                                "height": 41
                             },
                             {
                                 "x": 0,
@@ -8411,16 +8411,16 @@
                         "hitboxCount": 3,
                         "hitboxes": [
                             {
-                                "x": 0,
-                                "y": 0,
-                                "width": 0,
-                                "height": 0
+                                "x": -11,
+                                "y": 18,
+                                "width": 25,
+                                "height": 18
                             },
                             {
-                                "x": 0,
-                                "y": 0,
-                                "width": 0,
-                                "height": 0
+                                "x": -29,
+                                "y": 34,
+                                "width": 42,
+                                "height": 61
                             },
                             {
                                 "x": 0,
@@ -8474,16 +8474,16 @@
                         "hitboxCount": 3,
                         "hitboxes": [
                             {
-                                "x": 0,
-                                "y": 0,
-                                "width": 0,
-                                "height": 0
+                                "x": -11,
+                                "y": 18,
+                                "width": 25,
+                                "height": 18
                             },
                             {
-                                "x": 0,
-                                "y": 0,
-                                "width": 0,
-                                "height": 0
+                                "x": -29,
+                                "y": 34,
+                                "width": 42,
+                                "height": 61
                             },
                             {
                                 "x": 0,
@@ -8495,10 +8495,10 @@
                         "hurtboxCount": 3,
                         "hurtboxes": [
                             {
-                                "x": 0,
-                                "y": 0,
-                                "width": 0,
-                                "height": 0
+                                "x": 6,
+                                "y": 25,
+                                "width": 43,
+                                "height": 41
                             },
                             {
                                 "x": 0,
