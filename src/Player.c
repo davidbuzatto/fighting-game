@@ -17,7 +17,7 @@ static int head = -1;
 static int tail = -1;
 static int count = 0;
 
-static void drawPlayerAnimationFrameBoxes( Player *player );
+static void drawPlayerAnimationFrameBoxes( Player *player, AnimationFrame *af, Vector2 offset );
 
 static void addState( int state ) {
     if ( count == 0 ) {
@@ -621,7 +621,8 @@ void destroyPlayer( Player *player ) {
 
 void drawPlayer( Player *player ) {
 
-    drawPlayerAnimationFrame( player, getPlayerCurrentAnimationFrame( player ), (Vector2) { 0 }, WHITE );
+    AnimationFrame *af = getPlayerCurrentAnimationFrame( player );
+    drawPlayerAnimationFrame( player, af, (Vector2) { 0 }, WHITE );
 
     if ( player->showDebugInfo ) {
 
@@ -630,10 +631,6 @@ void drawPlayer( Player *player ) {
         DrawText( TextFormat( "x: %.2f", player->pos.x ), player->pos.x + 5, player->pos.y - 20, 10, BLACK );
         DrawText( TextFormat( "y: %.2f", player->pos.y ), player->pos.x + 5, player->pos.y - 10, 10, BLACK );
         
-    }
-
-    if ( player->showBoxes ) {
-        drawPlayerAnimationFrameBoxes( player );
     }
 
 }
@@ -652,27 +649,36 @@ void drawPlayerOnionLayers( Player *player, int xOffset ) {
                 int next = ( i + j ) % a->frameCount;
                 drawPlayerAnimationFrame( player, &(getPlayerCurrentAnimation( player )->frames[next]), (Vector2) { xOffset * j, 0 }, Fade( WHITE, 0.5f ) );
             }
+            /*for ( int j = 1; j < a->frameCount - 1; j++ ) {
+                int next = ( i + j ) % a->frameCount;
+                drawPlayerAnimationFrame( player, &(getPlayerCurrentAnimation( player )->frames[next]), (Vector2) { xOffset * j, 0 }, Fade( WHITE, 0.5f ) );
+            }
+            int prev = ( i - 1 );
+            if ( prev == -1 ) {
+                prev = a->frameCount - 1;
+            }
+            drawPlayerAnimationFrame( player, &(getPlayerCurrentAnimation( player )->frames[prev]), (Vector2) { -xOffset, 0 }, Fade( WHITE, 0.5f ) );*/
         }
     }
     
 }
 
-void drawPlayerAnimationFrame( Player *player, AnimationFrame *frame, Vector2 offset, Color tint ) {
+void drawPlayerAnimationFrame( Player *player, AnimationFrame *af, Vector2 offset, Color tint ) {
 
-    if ( frame != NULL ) {
+    if ( af != NULL ) {
         DrawTexturePro( 
             *player->texture,
             (Rectangle) {
-                frame->source.x,
-                frame->source.y,
-                player->lookingRight ? frame->source.width : -frame->source.width,
-                frame->source.height
+                af->source.x,
+                af->source.y,
+                player->lookingRight ? af->source.width : -af->source.width,
+                af->source.height
             },
             (Rectangle) { 
-                offset.x + player->pos.x - fabs( frame->source.width ) / 2 + ( player->lookingRight ? frame->offset.x : -frame->offset.x ),
-                offset.y + player->pos.y + player->dim.y - frame->source.height + frame->offset.y,
-                frame->source.width,
-                frame->source.height
+                offset.x + player->pos.x - fabs( af->source.width ) / 2 + ( player->lookingRight ? af->offset.x : -af->offset.x ),
+                offset.y + player->pos.y + player->dim.y - af->source.height + af->offset.y,
+                af->source.width,
+                af->source.height
             },
             (Vector2) { 0 },
             0.0f,
@@ -680,18 +686,21 @@ void drawPlayerAnimationFrame( Player *player, AnimationFrame *frame, Vector2 of
         );
     }
 
+    if ( player->showBoxes ) {
+        drawPlayerAnimationFrameBoxes( player, af, offset );
+    }
+
 }
 
-static void drawPlayerAnimationFrameBoxes( Player *player ) {
+static void drawPlayerAnimationFrameBoxes( Player *player, AnimationFrame *af, Vector2 offset ) {
 
-    AnimationFrame *af = getPlayerCurrentAnimationFrame( player );
-    int x = (int) ( player->pos.x + af->boxes.collisionBox.x );
-    int y = (int) ( player->pos.y + af->boxes.collisionBox.y );
+    int x = (int) ( player->pos.x + af->boxes.collisionBox.x + offset.x );
+    int y = (int) ( player->pos.y + af->boxes.collisionBox.y + offset.y );
     int w = (int) af->boxes.collisionBox.width;
     int h = (int) af->boxes.collisionBox.height;
 
     if ( !player->lookingRight ) {
-        x = (int) ( player->pos.x - af->boxes.collisionBox.x - af->boxes.collisionBox.width );
+        x = (int) ( player->pos.x - af->boxes.collisionBox.x - af->boxes.collisionBox.width + offset.x );
     }
 
     if ( !( w == 0 && h == 0 ) ) {
@@ -702,13 +711,13 @@ static void drawPlayerAnimationFrameBoxes( Player *player ) {
     for ( int i = 0; i < af->boxes.hitboxCount; i++ ) {
 
         Rectangle *r = &af->boxes.hitboxes[i];
-        int x = (int) ( player->pos.x + r->x );
-        int y = (int) ( player->pos.y + r->y );
+        int x = (int) ( player->pos.x + r->x + offset.x );
+        int y = (int) ( player->pos.y + r->y + offset.y );
         int w = (int) r->width;
         int h = (int) r->height;
 
         if ( !player->lookingRight ) {
-            x = (int) player->pos.x - r->x - r->width;
+            x = (int) ( player->pos.x - r->x - r->width + offset.y );
         }
 
         if ( !( w == 0 && h == 0 ) ) {
@@ -722,13 +731,13 @@ static void drawPlayerAnimationFrameBoxes( Player *player ) {
     for ( int i = 0; i < af->boxes.hurtboxCount; i++ ) {
 
         Rectangle *r = &af->boxes.hurtboxes[i];
-        int x = (int) ( player->pos.x + r->x );
-        int y = (int) ( player->pos.y + r->y );
+        int x = (int) ( player->pos.x + r->x + offset.x );
+        int y = (int) ( player->pos.y + r->y + offset.y );
         int w = (int) r->width;
         int h = (int) r->height;
 
         if ( !player->lookingRight ) {
-            x = (int) player->pos.x - r->x - r->width;
+            x = (int) ( player->pos.x - r->x - r->width + offset.x );
         }
 
         if ( !( w == 0 && h == 0 ) ) {

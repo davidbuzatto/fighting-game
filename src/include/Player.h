@@ -10,7 +10,7 @@ void initializePlayerKen( float x, float y, Player *p, DurationMode animationDur
 void destroyPlayer( Player *player );
 void drawPlayer( Player *player );
 void drawPlayerOnionLayers( Player *player, int xOffset );
-void drawPlayerAnimationFrame( Player *player, AnimationFrame *frame, Vector2 offset, Color tint );
+void drawPlayerAnimationFrame( Player *player, AnimationFrame *af, Vector2 offset, Color tint );
 void processInputPlayer( Player *player, Player *opponent, float delta );
 void updatePlayer( Player *player, Player *opponent, float gravity, float delta );
 void flipPlayerSide( Player *player );
