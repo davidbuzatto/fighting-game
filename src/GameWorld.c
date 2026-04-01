@@ -761,6 +761,8 @@ static void drawEditorHelp( void ) {
     int lh = 28;
     int col1 = 30;
     int col2 = GetScreenWidth() / 2 + 20;
+    int desc1 = col1 + 210;   // description column for left side
+    int desc2 = col2 + 220;   // description column for right side
     int yStart = 20;
 
     DrawText( "HELP  -  ANIMATION EDITOR        ( H to close )", col1, yStart, 20, YELLOW );
@@ -769,58 +771,58 @@ static void drawEditorHelp( void ) {
     int yR = yStart + 35;
 
     // left column
-    DrawText( "NAVIGATION", col1, yL, fs, LIGHTGRAY ); yL += lh;
-    DrawText( "UP / DOWN         change state", col1, yL, fs, WHITE ); yL += lh;
-    DrawText( "LEFT / RIGHT     change frame", col1, yL, fs, WHITE ); yL += lh;
+    DrawText( "NAVIGATION",   col1, yL, fs, LIGHTGRAY ); yL += lh;
+    DrawText( "UP / DOWN",    col1, yL, fs, WHITE ); DrawText( "change state", desc1, yL, fs, WHITE ); yL += lh;
+    DrawText( "LEFT / RIGHT", col1, yL, fs, WHITE ); DrawText( "change frame", desc1, yL, fs, WHITE ); yL += lh;
     yL += lh / 2;
 
     DrawText( "BOX SELECTION", col1, yL, fs, LIGHTGRAY ); yL += lh;
-    DrawText( "1                       collision box", col1, yL, fs, GREEN ); yL += lh;
-    DrawText( "2 / 3 / 4            hitbox 0 / 1 / 2", col1, yL, fs, BLUE ); yL += lh;
-    DrawText( "5 / 6 / 7            hurtbox 0 / 1 / 2", col1, yL, fs, RED ); yL += lh;
+    DrawText( "1",             col1, yL, fs, GREEN ); DrawText( "collision box",     desc1, yL, fs, GREEN ); yL += lh;
+    DrawText( "2 / 3 / 4",     col1, yL, fs, BLUE  ); DrawText( "hitbox 0 / 1 / 2",  desc1, yL, fs, BLUE  ); yL += lh;
+    DrawText( "5 / 6 / 7",     col1, yL, fs, RED   ); DrawText( "hurtbox 0 / 1 / 2", desc1, yL, fs, RED   ); yL += lh;
     yL += lh / 2;
 
-    DrawText( "BOX EDITING", col1, yL, fs, LIGHTGRAY ); yL += lh;
-    DrawText( "M + arrows           move box (x/y)", col1, yL, fs, WHITE ); yL += lh;
-    DrawText( "SPACE + arrows     resize (w/h)", col1, yL, fs, WHITE ); yL += lh;
-    DrawText( "+ RIGHT CTRL       1 pixel step", col1, yL, fs, WHITE ); yL += lh;
-    DrawText( "R                        reset box", col1, yL, fs, WHITE ); yL += lh;
+    DrawText( "BOX EDITING",    col1, yL, fs, LIGHTGRAY ); yL += lh;
+    DrawText( "M + arrows",     col1, yL, fs, WHITE ); DrawText( "move box (x/y)", desc1, yL, fs, WHITE ); yL += lh;
+    DrawText( "SPACE + arrows", col1, yL, fs, WHITE ); DrawText( "resize (w/h)",   desc1, yL, fs, WHITE ); yL += lh;
+    DrawText( "+ RIGHT CTRL",   col1, yL, fs, WHITE ); DrawText( "1 pixel step",   desc1, yL, fs, WHITE ); yL += lh;
+    DrawText( "R",              col1, yL, fs, WHITE ); DrawText( "reset box",      desc1, yL, fs, WHITE ); yL += lh;
     yL += lh / 2;
 
     DrawText( "FRAME DURATION", col1, yL, fs, LIGHTGRAY ); yL += lh;
-    DrawText( "KP+ / KP-            adjust duration", col1, yL, fs, WHITE ); yL += lh;
-    DrawText( "+ RIGHT CTRL       step 1", col1, yL, fs, WHITE ); yL += lh;
+    DrawText( "KP+ / KP-",      col1, yL, fs, WHITE ); DrawText( "adjust duration", desc1, yL, fs, WHITE ); yL += lh;
+    DrawText( "+ RIGHT CTRL",   col1, yL, fs, WHITE ); DrawText( "step 1",          desc1, yL, fs, WHITE ); yL += lh;
     yL += lh / 2;
 
     DrawText( "CHARACTER POSITION", col1, yL, fs, LIGHTGRAY ); yL += lh;
-    DrawText( "A / D / W / S        move (continuous)", col1, yL, fs, WHITE ); yL += lh;
-    DrawText( "CTRL + A/D/W/S   move 1 pixel", col1, yL, fs, WHITE ); yL += lh;
+    DrawText( "A / D / W / S",      col1, yL, fs, WHITE ); DrawText( "move (continuous)", desc1, yL, fs, WHITE ); yL += lh;
+    DrawText( "CTRL + A/D/W/S",     col1, yL, fs, WHITE ); DrawText( "move 1 pixel",      desc1, yL, fs, WHITE ); yL += lh;
 
     // right column
     DrawText( "ANIMATION", col2, yR, fs, LIGHTGRAY ); yR += lh;
-    DrawText( "ENTER            start/pause loop", col2, yR, fs, WHITE ); yR += lh;
-    DrawText( "KP ENTER       play once", col2, yR, fs, WHITE ); yR += lh;
+    DrawText( "ENTER",     col2, yR, fs, WHITE ); DrawText( "start/pause loop", desc2, yR, fs, WHITE ); yR += lh;
+    DrawText( "KP ENTER",  col2, yR, fs, WHITE ); DrawText( "play once",        desc2, yR, fs, WHITE ); yR += lh;
     yR += lh / 2;
 
-    DrawText( "ONION SKIN", col2, yR, fs, LIGHTGRAY ); yR += lh;
-    DrawText( "F4                   toggle on/off", col2, yR, fs, WHITE ); yR += lh;
-    DrawText( "O + arrows        adjust offset", col2, yR, fs, WHITE ); yR += lh;
-    DrawText( "O + RIGHT CTRL + arrows        step 1", col2, yR, fs, WHITE ); yR += lh;
+    DrawText( "ONION SKIN",         col2, yR, fs, LIGHTGRAY ); yR += lh;
+    DrawText( "F4",                 col2, yR, fs, WHITE ); DrawText( "toggle on/off", desc2, yR, fs, WHITE ); yR += lh;
+    DrawText( "O + arrows",         col2, yR, fs, WHITE ); DrawText( "adjust offset", desc2, yR, fs, WHITE ); yR += lh;
+    DrawText( "O + RCTRL + arrows", col2, yR, fs, WHITE ); DrawText( "step 1",      desc2, yR, fs, WHITE ); yR += lh;
     yR += lh / 2;
 
-    DrawText( "COPY BOXES", col2, yR, fs, LIGHTGRAY ); yR += lh;
-    DrawText( "CTRL + X           copy -> previous frame", col2, yR, fs, WHITE ); yR += lh;
-    DrawText( "CTRL + C           copy -> next frame", col2, yR, fs, WHITE ); yR += lh;
-    DrawText( "CTRL+ALT + X     copy all -> prev anim.", col2, yR, fs, WHITE ); yR += lh;
-    DrawText( "CTRL+ALT + C     copy all -> next anim.", col2, yR, fs, WHITE ); yR += lh;
+    DrawText( "COPY BOXES",   col2, yR, fs, LIGHTGRAY ); yR += lh;
+    DrawText( "CTRL + X",     col2, yR, fs, WHITE ); DrawText( "copy -> previous frame", desc2 - 30, yR, fs, WHITE ); yR += lh;
+    DrawText( "CTRL + C",     col2, yR, fs, WHITE ); DrawText( "copy -> next frame",     desc2 - 30, yR, fs, WHITE ); yR += lh;
+    DrawText( "CTRL+ALT + X", col2, yR, fs, WHITE ); DrawText( "copy all -> prev anim.", desc2 - 30, yR, fs, WHITE ); yR += lh;
+    DrawText( "CTRL+ALT + C", col2, yR, fs, WHITE ); DrawText( "copy all -> next anim.", desc2 - 30, yR, fs, WHITE ); yR += lh;
     yR += lh / 2;
 
     DrawText( "FILE / GENERAL", col2, yR, fs, LIGHTGRAY ); yR += lh;
-    DrawText( "CTRL + S         save", col2, yR, fs, WHITE ); yR += lh;
-    DrawText( "F1               toggle play/edit mode", col2, yR, fs, WHITE ); yR += lh;
-    DrawText( "F2               show/hide boxes", col2, yR, fs, WHITE ); yR += lh;
-    DrawText( "F3               show/hide debug", col2, yR, fs, WHITE ); yR += lh;
-    DrawText( "H                show/hide help", col2, yR, fs, WHITE ); yR += lh;
+    DrawText( "CTRL + S",       col2, yR, fs, WHITE ); DrawText( "save",                  desc2 - 30, yR, fs, WHITE ); yR += lh;
+    DrawText( "F1",             col2, yR, fs, WHITE ); DrawText( "toggle play/edit mode", desc2 - 30, yR, fs, WHITE ); yR += lh;
+    DrawText( "F2",             col2, yR, fs, WHITE ); DrawText( "show/hide boxes",       desc2 - 30, yR, fs, WHITE ); yR += lh;
+    DrawText( "F3",             col2, yR, fs, WHITE ); DrawText( "show/hide debug",       desc2 - 30, yR, fs, WHITE ); yR += lh;
+    DrawText( "H",              col2, yR, fs, WHITE ); DrawText( "show/hide help",        desc2 - 30, yR, fs, WHITE ); yR += lh;
 
 }
 
