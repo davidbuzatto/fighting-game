@@ -42,6 +42,7 @@ static void copyAnimationFrameBoxesPrevious( Player *p );
 static void copyAnimationFrameBoxesNext( Player *p );
 static void copyAllFrameBoxesToPreviousAnimation( Player *p );
 static void copyAllFrameBoxesToNextAnimation( Player *p );
+static void drawEditorHelp( void );
 
 static void updateCameraPlaying( GameWorld *gw );
 static void updateCameraEditing( GameWorld *gw );
@@ -55,6 +56,8 @@ static bool drawPlayerOnion = DRAW_PLAYER_ONION;
 static bool runPlayerCurrentAnimation = false;
 static bool runPlayerCurrentAnimationOnce = false;
 static int onionOffset = 40;
+static bool showHelp = false;
+static int saveTimer = 0;
 
 // for camera target on playing
 static float playerDist = 0.0f;
@@ -306,39 +309,159 @@ static void drawGameWorldEditing( GameWorld *gw ) {
 
     EndMode2D();
 
-    DrawRectangle( 0, 0, GetScreenWidth(), 140, Fade( BLACK, 0.2f ) );
-    DrawText( "Animation Editor", 5, 5, 20, BLACK );
-    DrawText( TextFormat( "State: %s", utilsPlayerStateToText( gw->player1->state ) ), 5, 35, 20, BLACK );
-    DrawText( TextFormat( "Editing Box: %s", utilsEditorModeToText( editorMode ) ), 5, 55, 20, BLACK );
+    // --- info panel ---
+    DrawRectangle( 0, 0, GetScreenWidth(), 175, Fade( BLACK, 0.25f ) );
 
+    // line 1: title + playback status
+    DrawText( "Animation Editor", 5, 5, 20, BLACK );
+
+    const char *playStatus;
+    Color playColor;
+    if ( runPlayerCurrentAnimation ) {
+        playStatus = "PLAYING";
+        playColor = DARKGREEN;
+    } else if ( runPlayerCurrentAnimationOnce ) {
+        playStatus = "PLAYING ONCE";
+        playColor = DARKGREEN;
+    } else {
+        playStatus = "STOPPED";
+        playColor = DARKGRAY;
+    }
+    int playW = MeasureText( playStatus, 20 );
+    DrawText( playStatus, GetScreenWidth() - playW - 8, 5, 20, playColor );
+
+    // line 2: state
+    DrawText( TextFormat( "State: %s", utilsPlayerStateToText( gw->player1->state ) ), 5, 30, 20, BLACK );
+
+    // line 3: frame / duration / onion offset
     Animation *anim = getPlayerCurrentAnimation( gw->player1 );
+    AnimationFrame *af = getPlayerCurrentAnimationFrame( gw->player1 );
+
     if ( anim != NULL ) {
-        DrawText( TextFormat( "Frame: %d", anim->currentFrame ), 5, 90, 20, BLACK );
+        DrawText( TextFormat( "Frame: %d / %d", anim->currentFrame, anim->frameCount - 1 ), 5, 55, 20, BLACK );
+    }
+    if ( af != NULL ) {
+        DrawText( TextFormat( "Duration: %d", af->duration ), 210, 55, 20, BLACK );
+    }
+    if ( drawPlayerOnion ) {
+        DrawText( TextFormat( "Onion: %d", onionOffset ), 380, 55, 20, DARKBLUE );
     }
 
-    AnimationFrame *af = getPlayerCurrentAnimationFrame( gw->player1 );
+    // line 4: visual box selector slots
+    int slotW = 80;
+    int slotH = 30;
+    int slotY = 82;
+    int slotPad = 4;
+
+    for ( int i = 0; i < 7; i++ ) {
+
+        const char *label;
+        EditorMode mode;
+        Color color;
+        bool available;
+
+        switch ( i ) {
+            case 0: label = "1 COL";  mode = EDITOR_MODE_COLLISION_BOX; color = GREEN; available = true; break;
+            case 1: label = "2 HIT0"; mode = EDITOR_MODE_HIT_BOX_0;     color = BLUE;  available = af != NULL && af->boxes.hitboxCount >= 1; break;
+            case 2: label = "3 HIT1"; mode = EDITOR_MODE_HIT_BOX_1;     color = BLUE;  available = af != NULL && af->boxes.hitboxCount >= 2; break;
+            case 3: label = "4 HIT2"; mode = EDITOR_MODE_HIT_BOX_2;     color = BLUE;  available = af != NULL && af->boxes.hitboxCount >= 3; break;
+            case 4: label = "5 HUR0"; mode = EDITOR_MODE_HURT_BOX_0;    color = RED;   available = af != NULL && af->boxes.hurtboxCount >= 1; break;
+            case 5: label = "6 HUR1"; mode = EDITOR_MODE_HURT_BOX_1;    color = RED;   available = af != NULL && af->boxes.hurtboxCount >= 2; break;
+            case 6: label = "7 HUR2"; mode = EDITOR_MODE_HURT_BOX_2;    color = RED;   available = af != NULL && af->boxes.hurtboxCount >= 3; break;
+            default: continue;
+        }
+
+        bool selected = editorMode == mode;
+        Color bg      = available ? Fade( color, selected ? 0.70f : 0.30f ) : Fade( GRAY, 0.20f );
+        Color border  = available ? ( selected ? ColorBrightness( color, -0.5f ) : Fade( color, 0.5f ) ) : Fade( DARKGRAY, 0.5f );
+        Color textCol = available ? BLACK : DARKGRAY;
+
+        int sx = 5 + i * ( slotW + slotPad );
+        DrawRectangle( sx, slotY, slotW, slotH, bg );
+        DrawRectangleLines( sx, slotY, slotW, slotH, border );
+        int tw = MeasureText( label, 20 );
+        DrawText( label, sx + ( slotW - tw ) / 2, slotY + 5, 20, textCol );
+
+    }
+
+    // line 5: selected box detail
     if ( af != NULL ) {
-        DrawText( TextFormat( "Duration: %d", af->duration ), 5, 110, 20, BLACK );
+
+        Rectangle *box = NULL;
+        Color boxColor = WHITE;
         switch ( editorMode ) {
-            case EDITOR_MODE_COLLISION_BOX: showAnimationFrameBoxDetail( gw->player1, &af->boxes.collisionBox, gw->camera, GREEN ); break;
-            case EDITOR_MODE_HIT_BOX_0: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hitboxes[0], gw->camera, BLUE ); break;
-            case EDITOR_MODE_HIT_BOX_1: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hitboxes[1], gw->camera, BLUE ); break;
-            case EDITOR_MODE_HIT_BOX_2: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hitboxes[2], gw->camera, BLUE ); break;
-            case EDITOR_MODE_HURT_BOX_0: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hurtboxes[0], gw->camera, RED ); break;
-            case EDITOR_MODE_HURT_BOX_1: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hurtboxes[1], gw->camera, RED ); break;
-            case EDITOR_MODE_HURT_BOX_2: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hurtboxes[2], gw->camera, RED ); break;
+            case EDITOR_MODE_COLLISION_BOX: box = &af->boxes.collisionBox; boxColor = GREEN; break;
+            case EDITOR_MODE_HIT_BOX_0:     box = &af->boxes.hitboxes[0];  boxColor = BLUE;  break;
+            case EDITOR_MODE_HIT_BOX_1:     box = &af->boxes.hitboxes[1];  boxColor = BLUE;  break;
+            case EDITOR_MODE_HIT_BOX_2:     box = &af->boxes.hitboxes[2];  boxColor = BLUE;  break;
+            case EDITOR_MODE_HURT_BOX_0:    box = &af->boxes.hurtboxes[0]; boxColor = RED;   break;
+            case EDITOR_MODE_HURT_BOX_1:    box = &af->boxes.hurtboxes[1]; boxColor = RED;   break;
+            case EDITOR_MODE_HURT_BOX_2:    box = &af->boxes.hurtboxes[2]; boxColor = RED;   break;
             default: break;
         }
 
+        if ( box != NULL ) {
+            if ( box->width == 0 && box->height == 0 ) {
+                DrawText( "disabled", 5, 118, 20, DARKGRAY );
+            } else {
+                Color dc = ColorBrightness( boxColor, -0.5f );
+                DrawText( TextFormat( "x: %-5d  y: %-5d  w: %-5d  h: %-5d",
+                    (int) box->x, (int) box->y, (int) box->width, (int) box->height ),
+                    5, 118, 20, dc );
+            }
+            showAnimationFrameBoxDetail( gw->player1, box, gw->camera, boxColor );
+        }
+
+    }
+
+    // line 6: dynamic modifier hint
+    const char *hint;
+    Color hintColor;
+    if ( IsKeyDown( KEY_M ) ) {
+        hint = "M + arrows: move box (x/y)  |  + RIGHT CTRL: 1px step";
+        hintColor = BLACK;
+    } else if ( IsKeyDown( KEY_SPACE ) ) {
+        hint = "SPACE + arrows: resize box (w/h)  |  + RIGHT CTRL: 1px step";
+        hintColor = BLACK;
+    } else if ( IsKeyDown( KEY_O ) ) {
+        hint = "O + arrows: adjust onion offset  |  + RIGHT CTRL: step 1";
+        hintColor = BLACK;
+    } else if ( IsKeyDown( KEY_LEFT_CONTROL ) ) {
+        hint = "CTRL+S: save  |  CTRL+X/C: copy boxes  |  CTRL+ALT+X/C: copy animation";
+        hintColor = BLACK;
+    } else {
+        hint = "arrows: navigate  |  1-7: select box  |  M/SPACE+arrows: move/resize  |  H: help";
+        hintColor = BLACK;
+    }
+    DrawText( hint, 5, 148, 20, hintColor );
+
+    // save feedback
+    if ( saveTimer > 0 ) {
+        const char *savedText = "SAVED!";
+        int sw = MeasureText( savedText, 20 );
+        float alpha = saveTimer > 30 ? 1.0f : (float) saveTimer / 30.0f;
+        DrawText( savedText, GetScreenWidth() - sw - 10, 30, 20, Fade( DARKGREEN, alpha ) );
+    }
+
+    // help overlay
+    if ( showHelp ) {
+        drawEditorHelp();
     }
 
 }
 
 static void updateGameWorldEditing( GameWorld *gw, float delta ) {
 
+    if ( saveTimer > 0 ) saveTimer--;
+
+    if ( IsKeyPressed( KEY_H ) ) {
+        showHelp = !showHelp;
+    }
+
     if ( IsKeyDown( KEY_LEFT_CONTROL ) && IsKeyPressed( KEY_S ) ) {
         resetPlayerAnimations( gw->player1 );
         storePlayerAnimations( gw->player1, true, false, PLAYER_1_FILE );
+        saveTimer = 90;
         return;
     }
 
@@ -627,6 +750,77 @@ static void showAnimationFrameBoxDetail( Player *p, Rectangle *box, Camera2D cam
     } else {
         DrawText( "disabled", pos.x + box2.x, pos.y + box2.y - 20, 20, Fade( color, 0.5f ) );
     }
+
+}
+
+static void drawEditorHelp( void ) {
+
+    DrawRectangle( 0, 0, GetScreenWidth(), GetScreenHeight(), Fade( BLACK, 0.88f ) );
+
+    int fs = 20;
+    int lh = 28;
+    int col1 = 30;
+    int col2 = GetScreenWidth() / 2 + 20;
+    int yStart = 20;
+
+    DrawText( "HELP  -  ANIMATION EDITOR        ( H to close )", col1, yStart, 20, YELLOW );
+
+    int yL = yStart + 35;
+    int yR = yStart + 35;
+
+    // left column
+    DrawText( "NAVIGATION", col1, yL, fs, LIGHTGRAY ); yL += lh;
+    DrawText( "UP / DOWN         change state", col1, yL, fs, WHITE ); yL += lh;
+    DrawText( "LEFT / RIGHT     change frame", col1, yL, fs, WHITE ); yL += lh;
+    yL += lh / 2;
+
+    DrawText( "BOX SELECTION", col1, yL, fs, LIGHTGRAY ); yL += lh;
+    DrawText( "1                       collision box", col1, yL, fs, GREEN ); yL += lh;
+    DrawText( "2 / 3 / 4            hitbox 0 / 1 / 2", col1, yL, fs, BLUE ); yL += lh;
+    DrawText( "5 / 6 / 7            hurtbox 0 / 1 / 2", col1, yL, fs, RED ); yL += lh;
+    yL += lh / 2;
+
+    DrawText( "BOX EDITING", col1, yL, fs, LIGHTGRAY ); yL += lh;
+    DrawText( "M + arrows           move box (x/y)", col1, yL, fs, WHITE ); yL += lh;
+    DrawText( "SPACE + arrows     resize (w/h)", col1, yL, fs, WHITE ); yL += lh;
+    DrawText( "+ RIGHT CTRL       1 pixel step", col1, yL, fs, WHITE ); yL += lh;
+    DrawText( "R                        reset box", col1, yL, fs, WHITE ); yL += lh;
+    yL += lh / 2;
+
+    DrawText( "FRAME DURATION", col1, yL, fs, LIGHTGRAY ); yL += lh;
+    DrawText( "KP+ / KP-            adjust duration", col1, yL, fs, WHITE ); yL += lh;
+    DrawText( "+ RIGHT CTRL       step 1", col1, yL, fs, WHITE ); yL += lh;
+    yL += lh / 2;
+
+    DrawText( "CHARACTER POSITION", col1, yL, fs, LIGHTGRAY ); yL += lh;
+    DrawText( "A / D / W / S        move (continuous)", col1, yL, fs, WHITE ); yL += lh;
+    DrawText( "CTRL + A/D/W/S   move 1 pixel", col1, yL, fs, WHITE ); yL += lh;
+
+    // right column
+    DrawText( "ANIMATION", col2, yR, fs, LIGHTGRAY ); yR += lh;
+    DrawText( "ENTER            start/pause loop", col2, yR, fs, WHITE ); yR += lh;
+    DrawText( "KP ENTER       play once", col2, yR, fs, WHITE ); yR += lh;
+    yR += lh / 2;
+
+    DrawText( "ONION SKIN", col2, yR, fs, LIGHTGRAY ); yR += lh;
+    DrawText( "F4                   toggle on/off", col2, yR, fs, WHITE ); yR += lh;
+    DrawText( "O + arrows        adjust offset", col2, yR, fs, WHITE ); yR += lh;
+    DrawText( "O + RIGHT CTRL + arrows        step 1", col2, yR, fs, WHITE ); yR += lh;
+    yR += lh / 2;
+
+    DrawText( "COPY BOXES", col2, yR, fs, LIGHTGRAY ); yR += lh;
+    DrawText( "CTRL + X           copy -> previous frame", col2, yR, fs, WHITE ); yR += lh;
+    DrawText( "CTRL + C           copy -> next frame", col2, yR, fs, WHITE ); yR += lh;
+    DrawText( "CTRL+ALT + X     copy all -> prev anim.", col2, yR, fs, WHITE ); yR += lh;
+    DrawText( "CTRL+ALT + C     copy all -> next anim.", col2, yR, fs, WHITE ); yR += lh;
+    yR += lh / 2;
+
+    DrawText( "FILE / GENERAL", col2, yR, fs, LIGHTGRAY ); yR += lh;
+    DrawText( "CTRL + S         save", col2, yR, fs, WHITE ); yR += lh;
+    DrawText( "F1               toggle play/edit mode", col2, yR, fs, WHITE ); yR += lh;
+    DrawText( "F2               show/hide boxes", col2, yR, fs, WHITE ); yR += lh;
+    DrawText( "F3               show/hide debug", col2, yR, fs, WHITE ); yR += lh;
+    DrawText( "H                show/hide help", col2, yR, fs, WHITE ); yR += lh;
 
 }
 
