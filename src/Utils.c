@@ -4,6 +4,7 @@
 #include "raylib/raylib.h"
 #include "parson/parson.h"
 
+#include "Macros.h"
 #include "Types.h"
 
 const char *utilsPlayerStateToText( PlayerState state ) {
@@ -239,8 +240,13 @@ void loadPlayerAnimationFrameBoxes( Player *p, const char *filename ) {
 
         for ( int f = 0; f < frameCount; f++ ) {
 
+            AnimationFrame *af = &a->frames[f];
+
             JSON_Object *frameObj = json_array_get_object( framesArray, f );
             if ( frameObj == NULL ) continue;
+
+            int duration = (int) json_object_get_number( frameObj, "duration" );
+            af->duration = duration;
 
             JSON_Object *boxesObj = json_object_get_object( frameObj, "boxes" );
             if ( boxesObj == NULL ) continue;

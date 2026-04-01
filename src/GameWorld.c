@@ -15,6 +15,7 @@
 //#include "raylib/raygui.h"       // other compilation units must only include
 //#undef RAYGUI_IMPLEMENTATION     // raygui.h
 
+#include "Animation.h"
 #include "GameWorld.h"
 #include "Macros.h"
 #include "ResourceManager.h"
@@ -51,6 +52,7 @@ static void flipPlayers( GameWorld *gw );
 // editor
 static EditorMode editorMode = EDITOR_MODE_COLLISION_BOX;
 static bool drawPlayerOnion = DRAW_PLAYER_ONION;
+static bool runPlayerCurrentAnimation = false;
 static int onionOffset = 40;
 
 // for camera target on playing
@@ -303,18 +305,19 @@ static void drawGameWorldEditing( GameWorld *gw ) {
 
     EndMode2D();
 
-    DrawRectangle( 0, 0, GetScreenWidth(), 100, Fade( BLACK, 0.2f ) );
-    DrawText( "Animation Frame Box Editor", 5, 5, 20, BLACK );
-    DrawText( TextFormat( "Mode: %s", utilsEditorModeToText( editorMode ) ), 5, 35, 20, BLACK );
-    DrawText( TextFormat( "State: %s", utilsPlayerStateToText( gw->player1->state ) ), 5, 55, 20, BLACK );
+    DrawRectangle( 0, 0, GetScreenWidth(), 140, Fade( BLACK, 0.2f ) );
+    DrawText( "Animation Editor", 5, 5, 20, BLACK );
+    DrawText( TextFormat( "State: %s", utilsPlayerStateToText( gw->player1->state ) ), 5, 35, 20, BLACK );
+    DrawText( TextFormat( "Editing Box: %s", utilsEditorModeToText( editorMode ) ), 5, 55, 20, BLACK );
 
     Animation *anim = getPlayerCurrentAnimation( gw->player1 );
     if ( anim != NULL ) {
-        DrawText( TextFormat( "Frame: %d", anim->currentFrame ), 5, 75, 20, BLACK );
+        DrawText( TextFormat( "Frame: %d", anim->currentFrame ), 5, 90, 20, BLACK );
     }
 
     AnimationFrame *af = getPlayerCurrentAnimationFrame( gw->player1 );
     if ( af != NULL ) {
+        DrawText( TextFormat( "Duration: %d", af->duration ), 5, 110, 20, BLACK );
         switch ( editorMode ) {
             case EDITOR_MODE_COLLISION_BOX: showAnimationFrameBoxDetail( gw->player1, &af->boxes.collisionBox, gw->camera, GREEN ); break;
             case EDITOR_MODE_HIT_BOX_0: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hitboxes[0], gw->camera, BLUE ); break;
@@ -325,6 +328,7 @@ static void drawGameWorldEditing( GameWorld *gw ) {
             case EDITOR_MODE_HURT_BOX_2: showAnimationFrameBoxDetail( gw->player1, &af->boxes.hurtboxes[2], gw->camera, RED ); break;
             default: break;
         }
+
     }
 
 }
@@ -464,6 +468,37 @@ static void updateGameWorldEditing( GameWorld *gw, float delta ) {
         case EDITOR_MODE_HURT_BOX_1: editAnimationFrameBox( &af->boxes.hurtboxes[1] ); break;
         case EDITOR_MODE_HURT_BOX_2: editAnimationFrameBox( &af->boxes.hurtboxes[2] ); break;
         default: break;
+    }
+
+    if ( IsKeyDown( KEY_RIGHT_CONTROL ) ) {
+        if ( IsKeyPressed( KEY_KP_ADD ) ) {
+            af->duration++;
+        } else if ( IsKeyPressed( KEY_KP_SUBTRACT ) ) {
+            af->duration--;
+            if ( af->duration < 0 ) {
+                af->duration = 0;
+            }
+        }
+    } else {
+        if ( IsKeyDown( KEY_KP_ADD ) ) {
+            af->duration++;
+        } else if ( IsKeyDown( KEY_KP_SUBTRACT ) ) {
+            af->duration--;
+            if ( af->duration < 0 ) {
+                af->duration = 0;
+            }
+        }
+    }
+
+    if ( IsKeyPressed( KEY_ENTER ) ) {
+        runPlayerCurrentAnimation = !runPlayerCurrentAnimation;
+    }
+
+    if ( runPlayerCurrentAnimation ) {
+        updateAnimation( anim, DURATION_MODE, delta );
+        if ( ( anim->runOnce || anim->stopAtLastFrame ) && anim->finished ) {
+            resetAnimation( anim );
+        }
     }
 
     updateCameraEditing( gw );
