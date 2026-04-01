@@ -374,7 +374,7 @@ static void drawGameWorldEditing( GameWorld *gw ) {
         bool selected = editorMode == mode;
         Color bg      = available ? Fade( color, selected ? 0.70f : 0.30f ) : Fade( GRAY, 0.20f );
         Color border  = available ? ( selected ? ColorBrightness( color, -0.5f ) : Fade( color, 0.5f ) ) : Fade( DARKGRAY, 0.5f );
-        Color textCol = available ? BLACK : DARKGRAY;
+        Color textCol = selected ? ColorBrightness( color, -0.7f ) : DARKGRAY;
 
         int sx = 5 + i * ( slotW + slotPad );
         DrawRectangle( sx, slotY, slotW, slotH, bg );
@@ -400,11 +400,11 @@ static void drawGameWorldEditing( GameWorld *gw ) {
             default: break;
         }
 
+        Color dc = ColorBrightness( boxColor, -0.5f );
         if ( box != NULL ) {
             if ( box->width == 0 && box->height == 0 ) {
-                DrawText( "disabled", 5, 118, 20, DARKGRAY );
+                DrawText( "disabled", 5, 118, 20, Fade( dc, 0.5f ) );
             } else {
-                Color dc = ColorBrightness( boxColor, -0.5f );
                 DrawText( TextFormat( "x: %-5d  y: %-5d  w: %-5d  h: %-5d",
                     (int) box->x, (int) box->y, (int) box->width, (int) box->height ),
                     5, 118, 20, dc );
