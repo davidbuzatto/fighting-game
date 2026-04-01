@@ -403,7 +403,7 @@
                         "width": -80,
                         "height": 96
                     },
-                    "duration": 70,
+                    "duration": 90,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -466,7 +466,7 @@
                         "width": -80,
                         "height": 96
                     },
-                    "duration": 70,
+                    "duration": 90,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -529,7 +529,7 @@
                         "width": -80,
                         "height": 96
                     },
-                    "duration": 70,
+                    "duration": 90,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -592,7 +592,7 @@
                         "width": -80,
                         "height": 96
                     },
-                    "duration": 70,
+                    "duration": 90,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -655,7 +655,7 @@
                         "width": -80,
                         "height": 96
                     },
-                    "duration": 70,
+                    "duration": 90,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -728,7 +728,7 @@
                         "width": -80,
                         "height": 96
                     },
-                    "duration": 80,
+                    "duration": 62,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -791,7 +791,7 @@
                         "width": -80,
                         "height": 96
                     },
-                    "duration": 80,
+                    "duration": 62,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -854,7 +854,7 @@
                         "width": -80,
                         "height": 96
                     },
-                    "duration": 80,
+                    "duration": 62,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -917,7 +917,7 @@
                         "width": -80,
                         "height": 96
                     },
-                    "duration": 80,
+                    "duration": 62,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -980,7 +980,7 @@
                         "width": -80,
                         "height": 96
                     },
-                    "duration": 80,
+                    "duration": 62,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -1043,7 +1043,7 @@
                         "width": -80,
                         "height": 96
                     },
-                    "duration": 80,
+                    "duration": 62,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -2678,7 +2678,7 @@
                         "width": -112,
                         "height": 96
                     },
-                    "duration": 50,
+                    "duration": 60,
                     "offset": {
                         "x": 22,
                         "y": 0
@@ -2741,7 +2741,7 @@
                         "width": -112,
                         "height": 96
                     },
-                    "duration": 50,
+                    "duration": 60,
                     "offset": {
                         "x": 22,
                         "y": 0
@@ -2804,7 +2804,7 @@
                         "width": -112,
                         "height": 96
                     },
-                    "duration": 50,
+                    "duration": 60,
                     "offset": {
                         "x": 22,
                         "y": 0
@@ -2877,7 +2877,7 @@
                         "width": -128,
                         "height": 96
                     },
-                    "duration": 50,
+                    "duration": 60,
                     "offset": {
                         "x": 30,
                         "y": 0
@@ -2940,7 +2940,7 @@
                         "width": -128,
                         "height": 96
                     },
-                    "duration": 50,
+                    "duration": 60,
                     "offset": {
                         "x": 30,
                         "y": 0
@@ -3003,7 +3003,7 @@
                         "width": -128,
                         "height": 96
                     },
-                    "duration": 50,
+                    "duration": 60,
                     "offset": {
                         "x": 30,
                         "y": 0
@@ -3066,7 +3066,7 @@
                         "width": -128,
                         "height": 96
                     },
-                    "duration": 50,
+                    "duration": 60,
                     "offset": {
                         "x": 30,
                         "y": 0
@@ -3129,7 +3129,7 @@
                         "width": -128,
                         "height": 96
                     },
-                    "duration": 50,
+                    "duration": 60,
                     "offset": {
                         "x": 30,
                         "y": 0
@@ -3202,7 +3202,7 @@
                         "width": -128,
                         "height": 96
                     },
-                    "duration": 90,
+                    "duration": 70,
                     "offset": {
                         "x": 30,
                         "y": 0
@@ -3265,7 +3265,7 @@
                         "width": -128,
                         "height": 96
                     },
-                    "duration": 90,
+                    "duration": 80,
                     "offset": {
                         "x": 30,
                         "y": 0
@@ -3328,7 +3328,7 @@
                         "width": -128,
                         "height": 96
                     },
-                    "duration": 90,
+                    "duration": 80,
                     "offset": {
                         "x": 30,
                         "y": 0
@@ -3391,7 +3391,7 @@
                         "width": -128,
                         "height": 96
                     },
-                    "duration": 90,
+                    "duration": 140,
                     "offset": {
                         "x": 30,
                         "y": 0
@@ -3454,7 +3454,7 @@
                         "width": -128,
                         "height": 96
                     },
-                    "duration": 90,
+                    "duration": 80,
                     "offset": {
                         "x": 30,
                         "y": 0
@@ -3527,7 +3527,7 @@
                         "width": -128,
                         "height": 96
                     },
-                    "duration": 60,
+                    "duration": 70,
                     "offset": {
                         "x": 0,
                         "y": -5
@@ -3590,7 +3590,7 @@
                         "width": -128,
                         "height": 96
                     },
-                    "duration": 60,
+                    "duration": 100,
                     "offset": {
                         "x": 0,
                         "y": -5
@@ -3653,7 +3653,7 @@
                         "width": -128,
                         "height": 96
                     },
-                    "duration": 60,
+                    "duration": 70,
                     "offset": {
                         "x": 0,
                         "y": -5
@@ -3726,7 +3726,7 @@
                         "width": -128,
                         "height": 96
                     },
-                    "duration": 90,
+                    "duration": 110,
                     "offset": {
                         "x": 0,
                         "y": -5
@@ -3789,7 +3789,7 @@
                         "width": -128,
                         "height": 96
                     },
-                    "duration": 90,
+                    "duration": 160,
                     "offset": {
                         "x": 0,
                         "y": -5
@@ -3852,7 +3852,7 @@
                         "width": -128,
                         "height": 96
                     },
-                    "duration": 90,
+                    "duration": 110,
                     "offset": {
                         "x": 0,
                         "y": -5

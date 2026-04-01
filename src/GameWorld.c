@@ -53,6 +53,7 @@ static void flipPlayers( GameWorld *gw );
 static EditorMode editorMode = EDITOR_MODE_COLLISION_BOX;
 static bool drawPlayerOnion = DRAW_PLAYER_ONION;
 static bool runPlayerCurrentAnimation = false;
+static bool runPlayerCurrentAnimationOnce = false;
 static int onionOffset = 40;
 
 // for camera target on playing
@@ -490,14 +491,30 @@ static void updateGameWorldEditing( GameWorld *gw, float delta ) {
         }
     }
 
-    if ( IsKeyPressed( KEY_ENTER ) ) {
-        runPlayerCurrentAnimation = !runPlayerCurrentAnimation;
+    if ( !runPlayerCurrentAnimationOnce ) {
+        if ( IsKeyPressed( KEY_ENTER ) ) {
+            runPlayerCurrentAnimation = !runPlayerCurrentAnimation;
+        }
     }
 
     if ( runPlayerCurrentAnimation ) {
         updateAnimation( anim, DURATION_MODE, delta );
         if ( ( anim->runOnce || anim->stopAtLastFrame ) && anim->finished ) {
             resetAnimation( anim );
+        }
+    }
+
+    if ( !runPlayerCurrentAnimation ) {
+        if ( IsKeyPressed( KEY_KP_ENTER ) ) {
+            runPlayerCurrentAnimationOnce = true;
+            resetAnimation( anim );
+        }
+    }
+
+    if ( runPlayerCurrentAnimationOnce ) {
+        updateAnimation( anim, DURATION_MODE, delta );
+        if ( anim->finished || anim->currentFrame == anim->frameCount - 1 ) {
+            runPlayerCurrentAnimationOnce = false;
         }
     }
 
