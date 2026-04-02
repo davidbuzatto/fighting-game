@@ -494,12 +494,12 @@ static void updateGameWorldEditing( GameWorld *gw, float delta ) {
 
     switch ( editorMode ) {
         case EDITOR_MODE_COLLISION_BOX: editAnimationFrameBox( &af->boxes.collisionBox ); break;
-        case EDITOR_MODE_HIT_BOX_0: editAnimationFrameBox( &af->boxes.hitboxes[0] ); break;
-        case EDITOR_MODE_HIT_BOX_1: editAnimationFrameBox( &af->boxes.hitboxes[1] ); break;
-        case EDITOR_MODE_HIT_BOX_2: editAnimationFrameBox( &af->boxes.hitboxes[2] ); break;
-        case EDITOR_MODE_HURT_BOX_0: editAnimationFrameBox( &af->boxes.hurtboxes[0] ); break;
-        case EDITOR_MODE_HURT_BOX_1: editAnimationFrameBox( &af->boxes.hurtboxes[1] ); break;
-        case EDITOR_MODE_HURT_BOX_2: editAnimationFrameBox( &af->boxes.hurtboxes[2] ); break;
+        case EDITOR_MODE_HIT_BOX_0:     editAnimationFrameBox( &af->boxes.hitboxes[0] );  break;
+        case EDITOR_MODE_HIT_BOX_1:     editAnimationFrameBox( &af->boxes.hitboxes[1] );  break;
+        case EDITOR_MODE_HIT_BOX_2:     editAnimationFrameBox( &af->boxes.hitboxes[2] );  break;
+        case EDITOR_MODE_HURT_BOX_0:    editAnimationFrameBox( &af->boxes.hurtboxes[0] ); break;
+        case EDITOR_MODE_HURT_BOX_1:    editAnimationFrameBox( &af->boxes.hurtboxes[1] ); break;
+        case EDITOR_MODE_HURT_BOX_2:    editAnimationFrameBox( &af->boxes.hurtboxes[2] ); break;
         default: break;
     }
 
@@ -712,9 +712,9 @@ static void drawInfoPanel( GameWorld *gw ) {
 
         switch ( i ) {
             case 0: label = "1 COL";  mode = EDITOR_MODE_COLLISION_BOX; color = GREEN; available = true; break;
-            case 1: label = "2 HIT0"; mode = EDITOR_MODE_HIT_BOX_0;     color = BLUE;  available = af != NULL && af->boxes.hitboxCount >= 1; break;
-            case 2: label = "3 HIT1"; mode = EDITOR_MODE_HIT_BOX_1;     color = BLUE;  available = af != NULL && af->boxes.hitboxCount >= 2; break;
-            case 3: label = "4 HIT2"; mode = EDITOR_MODE_HIT_BOX_2;     color = BLUE;  available = af != NULL && af->boxes.hitboxCount >= 3; break;
+            case 1: label = "2 HIT0"; mode = EDITOR_MODE_HIT_BOX_0;     color = BLUE;  available = af != NULL && af->boxes.hitboxCount >= 1;  break;
+            case 2: label = "3 HIT1"; mode = EDITOR_MODE_HIT_BOX_1;     color = BLUE;  available = af != NULL && af->boxes.hitboxCount >= 2;  break;
+            case 3: label = "4 HIT2"; mode = EDITOR_MODE_HIT_BOX_2;     color = BLUE;  available = af != NULL && af->boxes.hitboxCount >= 3;  break;
             case 4: label = "5 HUR0"; mode = EDITOR_MODE_HURT_BOX_0;    color = RED;   available = af != NULL && af->boxes.hurtboxCount >= 1; break;
             case 5: label = "6 HUR1"; mode = EDITOR_MODE_HURT_BOX_1;    color = RED;   available = af != NULL && af->boxes.hurtboxCount >= 2; break;
             case 6: label = "7 HUR2"; mode = EDITOR_MODE_HURT_BOX_2;    color = RED;   available = af != NULL && af->boxes.hurtboxCount >= 3; break;
