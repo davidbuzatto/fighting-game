@@ -58,6 +58,7 @@ static bool runPlayerCurrentAnimationOnce = false;
 static int onionOffset = 40;
 static bool showHelp = false;
 static int saveTimer = 0;
+static PlayerState lastEditState = PLAYER_STATE_LAST;
 
 // for camera target on playing
 static float playerDist = 0.0f;
@@ -155,13 +156,23 @@ void destroyGameWorld( GameWorld *gw ) {
 void updateGameWorld( GameWorld *gw, float delta ) {
 
     if ( IsKeyPressed( KEY_F1 ) ) {
+
         if ( gw->mode == GAME_MODE_PLAYING ) {
             gw->mode = GAME_MODE_EDITING;
         } else {
             gw->mode = GAME_MODE_PLAYING;
         }
-        gw->player1->state = PLAYER_STATE_IDLE;
+
+        if ( gw->mode == GAME_MODE_EDITING ) {
+            if ( lastEditState == PLAYER_STATE_LAST ) {
+                gw->player1->state = PLAYER_STATE_IDLE;
+            } else {
+                gw->player1->state = lastEditState;
+            }
+        }
+
         resetPlayerAnimations( gw->player1 );
+
     }
 
     if ( IsKeyPressed( KEY_F2 ) ) {
@@ -509,13 +520,13 @@ static void updateGameWorldEditing( GameWorld *gw, float delta ) {
             } else {
                 gw->player1->state = state;
             }
-            //editorMode = EDITOR_MODE_COLLISION_BOX;
+            lastEditState = gw->player1->state;
         } else if ( IsKeyPressed( KEY_DOWN ) ) {
             gw->player1->state++;
             if ( gw->player1->state == PLAYER_STATE_LAST ) {
                 gw->player1->state = PLAYER_STATE_IDLE;
             }
-            //editorMode = EDITOR_MODE_COLLISION_BOX;
+            lastEditState = gw->player1->state;
         }
     }
 
