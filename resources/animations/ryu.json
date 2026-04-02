@@ -4250,7 +4250,7 @@
                         "width": -80,
                         "height": 112
                     },
-                    "duration": 150,
+                    "duration": 200,
                     "offset": {
                         "x": 5,
                         "y": 0
@@ -4325,7 +4325,7 @@
                     },
                     "duration": 65,
                     "offset": {
-                        "x": 7,
+                        "x": 16,
                         "y": -1
                     },
                     "boxes": {
@@ -4386,9 +4386,9 @@
                         "width": -96,
                         "height": 96
                     },
-                    "duration": 65,
+                    "duration": 170,
                     "offset": {
-                        "x": 7,
+                        "x": 10,
                         "y": -1
                     },
                     "boxes": {
@@ -4449,9 +4449,9 @@
                         "width": -96,
                         "height": 96
                     },
-                    "duration": 65,
+                    "duration": 100,
                     "offset": {
-                        "x": 7,
+                        "x": 10,
                         "y": -1
                     },
                     "boxes": {
@@ -4512,9 +4512,9 @@
                         "width": -96,
                         "height": 96
                     },
-                    "duration": 65,
+                    "duration": 40,
                     "offset": {
-                        "x": 7,
+                        "x": 10,
                         "y": -1
                     },
                     "boxes": {
@@ -4575,9 +4575,9 @@
                         "width": -96,
                         "height": 96
                     },
-                    "duration": 65,
+                    "duration": 40,
                     "offset": {
-                        "x": 7,
+                        "x": 10,
                         "y": -1
                     },
                     "boxes": {
@@ -4711,7 +4711,7 @@
                         "width": -112,
                         "height": 128
                     },
-                    "duration": 65,
+                    "duration": 170,
                     "offset": {
                         "x": 20,
                         "y": 0
@@ -4774,7 +4774,7 @@
                         "width": -112,
                         "height": 128
                     },
-                    "duration": 65,
+                    "duration": 50,
                     "offset": {
                         "x": 20,
                         "y": 0
@@ -4837,7 +4837,7 @@
                         "width": -112,
                         "height": 128
                     },
-                    "duration": 65,
+                    "duration": 50,
                     "offset": {
                         "x": 20,
                         "y": 0
@@ -4900,7 +4900,7 @@
                         "width": -112,
                         "height": 128
                     },
-                    "duration": 65,
+                    "duration": 50,
                     "offset": {
                         "x": 20,
                         "y": 0
@@ -5036,7 +5036,7 @@
                         "width": -96,
                         "height": 96
                     },
-                    "duration": 120,
+                    "duration": 180,
                     "offset": {
                         "x": 42,
                         "y": 0
@@ -5099,7 +5099,7 @@
                         "width": -96,
                         "height": 96
                     },
-                    "duration": 60,
+                    "duration": 50,
                     "offset": {
                         "x": 42,
                         "y": 0
@@ -5235,7 +5235,7 @@
                         "width": -80,
                         "height": 112
                     },
-                    "duration": 120,
+                    "duration": 180,
                     "offset": {
                         "x": 30,
                         "y": 0
@@ -5298,7 +5298,7 @@
                         "width": -80,
                         "height": 112
                     },
-                    "duration": 60,
+                    "duration": 50,
                     "offset": {
                         "x": 30,
                         "y": 0
@@ -5434,7 +5434,7 @@
                         "width": -112,
                         "height": 128
                     },
-                    "duration": 120,
+                    "duration": 180,
                     "offset": {
                         "x": 47,
                         "y": 0
@@ -5497,7 +5497,7 @@
                         "width": -112,
                         "height": 128
                     },
-                    "duration": 120,
+                    "duration": 180,
                     "offset": {
                         "x": 47,
                         "y": 0
@@ -5560,7 +5560,7 @@
                         "width": -112,
                         "height": 128
                     },
-                    "duration": 60,
+                    "duration": 50,
                     "offset": {
                         "x": 47,
                         "y": 0
@@ -5968,7 +5968,7 @@
                         "width": -96,
                         "height": 128
                     },
-                    "duration": 60,
+                    "duration": 50,
                     "offset": {
                         "x": 8,
                         "y": 0
@@ -6031,7 +6031,7 @@
                         "width": -96,
                         "height": 128
                     },
-                    "duration": 60,
+                    "duration": 160,
                     "offset": {
                         "x": 8,
                         "y": 0
@@ -6094,7 +6094,7 @@
                         "width": -96,
                         "height": 128
                     },
-                    "duration": 60,
+                    "duration": 160,
                     "offset": {
                         "x": 8,
                         "y": 0
@@ -6157,7 +6157,7 @@
                         "width": -96,
                         "height": 128
                     },
-                    "duration": 60,
+                    "duration": 70,
                     "offset": {
                         "x": 8,
                         "y": 0
@@ -6230,7 +6230,7 @@
                         "width": -160,
                         "height": 64
                     },
-                    "duration": 60,
+                    "duration": 80,
                     "offset": {
                         "x": 40,
                         "y": 0
@@ -6303,7 +6303,7 @@
                         "width": -160,
                         "height": 64
                     },
-                    "duration": 60,
+                    "duration": 70,
                     "offset": {
                         "x": 40,
                         "y": 0
@@ -6366,7 +6366,7 @@
                         "width": -160,
                         "height": 64
                     },
-                    "duration": 60,
+                    "duration": 140,
                     "offset": {
                         "x": 40,
                         "y": 0
@@ -6502,7 +6502,7 @@
                         "width": -144,
                         "height": 64
                     },
-                    "duration": 60,
+                    "duration": 120,
                     "offset": {
                         "x": 32,
                         "y": 0
@@ -6565,7 +6565,7 @@
                         "width": -144,
                         "height": 64
                     },
-                    "duration": 60,
+                    "duration": 120,
                     "offset": {
                         "x": 32,
                         "y": 0
@@ -6628,7 +6628,7 @@
                         "width": -144,
                         "height": 64
                     },
-                    "duration": 60,
+                    "duration": 120,
                     "offset": {
                         "x": 32,
                         "y": 0
@@ -6764,7 +6764,7 @@
                         "width": -96,
                         "height": 80
                     },
-                    "duration": 100,
+                    "duration": 350,
                     "offset": {
                         "x": 8,
                         "y": 0
@@ -6837,7 +6837,7 @@
                         "width": -96,
                         "height": 80
                     },
-                    "duration": 60,
+                    "duration": 50,
                     "offset": {
                         "x": 8,
                         "y": 0
@@ -6900,7 +6900,7 @@
                         "width": -96,
                         "height": 80
                     },
-                    "duration": 100,
+                    "duration": 250,
                     "offset": {
                         "x": 8,
                         "y": 0
@@ -6973,7 +6973,7 @@
                         "width": -96,
                         "height": 80
                     },
-                    "duration": 60,
+                    "duration": 50,
                     "offset": {
                         "x": 8,
                         "y": 0
@@ -7036,7 +7036,7 @@
                         "width": -96,
                         "height": 80
                     },
-                    "duration": 100,
+                    "duration": 150,
                     "offset": {
                         "x": 8,
                         "y": 0
@@ -7109,7 +7109,7 @@
                         "width": -80,
                         "height": 96
                     },
-                    "duration": 100,
+                    "duration": 400,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -7182,7 +7182,7 @@
                         "width": -80,
                         "height": 96
                     },
-                    "duration": 100,
+                    "duration": 200,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -7580,7 +7580,7 @@
                         "width": -96,
                         "height": 80
                     },
-                    "duration": 100,
+                    "duration": 350,
                     "offset": {
                         "x": 8,
                         "y": 0
@@ -7653,7 +7653,7 @@
                         "width": -96,
                         "height": 80
                     },
-                    "duration": 60,
+                    "duration": 50,
                     "offset": {
                         "x": 8,
                         "y": 0
@@ -7716,7 +7716,7 @@
                         "width": -96,
                         "height": 80
                     },
-                    "duration": 100,
+                    "duration": 250,
                     "offset": {
                         "x": 8,
                         "y": 0
@@ -7789,7 +7789,7 @@
                         "width": -96,
                         "height": 80
                     },
-                    "duration": 60,
+                    "duration": 50,
                     "offset": {
                         "x": 8,
                         "y": 0
@@ -7852,7 +7852,7 @@
                         "width": -96,
                         "height": 80
                     },
-                    "duration": 100,
+                    "duration": 150,
                     "offset": {
                         "x": 8,
                         "y": 0
@@ -7925,7 +7925,7 @@
                         "width": -80,
                         "height": 80
                     },
-                    "duration": 60,
+                    "duration": 50,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -7988,7 +7988,7 @@
                         "width": -80,
                         "height": 80
                     },
-                    "duration": 60,
+                    "duration": 50,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -8051,7 +8051,7 @@
                         "width": -80,
                         "height": 80
                     },
-                    "duration": 60,
+                    "duration": 290,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -8124,7 +8124,7 @@
                         "width": -128,
                         "height": 80
                     },
-                    "duration": 60,
+                    "duration": 50,
                     "offset": {
                         "x": 24,
                         "y": 0
@@ -8187,7 +8187,7 @@
                         "width": -128,
                         "height": 80
                     },
-                    "duration": 120,
+                    "duration": 220,
                     "offset": {
                         "x": 24,
                         "y": 0
@@ -8260,7 +8260,7 @@
                         "width": -128,
                         "height": 80
                     },
-                    "duration": 60,
+                    "duration": 50,
                     "offset": {
                         "x": 24,
                         "y": 0
@@ -8323,7 +8323,7 @@
                         "width": -128,
                         "height": 80
                     },
-                    "duration": 120,
+                    "duration": 150,
                     "offset": {
                         "x": 24,
                         "y": 0
@@ -8459,7 +8459,7 @@
                         "width": -96,
                         "height": 80
                     },
-                    "duration": 100,
+                    "duration": 350,
                     "offset": {
                         "x": 8,
                         "y": 0
@@ -8532,7 +8532,7 @@
                         "width": -96,
                         "height": 80
                     },
-                    "duration": 60,
+                    "duration": 50,
                     "offset": {
                         "x": 8,
                         "y": 0
@@ -8595,7 +8595,7 @@
                         "width": -96,
                         "height": 80
                     },
-                    "duration": 100,
+                    "duration": 250,
                     "offset": {
                         "x": 8,
                         "y": 0
@@ -8668,7 +8668,7 @@
                         "width": -96,
                         "height": 80
                     },
-                    "duration": 60,
+                    "duration": 50,
                     "offset": {
                         "x": 8,
                         "y": 0
@@ -8731,7 +8731,7 @@
                         "width": -96,
                         "height": 80
                     },
-                    "duration": 100,
+                    "duration": 150,
                     "offset": {
                         "x": 8,
                         "y": 0
@@ -8804,7 +8804,7 @@
                         "width": -80,
                         "height": 80
                     },
-                    "duration": 60,
+                    "duration": 50,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -8867,7 +8867,7 @@
                         "width": -80,
                         "height": 80
                     },
-                    "duration": 60,
+                    "duration": 50,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -8930,7 +8930,7 @@
                         "width": -80,
                         "height": 80
                     },
-                    "duration": 60,
+                    "duration": 290,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -9003,7 +9003,7 @@
                         "width": -128,
                         "height": 80
                     },
-                    "duration": 60,
+                    "duration": 50,
                     "offset": {
                         "x": 24,
                         "y": 0
@@ -9066,7 +9066,7 @@
                         "width": -128,
                         "height": 80
                     },
-                    "duration": 120,
+                    "duration": 220,
                     "offset": {
                         "x": 24,
                         "y": 0
@@ -9139,7 +9139,7 @@
                         "width": -128,
                         "height": 80
                     },
-                    "duration": 60,
+                    "duration": 50,
                     "offset": {
                         "x": 24,
                         "y": 0
@@ -9202,7 +9202,7 @@
                         "width": -128,
                         "height": 80
                     },
-                    "duration": 120,
+                    "duration": 250,
                     "offset": {
                         "x": 24,
                         "y": 0

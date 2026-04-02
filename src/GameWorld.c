@@ -59,6 +59,7 @@ static int onionOffset = 40;
 static bool showHelp = false;
 static int saveTimer = 0;
 static PlayerState lastEditState = PLAYER_STATE_LAST;
+static int lastEditFrame = 0;
 
 // for camera target on playing
 static float playerDist = 0.0f;
@@ -161,6 +162,7 @@ void updateGameWorld( GameWorld *gw, float delta ) {
             gw->mode = GAME_MODE_EDITING;
         } else {
             gw->mode = GAME_MODE_PLAYING;
+            resetPlayerAnimations( gw->player1 );
         }
 
         if ( gw->mode == GAME_MODE_EDITING ) {
@@ -169,9 +171,11 @@ void updateGameWorld( GameWorld *gw, float delta ) {
             } else {
                 gw->player1->state = lastEditState;
             }
+            Animation *a = getPlayerCurrentAnimation( gw->player1 );
+            if ( a != NULL )  {
+                a->currentFrame = lastEditFrame;
+            }
         }
-
-        resetPlayerAnimations( gw->player1 );
 
     }
 
@@ -539,11 +543,13 @@ static void updateGameWorldEditing( GameWorld *gw, float delta ) {
                 if ( anim->currentFrame < 0 ) {
                     anim->currentFrame = anim->frameCount - 1;
                 }
+                lastEditFrame = anim->currentFrame;
             } else if ( IsKeyPressed( KEY_RIGHT ) ) {
                 anim->currentFrame++;
                 if ( anim->currentFrame >= anim->frameCount ) {
                     anim->currentFrame = 0;
                 }
+                lastEditFrame = anim->currentFrame;
             }
         }
     }

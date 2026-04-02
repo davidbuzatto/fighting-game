@@ -258,11 +258,11 @@ void initializePlayerRyu( float x, float y, Player *p, DurationMode animationDur
     p->mpCloseAnim.runOnce = true;
     p->mpCloseAnim.finished = false;
     createAnimationFrames( &p->mpCloseAnim, p->mpCloseAnim.frameCount );
-    p->mpCloseAnim.frames[0] = (AnimationFrame) { {   1, 1338, -96, 96 }, 65, { 7, -1 }, .boxes = { 0 } };
-    p->mpCloseAnim.frames[1] = (AnimationFrame) { {  98, 1338, -96, 96 }, 65, { 7, -1 }, .boxes = { 0 } };
-    p->mpCloseAnim.frames[2] = (AnimationFrame) { { 195, 1338, -96, 96 }, 65, { 7, -1 }, .boxes = { 0 } };
-    p->mpCloseAnim.frames[3] = (AnimationFrame) { {  98, 1338, -96, 96 }, 65, { 7, -1 }, .boxes = { 0 } };
-    p->mpCloseAnim.frames[4] = (AnimationFrame) { {   1, 1338, -96, 96 }, 65, { 7, -1 }, .boxes = { 0 } };
+    p->mpCloseAnim.frames[0] = (AnimationFrame) { {   1, 1338, -96, 96 }, 65, { 16, -1 }, .boxes = { 0 } };
+    p->mpCloseAnim.frames[1] = (AnimationFrame) { {  98, 1338, -96, 96 }, 65, { 10, -1 }, .boxes = { 0 } };
+    p->mpCloseAnim.frames[2] = (AnimationFrame) { { 195, 1338, -96, 96 }, 65, { 10, -1 }, .boxes = { 0 } };
+    p->mpCloseAnim.frames[3] = (AnimationFrame) { {  98, 1338, -96, 96 }, 65, { 10, -1 }, .boxes = { 0 } };
+    p->mpCloseAnim.frames[4] = (AnimationFrame) { {   1, 1338, -96, 96 }, 65, { 10, -1 }, .boxes = { 0 } };
 
     p->hpCloseAnim.frameCount = 5;
     p->hpCloseAnim.currentFrame = 0;
