@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include <math.h>
 
 #include "raylib/raylib.h"
@@ -50,10 +51,12 @@ void initializePlayerRyu( float x, float y, Player *p, DurationMode animationDur
     p->vel = (Vector2) { 0 };
     p->forwardSpeed = 150;
     p->backwardSpeed = 120;
-    p->jumpSpeed = 420;
+    p->jumpSpeed = 450;
     p->animationDurationMode = animationDurationMode;
     p->state = PLAYER_STATE_IDLE;
     p->lastState = PLAYER_STATE_IDLE;
+    p->health = 100;
+    strcpy( p->name, "Ryu" );
     p->lookingRight = true;
     p->showBoxes = showBoxes;
     p->showDebugInfo = showDebugInfo;
@@ -610,6 +613,7 @@ void initializePlayerKen( float x, float y, Player *p, DurationMode animationDur
 
     initializePlayerRyu( x, y, p, animationDurationMode, showBoxes, showDebugInfo );
     p->texture = &rm.kenTexture;
+    strcpy( p->name, "Ken" );
 
 }
 
@@ -1355,4 +1359,74 @@ void resetPlayerAnimations( Player *player ) {
     for ( int i = 0; i < player->animationCount; i++ ) {
         resetAnimation( player->animations[i] );
     }
+}
+
+void resolvePlayerOponnentContact( Player *p, Player *o, Camera2D c ) {
+
+    AnimationFrame *paf = getPlayerCurrentAnimationFrame( p );
+    AnimationFrame *oaf = getPlayerCurrentAnimationFrame( o );
+
+    // collision box
+    // TODO?
+
+    for ( int i = 0; i < paf->boxes.hurtboxCount; i++ ) {
+
+        Rectangle *pHurt = &paf->boxes.hurtboxes[i];
+        if ( pHurt->width == 0 && pHurt->height == 0 ) {
+            continue;
+        }
+
+        Rectangle hurtbox = {
+            p->pos.x,
+            p->pos.y + pHurt->y,
+            pHurt->width,
+            pHurt->height
+        };
+
+        if ( p->lookingRight ) {
+            hurtbox.x += pHurt->x;
+        } else {
+            hurtbox.x -= pHurt->x + pHurt->width;
+        }
+
+        // for debug (use in draw)
+        Vector2 phurt = GetWorldToScreen2D( (Vector2) { hurtbox.x, hurtbox.y }, c );
+        DrawRectangle( phurt.x, phurt.y, pHurt->width * c.zoom, pHurt->height * c.zoom, Fade( ORANGE, 0.5f ) );
+
+        for ( int j = 0; j < oaf->boxes.hitboxCount; j++ ) {
+            
+            Rectangle *oHit = &oaf->boxes.hitboxes[j];
+            if ( oHit->width == 0 && oHit->height == 0 ) {
+                continue;
+            }
+
+            Rectangle hitbox = {
+                o->pos.x,
+                o->pos.y + oHit->y,
+                oHit->width,
+                oHit->height
+            };
+
+            if ( o->lookingRight ) {
+                hitbox.x += oHit->x;
+            } else {
+                hitbox.x -= oHit->x + oHit->width;
+            }
+
+            // for debug (use in draw)
+            Vector2 phit = GetWorldToScreen2D( (Vector2) { hitbox.x, hitbox.y }, c );
+            DrawRectangle( phit.x, phit.y, oHit->width * c.zoom, oHit->height * c.zoom, Fade( PURPLE, 0.5f ) );
+
+            if ( CheckCollisionRecs( hurtbox, hitbox ) ) {
+                // TODO: check if the hurt box was already used / or animation?
+                o->health--;
+            }
+
+        }
+
+    }
+
+    // TODO: reflect
+    
+
 }

@@ -58,6 +58,8 @@ void loadResourcesResourceManager( void ) {
     rm.guileStageTexture = LoadTexture( "resources/images/stages/guile-stage.png" );
     rm.kenStageTexture = LoadTexture( "resources/images/stages/ken-stage.png" );
 
+    rm.modelStageTexture = LoadTexture( "resources/images/stages/model.png" );
+
 }
 
 void unloadResourcesResourceManager( void ) {
@@ -70,6 +72,7 @@ void unloadResourcesResourceManager( void ) {
     UnloadTexture( rm.eHondaStageTexture );
     UnloadTexture( rm.guileStageTexture );
     UnloadTexture( rm.kenStageTexture );
+    UnloadTexture( rm.modelStageTexture );
 
     //UnloadSound( rm.soundExample );
     //UnloadMusicStream( rm.musicExample );

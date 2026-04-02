@@ -26,8 +26,9 @@
 #define SHOW_BOXES true
 #define SHOW_DEBUG_INFO false
 #define DRAW_PLAYER_ONION true
+#define DRAW_MODEL_STAGE_TEXTURE false
 #define DURATION_MODE DURATION_MODE_MILLISECONDS
-#define INITIAL_GAME_MODE GAME_MODE_EDITING
+#define INITIAL_GAME_MODE GAME_MODE_PLAYING
 
 #define PLAYER_1_FILE "resources/animations/ryu.json"
 #define PLAYER_2_FILE "resources/animations/ken.json"
@@ -43,6 +44,7 @@ static void copyAnimationFrameBoxesNext( Player *p );
 static void copyAllFrameBoxesToPreviousAnimation( Player *p );
 static void copyAllFrameBoxesToNextAnimation( Player *p );
 static void drawEditorHelp( void );
+static void drawHud( GameWorld *gw );
 
 static void updateCameraPlaying( GameWorld *gw );
 static void updateCameraEditing( GameWorld *gw );
@@ -67,6 +69,10 @@ static float playerDist = 0.0f;
 // flip players logic
 static bool player1RightPlayer2 = false;
 static bool needsToFlipPlayers = false;
+
+// match data
+static int remainingTime = 99;
+static float remainingTimeCounter = 0;
 
 /**
  * @brief Creates a dinamically allocated GameWorld struct instance.
@@ -221,17 +227,36 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
 
     ClearBackground( WHITE );
     
+    if ( DRAW_MODEL_STAGE_TEXTURE ) {
+        DrawTexture( rm.modelStageTexture, 0, 0, WHITE );
+    }
+
     BeginMode2D( gw->camera );
 
-    DrawTexture( *gw->stageTexture, 0, GetScreenHeight() - gw->stageTexture->height, WHITE );
+    if ( !DRAW_MODEL_STAGE_TEXTURE ) {
+        DrawTexture( *gw->stageTexture, 0, GetScreenHeight() - gw->stageTexture->height, WHITE );
+    }
     drawPlayer( gw->player2 );
     drawPlayer( gw->player1 );
 
     EndMode2D();
 
+    drawHud( gw );
+
 }
 
 static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
+
+    remainingTimeCounter += delta;
+    if ( remainingTimeCounter >= 1.0f ) {
+        remainingTime--;
+        remainingTimeCounter = 0.0f;
+    }
+
+    if ( IsKeyPressed( KEY_R ) ) {
+        gw->player1->health = 100;
+        gw->player2->health = 100;
+    }
 
     if ( IsKeyPressed( KEY_ONE ) ) {
         gw->stageTexture = &rm.kenStageTexture;
@@ -278,6 +303,7 @@ static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
 
     resolveCollisionPlayerStage( gw->player1, gw );
     resolveCollisionPlayerStage( gw->player2, gw );
+    resolvePlayerOponnentContact( gw->player1, gw->player2, gw->camera );
 
     flipPlayers( gw );
 
@@ -840,6 +866,107 @@ static void drawEditorHelp( void ) {
     DrawText( "F2",             col2, yR, fs, WHITE ); DrawText( "show/hide boxes",       desc2 - 30, yR, fs, WHITE ); yR += lh;
     DrawText( "F3",             col2, yR, fs, WHITE ); DrawText( "show/hide debug",       desc2 - 30, yR, fs, WHITE ); yR += lh;
     DrawText( "H",              col2, yR, fs, WHITE ); DrawText( "show/hide help",        desc2 - 30, yR, fs, WHITE ); yR += lh;
+
+}
+
+static void drawHud( GameWorld *gw ) {
+
+    int barWidth = 335;
+    int healthWidthP1 = (int) ( barWidth * ( gw->player1->health / 100.0f ) );
+    int healthWidthP2 = (int) ( barWidth * ( gw->player2->health / 100.0f ) );
+
+    // player 1
+    DrawRectangleRec(
+        (Rectangle) { 75, 65, barWidth, 25 },
+        Fade( RED, 0.7f )
+    );
+
+    DrawRectangleRec(
+        (Rectangle) { 75 + barWidth - healthWidthP1, 65, healthWidthP1, 25 },
+        YELLOW
+    );
+
+    DrawRectangleRoundedLinesEx(
+        (Rectangle) { 77, 67, barWidth, 25 },
+        0.5f,
+        10,
+        4,
+        BLACK
+    );
+
+    DrawRectangleRoundedLinesEx(
+        (Rectangle) { 75, 65, barWidth, 25 },
+        0.5f,
+        10,
+        4,
+        WHITE
+    );
+
+    DrawText( TextFormat( "%s", gw->player1->name ), 78, 98, 40, BLACK );
+    DrawText( TextFormat( "%s", gw->player1->name ), 75, 95, 40, WHITE );
+
+    // player 2
+    DrawRectangleRec(
+        (Rectangle) { 485, 65, barWidth, 25 },
+        Fade( RED, 0.7f )
+    );
+
+    DrawRectangleRec(
+        (Rectangle) { 485, 65, healthWidthP2, 25 },
+        YELLOW
+    );
+
+    DrawRectangleRoundedLinesEx(
+        (Rectangle) { 487, 67, barWidth, 25 },
+        0.5f,
+        10,
+        4,
+        BLACK
+    );
+
+    DrawRectangleRoundedLinesEx(
+        (Rectangle) { 485, 65, barWidth, 25 },
+        0.5f,
+        10,
+        4,
+        WHITE
+    );
+
+    const char *p2Name = TextFormat( "%s", gw->player2->name );
+    int wP2Name = MeasureText( p2Name, 40 );
+    DrawText( p2Name, 823 - wP2Name, 98, 40, BLACK );
+    DrawText( p2Name, 820 - wP2Name, 95, 40, WHITE );
+
+    // ko
+    DrawRectangleRounded(
+        (Rectangle) { 417, 60, 61, 35 },
+        0.5f,
+        10,
+        BLACK
+    );
+
+    DrawRectangleRoundedLinesEx(
+        (Rectangle) { 419, 62, 61, 35 },
+        0.5f,
+        10,
+        4,
+        BLACK
+    );
+
+    DrawRectangleRoundedLinesEx(
+        (Rectangle) { 417, 60, 61, 35 },
+        0.5f,
+        10,
+        4,
+        WHITE
+    );
+
+    DrawText( "K.O", 421, 61, 36, RED );
+    
+    const char *remainingTimeStr = TextFormat( "%d", remainingTime );
+    int wRemainingTime = MeasureText( remainingTimeStr, 60 );
+    DrawText( remainingTimeStr, GetScreenWidth() / 2 - wRemainingTime / 2 + 3, 100, 60, BLACK );
+    DrawText( remainingTimeStr, GetScreenWidth() / 2 - wRemainingTime / 2, 97, 60, RED );
 
 }
 

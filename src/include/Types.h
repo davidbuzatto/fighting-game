@@ -185,6 +185,9 @@ typedef struct Player {
     PlayerState state;
     PlayerState lastState;
 
+    int health;
+    char name[100];
+
     bool lookingRight;
 
     PlayerKeyBindings kb;

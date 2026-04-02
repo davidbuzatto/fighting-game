@@ -20,6 +20,8 @@ typedef struct ResourceManager {
     Texture2D guileStageTexture;
     Texture2D kenStageTexture;
 
+    Texture2D modelStageTexture;
+
     //Sound soundExample;
     //Music musicExample;
 } ResourceManager;
