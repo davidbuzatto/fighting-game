@@ -9417,7 +9417,7 @@
                     },
                     "duration": 60,
                     "offset": {
-                        "x": 0,
+                        "x": -16,
                         "y": 0
                     },
                     "boxes": {
@@ -9479,9 +9479,9 @@
                         "width": -96,
                         "height": 96
                     },
-                    "duration": 60,
+                    "duration": 170,
                     "offset": {
-                        "x": 0,
+                        "x": -16,
                         "y": 0
                     },
                     "boxes": {
@@ -9555,7 +9555,7 @@
                     },
                     "duration": 60,
                     "offset": {
-                        "x": 0,
+                        "x": -16,
                         "y": 0
                     },
                     "boxes": {
@@ -9617,9 +9617,9 @@
                         "width": -96,
                         "height": 96
                     },
-                    "duration": 60,
+                    "duration": 210,
                     "offset": {
-                        "x": 0,
+                        "x": -16,
                         "y": 0
                     },
                     "boxes": {

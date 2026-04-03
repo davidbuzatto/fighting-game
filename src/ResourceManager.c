@@ -59,7 +59,17 @@ void loadResourcesResourceManager( void ) {
     rm.kenStageTexture = LoadTexture( "resources/images/stages/ken-stage.png" );
     rm.modelStageTexture = LoadTexture( "resources/images/stages/model.png" );
 
-    rm.effectsTexture = LoadTexture( "resources/images/effects.png" );
+    rm.effectsTexture = loadTextureReplacingColor( 
+        "resources/images/effects.png", 
+        (Color[]) { 
+            (Color) { 0, 85, 127, 255 }
+        }, 
+        (Color[]) { 
+            BLANK
+        },
+        1
+    );
+
     rm.fontsTexture = LoadTexture( "resources/images/fonts.png" );
 
 }

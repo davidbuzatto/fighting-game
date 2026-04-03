@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <math.h>
 
 #include "raylib/raylib.h"
 #include "parson/parson.h"
@@ -365,4 +366,24 @@ Vector2 measureTextUsingFont( const char *text, float scale ) {
         strlen( text ) * fontDim.x * scale,
         fontDim.y * scale
     };
+}
+
+Rectangle getRectangleIntersection( Rectangle r1, Rectangle r2 ) {
+
+    float left = fmaxf( r1.x, r2.x );
+    float top = fmaxf( r1.y, r2.y );
+    float right = fminf( r1.x + r1.width,  r2.x + r2.width  );
+    float bottom = fminf( r1.y + r1.height, r2.y + r2.height );
+
+    if ( right <= left || bottom <= top ) {
+        return (Rectangle){ 0 };   // no intersection
+    }
+
+    return (Rectangle){
+        .x = left,
+        .y = top,
+        .width  = right  - left,
+        .height = bottom - top
+    };
+
 }

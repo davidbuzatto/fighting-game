@@ -9,3 +9,5 @@ void loadPlayerAnimationFrameBoxes( Player *p, const char *filename );
 
 void drawTextUsingFont( const char *text, int x, int y, float scale );
 Vector2 measureTextUsingFont( const char *text, float scale );
+
+Rectangle getRectangleIntersection( Rectangle r1, Rectangle r2 );

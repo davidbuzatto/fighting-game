@@ -1,10 +1,15 @@
 Implementar colisão;
+    Help do damage!
+    Implementar caixas de colisão (evitar sobreposição);
     Implementar animações de dano;
-        Animações prontas, falta usar e mudar o estado;
-        Oponente fica invulnerável até terminar a animação de dano.
+        Usar animações diferentes;
+        Personagem não pode se mover na animação de dano.
     Implementar bloqueio;
+        Animação pronta;
         Cheap damage;
 
-Implementar o fluxo de inputs (gerar imagens).
+Implementar o fluxo de inputs (gerar imagens);
+Implementar especiais do Ryu;
+Implementar especiais do Ken;
 
 Hit/hurt boxes: https://doctorguile.github.io/ssf2st/

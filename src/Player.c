@@ -11,6 +11,7 @@
 #include "Player.h"
 #include "ResourceManager.h"
 #include "Types.h"
+#include "Utils.h"
 
 #define TRACK_STATE_SIZE 14
 static PlayerState states[TRACK_STATE_SIZE] = { 0 };
@@ -670,6 +671,20 @@ void initializePlayerRyu( float x, float y, Player *p, DurationMode animationDur
     p->animations[PLAYER_STATE_LAST] = &p->lastAnim;                        animationCount++;
     p->animationCount = animationCount;
 
+    p->onHitAnimation.frameCount = 3;
+    p->onHitAnimation.currentFrame = 0;
+    p->onHitAnimation.frameTimeCounter = 0.0f;
+    p->onHitAnimation.stopAtLastFrame = false;
+    p->onHitAnimation.runOnce = true;
+    p->onHitAnimation.finished = false;
+    createAnimationFrames( &p->onHitAnimation, p->onHitAnimation.frameCount );
+    p->onHitAnimation.frames[0] = (AnimationFrame) { {  8, 10, 20, 19 }, 30, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
+    p->onHitAnimation.frames[1] = (AnimationFrame) { { 29, 10, 20, 19 }, 30, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
+    p->onHitAnimation.frames[2] = (AnimationFrame) { { 71, 10, 20, 19 }, 30, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
+
+    p->onHitPos = (Vector2) { 0 };
+    p->onHitPosActive = false;
+
 }
 
 void initializePlayerKen( float x, float y, Player *p, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo ) {
@@ -1131,6 +1146,14 @@ void updatePlayer( Player *player, Player *opponent, float gravity, float delta 
     if ( player->vel.y > gravity ) {
         player->vel.y = gravity;
     }
+
+    if ( player->onHitPosActive ) {
+        updateAnimation( &player->onHitAnimation, DURATION_MODE_MILLISECONDS, delta );
+        if ( player->onHitAnimation.finished ) {
+            player->onHitPosActive = false;
+            resetAnimation( &player->onHitAnimation );
+        }
+    }
     
 }
 
@@ -1244,14 +1267,40 @@ void resolvePlayerOponnentContact( Player *p, Player *o ) {
             //DrawRectangle( phit.x, phit.y, oHit->width * camera.zoom, oHit->height * camera.zoom, Fade( PURPLE, 0.5f ) );
 
             if ( CheckCollisionRecs( hurtbox, hitbox ) ) {
+
                 paf->hurtboxesActive = false;
                 o->health -= paf->damageOnHurt;
                 o->state = PLAYER_STATE_HIT_UP_STANDING;
+
+                Rectangle inter = getRectangleIntersection( hurtbox, hitbox );
+                p->onHitPos = (Vector2) { inter.x + inter.width / 2, inter.y + inter.height / 2 };
+                p->onHitPosActive = true;
+
                 return;
+
             }
 
         }
 
     }
+
+}
+
+void drawOnHitPlayerAnimation( Player *p ) {
+
+    if ( !p->onHitPosActive ) {
+        return;
+    }
+
+    AnimationFrame *af = getAnimationCurrentFrame( &p->onHitAnimation );
+
+    DrawTexturePro( 
+        rm.effectsTexture,
+        (Rectangle) { af->source.x, af->source.y, af->source.width, af->source.height },
+        (Rectangle) { p->onHitPos.x - af->source.width / 2, p->onHitPos.y - af->source.height / 2, af->source.width, af->source.height },
+        (Vector2) { 0 },
+        0.0f, 
+        WHITE
+    );
 
 }

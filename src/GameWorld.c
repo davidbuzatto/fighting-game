@@ -140,7 +140,7 @@ GameWorld* createGameWorld( void ) {
     gw->mode = INITIAL_GAME_MODE;
 
     loadPlayerAnimationFrameBoxes( gw->player1, PLAYER_1_ANIMATIONS_FILE );
-    loadPlayerAnimationFrameBoxes( gw->player2, PLAYER_1_ANIMATIONS_FILE );
+    loadPlayerAnimationFrameBoxes( gw->player2, PLAYER_2_ANIMATIONS_FILE );
 
     return gw;
 
@@ -236,6 +236,9 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
     }
     drawPlayer( gw->player2 );
     drawPlayer( gw->player1 );
+
+    drawOnHitPlayerAnimation( gw->player1 );
+    drawOnHitPlayerAnimation( gw->player2 );
 
     EndMode2D();
 
@@ -948,8 +951,6 @@ static void drawHud( GameWorld *gw ) {
         4,
         WHITE
     );
-
-    
 
     const char *p2Name = TextFormat( "%s", gw->player2->name );
     Vector2 measureP2Name = measureTextUsingFont( p2Name, 3 );

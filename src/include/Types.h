@@ -198,6 +198,10 @@ typedef struct Player {
     Animation *animations[80];
     int animationCount;
 
+    Animation onHitAnimation;
+    Vector2 onHitPos;
+    bool onHitPosActive;
+
     PlayerState state;
     PlayerState lastState;
 
