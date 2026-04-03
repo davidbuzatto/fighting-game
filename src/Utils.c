@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
 
 #include "raylib/raylib.h"
 #include "parson/parson.h"
 
 #include "Macros.h"
+#include "ResourceManager.h"
 #include "Types.h"
 
 const char *utilsPlayerStateToText( PlayerState state ) {
@@ -306,4 +309,60 @@ void loadPlayerAnimationFrameBoxes( Player *p, const char *filename ) {
 
     json_value_free( rootValue );
 
+}
+
+static Vector2 fontStartDigits = { 17, 101 };
+static Vector2 fontStartAUpper = { 29, 113 };
+static Vector2 fontStartPUpper = { 17, 125 };
+static Vector2 fontStartALower = { 29, 137 };
+static Vector2 fontStartPLower = { 17, 149 };
+static Vector2 fontDim = { 12, 10 };
+
+void drawTextUsingFont( const char *text, int x, int y, float scale ) {
+
+    int size = strlen( text );
+    int offset = 0;
+    Vector2 start = { 0 };
+
+    for ( int i = 0; i < size; i++ ) {
+
+        char c = text[i];
+        
+        if ( c >= '0' && c <= '9' ) {
+            offset = (int) ( c - '0' );
+            start = fontStartDigits;
+        } else if ( c >= 'A' && c <= 'O' ) {
+            offset = (int) ( c - 'A' );
+            start = fontStartAUpper;
+        } else if ( c >= 'P' && c <= 'Z'  ) {
+            offset = (int) ( c - 'P' );
+            start = fontStartPUpper;
+        } else if ( c >= 'a' && c <= 'o' ) {
+            offset = (int) ( c - 'a' );
+            start = fontStartALower;
+        } else if ( c >= 'p' && c <= 'z'  ) {
+            offset = (int) ( c - 'p' );
+            start = fontStartPLower;
+        } else {
+            continue;
+        }
+
+        DrawTexturePro( 
+            rm.fontsTexture,
+            (Rectangle) { (int) ( start.x + (int) ( fontDim.x * offset ) ), start.y, fontDim.x, fontDim.y },
+            (Rectangle) { x + ( fontDim.x * scale ) * i, y, fontDim.x * scale, fontDim.y * scale },
+            (Vector2) { 0 },
+            0.0f, 
+            WHITE
+        );
+
+    }
+
+}
+
+Vector2 measureTextUsingFont( const char *text, float scale ) {
+    return (Vector2) {
+        strlen( text ) * fontDim.x * scale,
+        fontDim.y * scale
+    };
 }

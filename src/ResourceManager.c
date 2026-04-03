@@ -57,8 +57,10 @@ void loadResourcesResourceManager( void ) {
     rm.eHondaStageTexture = LoadTexture( "resources/images/stages/ehonda-stage.png" );
     rm.guileStageTexture = LoadTexture( "resources/images/stages/guile-stage.png" );
     rm.kenStageTexture = LoadTexture( "resources/images/stages/ken-stage.png" );
-
     rm.modelStageTexture = LoadTexture( "resources/images/stages/model.png" );
+
+    rm.effectsTexture = LoadTexture( "resources/images/effects.png" );
+    rm.fontsTexture = LoadTexture( "resources/images/fonts.png" );
 
 }
 
@@ -73,6 +75,9 @@ void unloadResourcesResourceManager( void ) {
     UnloadTexture( rm.guileStageTexture );
     UnloadTexture( rm.kenStageTexture );
     UnloadTexture( rm.modelStageTexture );
+
+    UnloadTexture( rm.effectsTexture );
+    UnloadTexture( rm.fontsTexture );
 
     //UnloadSound( rm.soundExample );
     //UnloadMusicStream( rm.musicExample );

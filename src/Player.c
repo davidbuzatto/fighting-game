@@ -61,12 +61,12 @@ void initializePlayerRyu( float x, float y, Player *p, DurationMode animationDur
     p->showBoxes = showBoxes;
     p->showDebugInfo = showDebugInfo;
 
-    p->lpCloseTriggerDist = 70;
-    p->mpCloseTriggerDist = 70;
-    p->hpCloseTriggerDist = 70;
-    p->lkCloseTriggerDist = 50;
+    p->lpCloseTriggerDist = 50;
+    p->mpCloseTriggerDist = 60;
+    p->hpCloseTriggerDist = 60;
+    p->lkCloseTriggerDist = 60;
     p->mkCloseTriggerDist = 50;
-    p->hkCloseTriggerDist = 90;
+    p->hkCloseTriggerDist = 60;
 
     p->idleAnim.frameCount = 6;
     p->idleAnim.currentFrame = 0;
@@ -567,8 +567,8 @@ void initializePlayerRyu( float x, float y, Player *p, DurationMode animationDur
     p->hitUpStandingAnim.runOnce = true;
     p->hitUpStandingAnim.finished = false;
     createAnimationFrames( &p->hitUpStandingAnim, p->hitUpStandingAnim.frameCount );
-    p->hitUpStandingAnim.frames[0] = (AnimationFrame) { {  1, 3829, -96, 96 }, 0, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
-    p->hitUpStandingAnim.frames[1] = (AnimationFrame) { { 98, 3829, -96, 96 }, 0, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
+    p->hitUpStandingAnim.frames[0] = (AnimationFrame) { {  1, 3829, -96, 96 }, 0, { -16, 0 }, .boxes = { 0 }, true, true, 0 };
+    p->hitUpStandingAnim.frames[1] = (AnimationFrame) { { 98, 3829, -96, 96 }, 0, { -16, 0 }, .boxes = { 0 }, true, true, 0 };
 
     p->hitMidStandingAnim.frameCount = 2;
     p->hitMidStandingAnim.currentFrame = 0;
@@ -577,8 +577,8 @@ void initializePlayerRyu( float x, float y, Player *p, DurationMode animationDur
     p->hitMidStandingAnim.runOnce = true;
     p->hitMidStandingAnim.finished = false;
     createAnimationFrames( &p->hitMidStandingAnim, p->hitMidStandingAnim.frameCount );
-    p->hitMidStandingAnim.frames[0] = (AnimationFrame) { {  1, 3732, -96, 96 }, 0, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
-    p->hitMidStandingAnim.frames[1] = (AnimationFrame) { { 98, 3732, -96, 96 }, 0, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
+    p->hitMidStandingAnim.frames[0] = (AnimationFrame) { {  1, 3732, -96, 96 }, 0, { -16, 0 }, .boxes = { 0 }, true, true, 0 };
+    p->hitMidStandingAnim.frames[1] = (AnimationFrame) { { 98, 3732, -96, 96 }, 0, { -16, 0 }, .boxes = { 0 }, true, true, 0 };
 
     p->hitCrouchAnim.frameCount = 2;
     p->hitCrouchAnim.currentFrame = 0;
@@ -811,8 +811,22 @@ static void drawPlayerAnimationFrameBoxes( Player *player, AnimationFrame *af, V
 
 void processInputPlayer( Player *player, Player *opponent, float delta ) {
 
-    // attack in progress: blocks all input
     Animation *activeAnim = NULL;
+
+    // damage in progress: blocks all input
+    if ( player->state >= PLAYER_STATE_HIT_UP_STANDING && player->state <= PLAYER_STATE_HIT_CROUCH ) {
+        activeAnim = getPlayerCurrentAnimation( player );
+        if ( activeAnim != NULL ) {
+            updateAnimation( activeAnim, player->animationDurationMode, delta );
+            if ( activeAnim->finished ) {
+                player->state = PLAYER_STATE_IDLE;
+                resetAnimation( activeAnim );
+            }
+        }
+        return;
+    }
+
+    // attack in progress: blocks all input
     if ( player->state >= PLAYER_STATE_LP && player->state <= PLAYER_STATE_HK_JUMP_BACKWARD ) {
         activeAnim = getPlayerCurrentAnimation( player );
     }
@@ -1232,6 +1246,7 @@ void resolvePlayerOponnentContact( Player *p, Player *o ) {
             if ( CheckCollisionRecs( hurtbox, hitbox ) ) {
                 paf->hurtboxesActive = false;
                 o->health -= paf->damageOnHurt;
+                o->state = PLAYER_STATE_HIT_UP_STANDING;
                 return;
             }
 

@@ -28,10 +28,10 @@
 #define DRAW_PLAYER_ONION true
 #define DRAW_MODEL_STAGE_TEXTURE false
 #define DURATION_MODE DURATION_MODE_MILLISECONDS
-#define INITIAL_GAME_MODE GAME_MODE_EDITING
+#define INITIAL_GAME_MODE GAME_MODE_PLAYING
 
-#define PLAYER_1_FILE "resources/animations/ryu.json"
-#define PLAYER_2_FILE "resources/animations/ken.json"
+#define PLAYER_1_ANIMATIONS_FILE "resources/animations/ryu.json"
+#define PLAYER_2_ANIMATIONS_FILE "resources/animations/ken.json"
 
 static void drawGameWorldPlaying( GameWorld *gw );
 static void drawGameWorldEditing( GameWorld *gw );
@@ -139,11 +139,8 @@ GameWorld* createGameWorld( void ) {
 
     gw->mode = INITIAL_GAME_MODE;
 
-    //storePlayerAnimations( gw->player1, true, false, PLAYER_1_FILE );
-    //storePlayerAnimations( gw->player2, true, false, PLAYER_2_FILE );
-
-    loadPlayerAnimationFrameBoxes( gw->player1, PLAYER_1_FILE );
-    loadPlayerAnimationFrameBoxes( gw->player2, PLAYER_2_FILE );
+    loadPlayerAnimationFrameBoxes( gw->player1, PLAYER_1_ANIMATIONS_FILE );
+    loadPlayerAnimationFrameBoxes( gw->player2, PLAYER_1_ANIMATIONS_FILE );
 
     return gw;
 
@@ -367,7 +364,7 @@ static void updateGameWorldEditing( GameWorld *gw, float delta ) {
 
     if ( IsKeyDown( KEY_LEFT_CONTROL ) && IsKeyPressed( KEY_S ) ) {
         resetPlayerAnimations( gw->player1 );
-        storePlayerAnimations( gw->player1, true, false, PLAYER_1_FILE );
+        storePlayerAnimations( gw->player1, true, false, PLAYER_1_ANIMATIONS_FILE );
         saveTimer = 90;
         return;
     }
@@ -923,8 +920,7 @@ static void drawHud( GameWorld *gw ) {
         WHITE
     );
 
-    DrawText( TextFormat( "%s", gw->player1->name ), 78, 98, 40, BLACK );
-    DrawText( TextFormat( "%s", gw->player1->name ), 75, 95, 40, WHITE );
+    drawTextUsingFont( TextFormat( "%s", gw->player1->name ), 75, 98, 3 );
 
     // player 2
     DrawRectangleRec(
@@ -953,10 +949,11 @@ static void drawHud( GameWorld *gw ) {
         WHITE
     );
 
+    
+
     const char *p2Name = TextFormat( "%s", gw->player2->name );
-    int wP2Name = MeasureText( p2Name, 40 );
-    DrawText( p2Name, 823 - wP2Name, 98, 40, BLACK );
-    DrawText( p2Name, 820 - wP2Name, 95, 40, WHITE );
+    Vector2 measureP2Name = measureTextUsingFont( p2Name, 3 );
+    drawTextUsingFont( p2Name, 823 - measureP2Name.x, 98, 3 );
 
     // ko
     DrawRectangleRounded(
@@ -985,9 +982,8 @@ static void drawHud( GameWorld *gw ) {
     DrawText( "K.O", 421, 61, 36, RED );
     
     const char *remainingTimeStr = TextFormat( "%d", remainingTime );
-    int wRemainingTime = MeasureText( remainingTimeStr, 60 );
-    DrawText( remainingTimeStr, GetScreenWidth() / 2 - wRemainingTime / 2 + 3, 100, 60, BLACK );
-    DrawText( remainingTimeStr, GetScreenWidth() / 2 - wRemainingTime / 2, 97, 60, RED );
+    Vector2 measureRemainingTime = measureTextUsingFont( remainingTimeStr, 4 );
+    drawTextUsingFont( remainingTimeStr, GetScreenWidth() / 2 - measureRemainingTime.x / 2 + 5, 103, 4 );
 
 }
 
