@@ -172,6 +172,9 @@ void storePlayerAnimations( Player *p, bool prettyPrint, bool printOut, const ch
             json_object_set_value( boxesObj, "hurtboxes", hurtboxArrayValue );
 
             json_object_set_value( frameObj, "boxes", boxesValue );
+
+            json_object_set_number( frameObj, "damageOnHurt", af->damageOnHurt );
+
             json_array_append_value( framesArray, frameValue );
 
         }
@@ -252,6 +255,9 @@ void loadPlayerAnimationFrameBoxes( Player *p, const char *filename ) {
 
             int duration = (int) json_object_get_number( frameObj, "duration" );
             af->duration = duration;
+
+            int damageOnHurt = (int) json_object_get_number( frameObj, "damageOnHurt" );
+            af->damageOnHurt = damageOnHurt;
 
             JSON_Object *boxesObj = json_object_get_object( frameObj, "boxes" );
             if ( boxesObj == NULL ) continue;

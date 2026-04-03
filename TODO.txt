@@ -1,9 +1,6 @@
 Implementar colisão;
     Implementar animações de dano;
         Animações prontas, falta usar e mudar o estado;
-    Definir dano por golpe;
-        Implica em cada hurtbox ter um dano associado
-        Ao conectar, aplicar o dano (usar um acumulador para decrescer e animar);
         Oponente fica invulnerável até terminar a animação de dano.
     Implementar bloqueio;
         Cheap damage;

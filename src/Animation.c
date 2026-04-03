@@ -69,4 +69,8 @@ void resetAnimation( Animation *anim ) {
     anim->currentFrame = 0;
     anim->frameTimeCounter = 0;
     anim->finished = false;
+    for ( int i = 0; i < anim->frameCount; i++ ) {
+        anim->frames[i].hitboxesActive = true;
+        anim->frames[i].hurtboxesActive = true;
+    }
 }

@@ -523,6 +523,26 @@ static void updateGameWorldEditing( GameWorld *gw, float delta ) {
         }
     }
 
+    if ( IsKeyDown( KEY_RIGHT_CONTROL ) ) {
+        if ( IsKeyPressed( KEY_PAGE_UP ) ) {
+            af->damageOnHurt++;
+        } else if ( IsKeyPressed( KEY_PAGE_DOWN ) ) {
+            af->damageOnHurt--;
+            if ( af->damageOnHurt < 0 ) {
+                af->damageOnHurt = 0;
+            }
+        }
+    } else {
+        if ( IsKeyDown( KEY_PAGE_UP ) ) {
+            af->damageOnHurt++;
+        } else if ( IsKeyDown( KEY_PAGE_DOWN ) ) {
+            af->damageOnHurt--;
+            if ( af->damageOnHurt < 0 ) {
+                af->damageOnHurt = 0;
+            }
+        }
+    }
+
     if ( !runPlayerCurrentAnimationOnce ) {
         if ( IsKeyPressed( KEY_ENTER ) ) {
             runPlayerCurrentAnimation = !runPlayerCurrentAnimation;
@@ -693,9 +713,10 @@ static void drawInfoPanel( GameWorld *gw ) {
     }
     if ( af != NULL ) {
         DrawText( TextFormat( "Duration: %d", af->duration ), 210, 55, 20, BLACK );
+        DrawText( TextFormat( "Damage on Hurt: %d", af->damageOnHurt ), 380, 55, 20, BLACK );
     }
     if ( drawPlayerOnion ) {
-        DrawText( TextFormat( "Onion: %d", onionOffset ), 380, 55, 20, DARKBLUE );
+        DrawText( TextFormat( "Onion: %d", onionOffset ), 620, 55, 20, DARKBLUE );
     }
 
     int slotW = 80;

@@ -88,6 +88,9 @@ typedef struct AnimationFrame {
     int duration;      // milliseconds OR frames (see updateAnimation)
     Vector2 offset;
     AnimationFrameBoxes boxes;
+    bool hitboxesActive;
+    bool hurtboxesActive;
+    int damageOnHurt;
 } AnimationFrame;
 
 typedef struct Animation {
