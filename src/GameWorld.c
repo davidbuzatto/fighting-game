@@ -28,7 +28,7 @@
 #define DRAW_PLAYER_ONION true
 #define DRAW_MODEL_STAGE_TEXTURE false
 #define DURATION_MODE DURATION_MODE_MILLISECONDS
-#define INITIAL_GAME_MODE GAME_MODE_PLAYING
+#define INITIAL_GAME_MODE GAME_MODE_EDITING
 
 #define PLAYER_1_FILE "resources/animations/ryu.json"
 #define PLAYER_2_FILE "resources/animations/ken.json"

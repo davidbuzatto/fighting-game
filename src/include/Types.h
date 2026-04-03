@@ -67,6 +67,11 @@ typedef enum PlayerState {
     PLAYER_STATE_LK_JUMP_BACKWARD,
     PLAYER_STATE_MK_JUMP_BACKWARD,
     PLAYER_STATE_HK_JUMP_BACKWARD,
+    PLAYER_STATE_HIT_UP_STANDING,
+    PLAYER_STATE_HIT_MID_STANDING,
+    PLAYER_STATE_HIT_CROUCH,
+    PLAYER_STATE_DEFENCE_STANDING,
+    PLAYER_STATE_DEFENCE_CROUCH,
     PLAYER_STATE_LAST,              // just to mark the last (circular behaviour)
 } PlayerState;
 
@@ -171,6 +176,12 @@ typedef struct Player {
     Animation lkJumpBackwardAnim;
     Animation mkJumpBackwardAnim;
     Animation hkJumpBackwardAnim;
+
+    Animation hitUpStandingAnim;
+    Animation hitMidStandingAnim;
+    Animation hitCrouchAnim;
+    Animation defenceStandingAnim;
+    Animation defenceCrouchAnim;
 
     Animation lastAnim;
 

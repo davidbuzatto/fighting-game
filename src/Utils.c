@@ -54,8 +54,13 @@ const char *utilsPlayerStateToText( PlayerState state ) {
         case PLAYER_STATE_LK_JUMP_BACKWARD: return "PLAYER_STATE_LK_BACKWARD";
         case PLAYER_STATE_MK_JUMP_BACKWARD: return "PLAYER_STATE_MK_BACKWARD";
         case PLAYER_STATE_HK_JUMP_BACKWARD: return "PLAYER_STATE_HK_BACKWARD";
+        case PLAYER_STATE_HIT_UP_STANDING: return "PLAYER_STATE_HIT_UP_STANDING";
+        case PLAYER_STATE_HIT_MID_STANDING: return "PLAYER_STATE_HIT_MID_STANDING";
+        case PLAYER_STATE_HIT_CROUCH: return "PLAYER_STATE_HIT_CROUCH";
+        case PLAYER_STATE_DEFENCE_STANDING: return "PLAYER_STATE_DEFENCE_STANDING";
+        case PLAYER_STATE_DEFENCE_CROUCH: return "PLAYER_STATE_DEFENCE_CROUCH";
         case PLAYER_STATE_LAST: return "PLAYER_STATE_LAST";
-        default: return "";
+        default: return "DIDNT FIND";
     }
 
 }
