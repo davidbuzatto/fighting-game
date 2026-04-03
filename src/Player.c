@@ -558,6 +558,7 @@ void initializePlayerRyu( float x, float y, Player *p, DurationMode animationDur
     p->hkJumpBackwardAnim.finished = false;
     createAnimationFrames( &p->hkJumpBackwardAnim, p->hkJumpBackwardAnim.frameCount );
     p->hkJumpBackwardAnim.frames[0] = (AnimationFrame) { {   1, 2955, -128, 80 },  60, { 24, 0 }, .boxes = { 0 } };
+    p->hkJumpBackwardAnim.frames[1] = (AnimationFrame) { { 130, 2955, -128, 80 }, 120, { 24, 0 }, .boxes = { 0 } };
 
     p->hitUpStandingAnim.frameCount = 2;
     p->hitUpStandingAnim.currentFrame = 0;
