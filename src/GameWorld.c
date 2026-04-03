@@ -305,8 +305,8 @@ static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
     resolveCollisionPlayerStage( gw->player1, gw );
     resolveCollisionPlayerStage( gw->player2, gw );
 
-    resolvePlayerOponnentContact( gw->player1, gw->player2, gw->camera );
-    resolvePlayerOponnentContact( gw->player2, gw->player1, gw->camera );
+    resolvePlayerOponnentContact( gw->player1, gw->player2 );
+    resolvePlayerOponnentContact( gw->player2, gw->player1 );
 
     flipPlayers( gw );
 

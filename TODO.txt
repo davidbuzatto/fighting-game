@@ -1,11 +1,8 @@
-Implementar hitboxes;
-    https://doctorguile.github.io/ssf2st/.
-        Mapear estados com as posições das animações!!!
-        Todos os novos estados terão que vir no fim da enumeração para manter a consistência.
-
 Implementar colisão;
 Definir dano por golpe;
 Implementar animações de dano;
 Implementar bloqueio;
 
 Implementar o fluxo de inputs (gerar imagens).
+
+Hit/hurt boxes: https://doctorguile.github.io/ssf2st/

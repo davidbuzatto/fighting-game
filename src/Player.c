@@ -758,80 +758,18 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
 
     // attack in progress: blocks all input
     Animation *activeAnim = NULL;
-    switch ( player->state ) {
-        case PLAYER_STATE_LP: activeAnim = &player->lpAnim; break;
-        case PLAYER_STATE_MP: activeAnim = &player->mpAnim; break;
-        case PLAYER_STATE_HP: activeAnim = &player->hpAnim; break;
-        case PLAYER_STATE_LK: activeAnim = &player->lkAnim; break;
-        case PLAYER_STATE_MK: activeAnim = &player->mkAnim; break;
-        case PLAYER_STATE_HK: activeAnim = &player->hkAnim; break;
-        case PLAYER_STATE_LP_CLOSE: activeAnim = &player->lpCloseAnim; break;
-        case PLAYER_STATE_MP_CLOSE: activeAnim = &player->mpCloseAnim; break;
-        case PLAYER_STATE_HP_CLOSE: activeAnim = &player->hpCloseAnim; break;
-        case PLAYER_STATE_LK_CLOSE: activeAnim = &player->lkCloseAnim; break;
-        case PLAYER_STATE_MK_CLOSE: activeAnim = &player->mkCloseAnim; break;
-        case PLAYER_STATE_HK_CLOSE: activeAnim = &player->hkCloseAnim; break;
-        case PLAYER_STATE_LP_CROUCH: activeAnim = &player->lpCrouchAnim; break;
-        case PLAYER_STATE_MP_CROUCH: activeAnim = &player->mpCrouchAnim; break;
-        case PLAYER_STATE_HP_CROUCH: activeAnim = &player->hpCrouchAnim; break;
-        case PLAYER_STATE_LK_CROUCH: activeAnim = &player->lkCrouchAnim; break;
-        case PLAYER_STATE_MK_CROUCH: activeAnim = &player->mkCrouchAnim; break;
-        case PLAYER_STATE_HK_CROUCH: activeAnim = &player->hkCrouchAnim; break;
-        case PLAYER_STATE_LP_JUMP_STRAIGHT: activeAnim = &player->lpJumpStraightAnim; break;
-        case PLAYER_STATE_MP_JUMP_STRAIGHT: activeAnim = &player->mpJumpStraightAnim; break;
-        case PLAYER_STATE_HP_JUMP_STRAIGHT: activeAnim = &player->hpJumpStraightAnim; break;
-        case PLAYER_STATE_LK_JUMP_STRAIGHT: activeAnim = &player->lkJumpStraightAnim; break;
-        case PLAYER_STATE_MK_JUMP_STRAIGHT: activeAnim = &player->mkJumpStraightAnim; break;
-        case PLAYER_STATE_HK_JUMP_STRAIGHT: activeAnim = &player->hkJumpStraightAnim; break;
-        case PLAYER_STATE_LP_JUMP_FORWARD: activeAnim = &player->lpJumpForwardAnim; break;
-        case PLAYER_STATE_MP_JUMP_FORWARD: activeAnim = &player->mpJumpForwardAnim; break;
-        case PLAYER_STATE_HP_JUMP_FORWARD: activeAnim = &player->hpJumpForwardAnim; break;
-        case PLAYER_STATE_LK_JUMP_FORWARD: activeAnim = &player->lkJumpForwardAnim; break;
-        case PLAYER_STATE_MK_JUMP_FORWARD: activeAnim = &player->mkJumpForwardAnim; break;
-        case PLAYER_STATE_HK_JUMP_FORWARD: activeAnim = &player->hkJumpForwardAnim; break;
-        case PLAYER_STATE_LP_JUMP_BACKWARD: activeAnim = &player->lpJumpBackwardAnim; break;
-        case PLAYER_STATE_MP_JUMP_BACKWARD: activeAnim = &player->mpJumpBackwardAnim; break;
-        case PLAYER_STATE_HP_JUMP_BACKWARD: activeAnim = &player->hpJumpBackwardAnim; break;
-        case PLAYER_STATE_LK_JUMP_BACKWARD: activeAnim = &player->lkJumpBackwardAnim; break;
-        case PLAYER_STATE_MK_JUMP_BACKWARD: activeAnim = &player->mkJumpBackwardAnim; break;
-        case PLAYER_STATE_HK_JUMP_BACKWARD: activeAnim = &player->hkJumpBackwardAnim; break;
-        default: break;
+    if ( player->state >= PLAYER_STATE_LP && player->state <= PLAYER_STATE_HK_JUMP_BACKWARD ) {
+        activeAnim = getPlayerCurrentAnimation( player );
     }
 
     if ( activeAnim != NULL ) {
         updateAnimation( activeAnim, player->animationDurationMode, delta );
         if ( activeAnim->finished ) {
-            bool isCrouchAttack = (
-                player->state == PLAYER_STATE_LP_CROUCH ||
-                player->state == PLAYER_STATE_MP_CROUCH ||
-                player->state == PLAYER_STATE_HP_CROUCH ||
-                player->state == PLAYER_STATE_LK_CROUCH ||
-                player->state == PLAYER_STATE_MK_CROUCH ||
-                player->state == PLAYER_STATE_HK_CROUCH
-            );
-            bool isJumpAttack = (
-                player->state == PLAYER_STATE_LP_JUMP_STRAIGHT ||
-                player->state == PLAYER_STATE_MP_JUMP_STRAIGHT ||
-                player->state == PLAYER_STATE_HP_JUMP_STRAIGHT ||
-                player->state == PLAYER_STATE_LK_JUMP_STRAIGHT ||
-                player->state == PLAYER_STATE_MK_JUMP_STRAIGHT ||
-                player->state == PLAYER_STATE_HK_JUMP_STRAIGHT ||
-                player->state == PLAYER_STATE_LP_JUMP_FORWARD  ||
-                player->state == PLAYER_STATE_MP_JUMP_FORWARD  ||
-                player->state == PLAYER_STATE_HP_JUMP_FORWARD  ||
-                player->state == PLAYER_STATE_LK_JUMP_FORWARD  ||
-                player->state == PLAYER_STATE_MK_JUMP_FORWARD  ||
-                player->state == PLAYER_STATE_HK_JUMP_FORWARD  ||
-                player->state == PLAYER_STATE_LP_JUMP_BACKWARD ||
-                player->state == PLAYER_STATE_MP_JUMP_BACKWARD ||
-                player->state == PLAYER_STATE_HP_JUMP_BACKWARD ||
-                player->state == PLAYER_STATE_LK_JUMP_BACKWARD ||
-                player->state == PLAYER_STATE_MK_JUMP_BACKWARD ||
-                player->state == PLAYER_STATE_HK_JUMP_BACKWARD
-            );
-            if ( isCrouchAttack ) {
+            // is crouch attack?
+            if ( player->state >= PLAYER_STATE_LP_CROUCH && player->state <= PLAYER_STATE_HK_CROUCH ) {
                 player->state = PLAYER_STATE_CROUCHING;
-            } else if ( isJumpAttack ) {
+                // is jump attack?
+            } else if ( player->state >= PLAYER_STATE_LP_JUMP_STRAIGHT && player->state <= PLAYER_STATE_HK_JUMP_BACKWARD ) {
                 player->state = player->lastState;
             } else {
                 player->state = PLAYER_STATE_IDLE;
@@ -1137,112 +1075,7 @@ float distancePlayer( Player *player1, Player *player2 ) {
 }
 
 AnimationFrame *getPlayerCurrentAnimationFrame( Player *player ) {
-
-    switch ( player->state ) {
-        case PLAYER_STATE_IDLE:
-            return getAnimationCurrentFrame( &player->idleAnim );
-        case PLAYER_STATE_WALKING_FORWARD:
-            if ( player->lookingRight ) {
-                return getAnimationCurrentFrame( &player->forwardAnim );
-            }
-            return getAnimationCurrentFrame( &player->backwardAnim );
-        case PLAYER_STATE_WALKING_BACKWARD:
-            if ( player->lookingRight ) {
-                return getAnimationCurrentFrame( &player->backwardAnim );
-            }
-            return getAnimationCurrentFrame( &player->forwardAnim );
-        case PLAYER_STATE_CROUCHING:
-            return getAnimationCurrentFrame( &player->crouchingAnim );
-        case PLAYER_STATE_JUMPING_STRAIGHT:
-            return getAnimationCurrentFrame( &player->straightJumpAnim );
-        case PLAYER_STATE_JUMPING_FORWARD:
-            if ( player->lookingRight ) {
-                return getAnimationCurrentFrame( &player->forwardJumpAnim );
-            }
-            return getAnimationCurrentFrame( &player->backwardJumpAnim );
-        case PLAYER_STATE_JUMPING_BACKWARD:
-            if ( player->lookingRight ) {
-                return getAnimationCurrentFrame( &player->backwardJumpAnim );
-            }
-            return getAnimationCurrentFrame( &player->forwardJumpAnim );
-        case PLAYER_STATE_LP:
-            return getAnimationCurrentFrame( &player->lpAnim );
-        case PLAYER_STATE_MP:
-            return getAnimationCurrentFrame( &player->mpAnim );
-        case PLAYER_STATE_HP:
-            return getAnimationCurrentFrame( &player->hpAnim );
-        case PLAYER_STATE_LK:
-            return getAnimationCurrentFrame( &player->lkAnim );
-        case PLAYER_STATE_MK:
-            return getAnimationCurrentFrame( &player->mkAnim );
-        case PLAYER_STATE_HK:
-            return getAnimationCurrentFrame( &player->hkAnim );
-        case PLAYER_STATE_LP_CLOSE:
-            return getAnimationCurrentFrame( &player->lpCloseAnim );
-        case PLAYER_STATE_MP_CLOSE:
-            return getAnimationCurrentFrame( &player->mpCloseAnim );
-        case PLAYER_STATE_HP_CLOSE:
-            return getAnimationCurrentFrame( &player->hpCloseAnim );
-        case PLAYER_STATE_LK_CLOSE:
-            return getAnimationCurrentFrame( &player->lkCloseAnim );
-        case PLAYER_STATE_MK_CLOSE:
-            return getAnimationCurrentFrame( &player->mkCloseAnim );
-        case PLAYER_STATE_HK_CLOSE:
-            return getAnimationCurrentFrame( &player->hkCloseAnim );
-        case PLAYER_STATE_LP_CROUCH:
-            return getAnimationCurrentFrame( &player->lpCrouchAnim );
-        case PLAYER_STATE_MP_CROUCH:
-            return getAnimationCurrentFrame( &player->mpCrouchAnim );
-        case PLAYER_STATE_HP_CROUCH:
-            return getAnimationCurrentFrame( &player->hpCrouchAnim );
-        case PLAYER_STATE_LK_CROUCH:
-            return getAnimationCurrentFrame( &player->lkCrouchAnim );
-        case PLAYER_STATE_MK_CROUCH:
-            return getAnimationCurrentFrame( &player->mkCrouchAnim );
-        case PLAYER_STATE_HK_CROUCH:
-            return getAnimationCurrentFrame( &player->hkCrouchAnim );
-        case PLAYER_STATE_JUMP_COOLDOWN:
-            return getAnimationCurrentFrame( &player->jumpCooldownAnim );
-        case PLAYER_STATE_LP_JUMP_STRAIGHT:
-            return getAnimationCurrentFrame( &player->lpJumpStraightAnim );
-        case PLAYER_STATE_MP_JUMP_STRAIGHT:
-            return getAnimationCurrentFrame( &player->mpJumpStraightAnim );
-        case PLAYER_STATE_HP_JUMP_STRAIGHT:
-            return getAnimationCurrentFrame( &player->hpJumpStraightAnim );
-        case PLAYER_STATE_LK_JUMP_STRAIGHT:
-            return getAnimationCurrentFrame( &player->lkJumpStraightAnim );
-        case PLAYER_STATE_MK_JUMP_STRAIGHT:
-            return getAnimationCurrentFrame( &player->mkJumpStraightAnim );
-        case PLAYER_STATE_HK_JUMP_STRAIGHT:
-            return getAnimationCurrentFrame( &player->hkJumpStraightAnim );
-        case PLAYER_STATE_LP_JUMP_FORWARD:
-            return getAnimationCurrentFrame( &player->lpJumpForwardAnim );
-        case PLAYER_STATE_MP_JUMP_FORWARD:
-            return getAnimationCurrentFrame( &player->mpJumpForwardAnim );
-        case PLAYER_STATE_HP_JUMP_FORWARD:
-            return getAnimationCurrentFrame( &player->hpJumpForwardAnim );
-        case PLAYER_STATE_LK_JUMP_FORWARD:
-            return getAnimationCurrentFrame( &player->lkJumpForwardAnim );
-        case PLAYER_STATE_MK_JUMP_FORWARD:
-            return getAnimationCurrentFrame( &player->mkJumpForwardAnim );
-        case PLAYER_STATE_HK_JUMP_FORWARD:
-            return getAnimationCurrentFrame( &player->hkJumpForwardAnim );
-        case PLAYER_STATE_LP_JUMP_BACKWARD:
-            return getAnimationCurrentFrame( &player->lpJumpBackwardAnim );
-        case PLAYER_STATE_MP_JUMP_BACKWARD:
-            return getAnimationCurrentFrame( &player->mpJumpBackwardAnim );
-        case PLAYER_STATE_HP_JUMP_BACKWARD:
-            return getAnimationCurrentFrame( &player->hpJumpBackwardAnim );
-        case PLAYER_STATE_LK_JUMP_BACKWARD:
-            return getAnimationCurrentFrame( &player->lkJumpBackwardAnim );
-        case PLAYER_STATE_MK_JUMP_BACKWARD:
-            return getAnimationCurrentFrame( &player->mkJumpBackwardAnim );
-        case PLAYER_STATE_HK_JUMP_BACKWARD:
-            return getAnimationCurrentFrame( &player->hkJumpBackwardAnim );
-        default:
-            return NULL;
-    }
-
+    return getAnimationCurrentFrame( getPlayerCurrentAnimation( player ) );
 }
 
 Animation *getPlayerCurrentAnimation( Player *player ) {
@@ -1280,13 +1113,13 @@ void resetPlayerAnimations( Player *player ) {
     }
 }
 
-void resolvePlayerOponnentContact( Player *p, Player *o, Camera2D c ) {
+void resolvePlayerOponnentContact( Player *p, Player *o ) {
 
     AnimationFrame *paf = getPlayerCurrentAnimationFrame( p );
     AnimationFrame *oaf = getPlayerCurrentAnimationFrame( o );
 
     // collision box
-    // TODO?
+    // TODO: check if will use collisiom box
 
     for ( int i = 0; i < paf->boxes.hurtboxCount; i++ ) {
 
@@ -1309,8 +1142,8 @@ void resolvePlayerOponnentContact( Player *p, Player *o, Camera2D c ) {
         }
 
         // for debug (use in draw)
-        Vector2 phurt = GetWorldToScreen2D( (Vector2) { hurtbox.x, hurtbox.y }, c );
-        DrawRectangle( phurt.x, phurt.y, pHurt->width * c.zoom, pHurt->height * c.zoom, Fade( ORANGE, 0.5f ) );
+        //Vector2 phurt = GetWorldToScreen2D( (Vector2) { hurtbox.x, hurtbox.y }, camera );
+        //DrawRectangle( phurt.x, phurt.y, pHurt->width * camera.zoom, pHurt->height * camera.zoom, Fade( ORANGE, 0.5f ) );
 
         for ( int j = 0; j < oaf->boxes.hitboxCount; j++ ) {
             
@@ -1333,8 +1166,8 @@ void resolvePlayerOponnentContact( Player *p, Player *o, Camera2D c ) {
             }
 
             // for debug (use in draw)
-            Vector2 phit = GetWorldToScreen2D( (Vector2) { hitbox.x, hitbox.y }, c );
-            DrawRectangle( phit.x, phit.y, oHit->width * c.zoom, oHit->height * c.zoom, Fade( PURPLE, 0.5f ) );
+            //Vector2 phit = GetWorldToScreen2D( (Vector2) { hitbox.x, hitbox.y }, camera );
+            //DrawRectangle( phit.x, phit.y, oHit->width * camera.zoom, oHit->height * camera.zoom, Fade( PURPLE, 0.5f ) );
 
             if ( CheckCollisionRecs( hurtbox, hitbox ) ) {
                 // TODO: check if the hurt box was already used / or animation?
@@ -1344,8 +1177,5 @@ void resolvePlayerOponnentContact( Player *p, Player *o, Camera2D c ) {
         }
 
     }
-
-    // TODO: reflect
-    
 
 }

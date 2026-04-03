@@ -20,4 +20,4 @@ AnimationFrame *getPlayerCurrentAnimationFrame( Player *player );
 Animation *getPlayerCurrentAnimation( Player *player );
 void resetPlayerAnimations( Player *player );
 
-void resolvePlayerOponnentContact( Player *p, Player *o, Camera2D c );
+void resolvePlayerOponnentContact( Player *p, Player *o );
