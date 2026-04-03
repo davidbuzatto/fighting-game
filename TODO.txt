@@ -1,12 +1,13 @@
-Implementar colisão;
-    Help do damage!
-    Implementar caixas de colisão (evitar sobreposição);
-    Implementar animações de dano;
-        Usar animações diferentes;
-        Personagem não pode se mover na animação de dano.
-    Implementar bloqueio;
-        Animação pronta;
-        Cheap damage;
+Help do damage!
+Implementar caixas de colisão (evitar sobreposição);
+
+Implementar animações de dano;
+    Usar animações diferentes;
+    Personagem não pode se mover na animação de dano;
+    Aplicar deslocamento no personagem que toma o dano;
+Implementar bloqueio;
+    Animação pronta;
+    Cheap damage;
 
 Implementar o fluxo de inputs (gerar imagens);
 Implementar especiais do Ryu;
