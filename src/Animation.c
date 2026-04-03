@@ -56,7 +56,10 @@ int getAnimationCurrentFrameNumber( Animation *anim ) {
 }
 
 AnimationFrame *getAnimationCurrentFrame( Animation *anim ) {
-    return &anim->frames[getAnimationCurrentFrameNumber(anim)];
+    if ( anim != NULL ) {
+        return &anim->frames[getAnimationCurrentFrameNumber(anim)];
+    }
+    return NULL;
 }
 
 void resetAnimation( Animation *anim ) {

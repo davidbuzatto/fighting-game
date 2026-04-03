@@ -560,51 +560,59 @@ void initializePlayerRyu( float x, float y, Player *p, DurationMode animationDur
     p->hkJumpBackwardAnim.frames[0] = (AnimationFrame) { {   1, 2955, -128, 80 },  60, { 24, 0 }, .boxes = { 0 } };
     p->hkJumpBackwardAnim.frames[1] = (AnimationFrame) { { 130, 2955, -128, 80 }, 120, { 24, 0 }, .boxes = { 0 } };
 
+    p->lastAnim.frameCount = 0;
+    p->lastAnim.currentFrame = 0;
+    p->lastAnim.frameTimeCounter = 0.0f;
+    p->lastAnim.stopAtLastFrame = false;
+    p->lastAnim.runOnce = false;
+    p->lastAnim.finished = false;
+
     int animationCount = 0;
-    p->animations[animationCount++] = &p->idleAnim;
-    p->animations[animationCount++] = &p->forwardAnim;
-    p->animations[animationCount++] = &p->backwardAnim;
-    p->animations[animationCount++] = &p->straightJumpAnim;
-    p->animations[animationCount++] = &p->forwardJumpAnim;
-    p->animations[animationCount++] = &p->backwardJumpAnim;
-    p->animations[animationCount++] = &p->jumpCooldownAnim;
-    p->animations[animationCount++] = &p->crouchingAnim;
-    p->animations[animationCount++] = &p->lpAnim;
-    p->animations[animationCount++] = &p->mpAnim;
-    p->animations[animationCount++] = &p->hpAnim;
-    p->animations[animationCount++] = &p->lkAnim;
-    p->animations[animationCount++] = &p->mkAnim;
-    p->animations[animationCount++] = &p->hkAnim;
-    p->animations[animationCount++] = &p->lpCloseAnim;
-    p->animations[animationCount++] = &p->mpCloseAnim;
-    p->animations[animationCount++] = &p->hpCloseAnim;
-    p->animations[animationCount++] = &p->lkCloseAnim;
-    p->animations[animationCount++] = &p->mkCloseAnim;
-    p->animations[animationCount++] = &p->hkCloseAnim;
-    p->animations[animationCount++] = &p->lpCrouchAnim;
-    p->animations[animationCount++] = &p->mpCrouchAnim;
-    p->animations[animationCount++] = &p->hpCrouchAnim;
-    p->animations[animationCount++] = &p->lkCrouchAnim;
-    p->animations[animationCount++] = &p->mkCrouchAnim;
-    p->animations[animationCount++] = &p->hkCrouchAnim;
-    p->animations[animationCount++] = &p->lpJumpStraightAnim;
-    p->animations[animationCount++] = &p->mpJumpStraightAnim;
-    p->animations[animationCount++] = &p->hpJumpStraightAnim;
-    p->animations[animationCount++] = &p->lkJumpStraightAnim;
-    p->animations[animationCount++] = &p->mkJumpStraightAnim;
-    p->animations[animationCount++] = &p->hkJumpStraightAnim;
-    p->animations[animationCount++] = &p->lpJumpForwardAnim;
-    p->animations[animationCount++] = &p->mpJumpForwardAnim;
-    p->animations[animationCount++] = &p->hpJumpForwardAnim;
-    p->animations[animationCount++] = &p->lkJumpForwardAnim;
-    p->animations[animationCount++] = &p->mkJumpForwardAnim;
-    p->animations[animationCount++] = &p->hkJumpForwardAnim;
-    p->animations[animationCount++] = &p->lpJumpBackwardAnim;
-    p->animations[animationCount++] = &p->mpJumpBackwardAnim;
-    p->animations[animationCount++] = &p->hpJumpBackwardAnim;
-    p->animations[animationCount++] = &p->lkJumpBackwardAnim;
-    p->animations[animationCount++] = &p->mkJumpBackwardAnim;
-    p->animations[animationCount++] = &p->hkJumpBackwardAnim;
+    p->animations[PLAYER_STATE_IDLE] = &p->idleAnim;                       animationCount++;
+    p->animations[PLAYER_STATE_WALKING_FORWARD] = &p->forwardAnim;         animationCount++;
+    p->animations[PLAYER_STATE_WALKING_BACKWARD] = &p->backwardAnim;       animationCount++;
+    p->animations[PLAYER_STATE_JUMPING_STRAIGHT] = &p->straightJumpAnim;   animationCount++;
+    p->animations[PLAYER_STATE_JUMPING_FORWARD] = &p->forwardJumpAnim;     animationCount++;
+    p->animations[PLAYER_STATE_JUMPING_BACKWARD] = &p->backwardJumpAnim;   animationCount++;
+    p->animations[PLAYER_STATE_JUMP_COOLDOWN] = &p->jumpCooldownAnim;      animationCount++;
+    p->animations[PLAYER_STATE_CROUCHING] = &p->crouchingAnim;             animationCount++;
+    p->animations[PLAYER_STATE_LP] = &p->lpAnim;                           animationCount++;
+    p->animations[PLAYER_STATE_MP] = &p->mpAnim;                           animationCount++;
+    p->animations[PLAYER_STATE_HP] = &p->hpAnim;                           animationCount++;
+    p->animations[PLAYER_STATE_LK] = &p->lkAnim;                           animationCount++;
+    p->animations[PLAYER_STATE_MK] = &p->mkAnim;                           animationCount++;
+    p->animations[PLAYER_STATE_HK] = &p->hkAnim;                           animationCount++;
+    p->animations[PLAYER_STATE_LP_CLOSE] = &p->lpCloseAnim;                animationCount++;
+    p->animations[PLAYER_STATE_MP_CLOSE] = &p->mpCloseAnim;                animationCount++;
+    p->animations[PLAYER_STATE_HP_CLOSE] = &p->hpCloseAnim;                animationCount++;
+    p->animations[PLAYER_STATE_LK_CLOSE] = &p->lkCloseAnim;                animationCount++;
+    p->animations[PLAYER_STATE_MK_CLOSE] = &p->mkCloseAnim;                animationCount++;
+    p->animations[PLAYER_STATE_HK_CLOSE] = &p->hkCloseAnim;                animationCount++;
+    p->animations[PLAYER_STATE_LP_CROUCH] = &p->lpCrouchAnim;              animationCount++;
+    p->animations[PLAYER_STATE_MP_CROUCH] = &p->mpCrouchAnim;              animationCount++;
+    p->animations[PLAYER_STATE_HP_CROUCH] = &p->hpCrouchAnim;              animationCount++;
+    p->animations[PLAYER_STATE_LK_CROUCH] = &p->lkCrouchAnim;              animationCount++;
+    p->animations[PLAYER_STATE_MK_CROUCH] = &p->mkCrouchAnim;              animationCount++;
+    p->animations[PLAYER_STATE_HK_CROUCH] = &p->hkCrouchAnim;              animationCount++;
+    p->animations[PLAYER_STATE_LP_JUMP_STRAIGHT] = &p->lpJumpStraightAnim; animationCount++;
+    p->animations[PLAYER_STATE_MP_JUMP_STRAIGHT] = &p->mpJumpStraightAnim; animationCount++;
+    p->animations[PLAYER_STATE_HP_JUMP_STRAIGHT] = &p->hpJumpStraightAnim; animationCount++;
+    p->animations[PLAYER_STATE_LK_JUMP_STRAIGHT] = &p->lkJumpStraightAnim; animationCount++;
+    p->animations[PLAYER_STATE_MK_JUMP_STRAIGHT] = &p->mkJumpStraightAnim; animationCount++;
+    p->animations[PLAYER_STATE_HK_JUMP_STRAIGHT] = &p->hkJumpStraightAnim; animationCount++;
+    p->animations[PLAYER_STATE_LP_JUMP_FORWARD] = &p->lpJumpForwardAnim;   animationCount++;
+    p->animations[PLAYER_STATE_MP_JUMP_FORWARD] = &p->mpJumpForwardAnim;   animationCount++;
+    p->animations[PLAYER_STATE_HP_JUMP_FORWARD] = &p->hpJumpForwardAnim;   animationCount++;
+    p->animations[PLAYER_STATE_LK_JUMP_FORWARD] = &p->lkJumpForwardAnim;   animationCount++;
+    p->animations[PLAYER_STATE_MK_JUMP_FORWARD] = &p->mkJumpForwardAnim;   animationCount++;
+    p->animations[PLAYER_STATE_HK_JUMP_FORWARD] = &p->hkJumpForwardAnim;   animationCount++;
+    p->animations[PLAYER_STATE_LP_JUMP_BACKWARD] = &p->lpJumpBackwardAnim; animationCount++;
+    p->animations[PLAYER_STATE_MP_JUMP_BACKWARD] = &p->mpJumpBackwardAnim; animationCount++;
+    p->animations[PLAYER_STATE_HP_JUMP_BACKWARD] = &p->hpJumpBackwardAnim; animationCount++;
+    p->animations[PLAYER_STATE_LK_JUMP_BACKWARD] = &p->lkJumpBackwardAnim; animationCount++;
+    p->animations[PLAYER_STATE_MK_JUMP_BACKWARD] = &p->mkJumpBackwardAnim; animationCount++;
+    p->animations[PLAYER_STATE_HK_JUMP_BACKWARD] = &p->hkJumpBackwardAnim; animationCount++;
+    p->animations[PLAYER_STATE_LAST] = &p->lastAnim;                       animationCount++;
     p->animationCount = animationCount;
 
 }
@@ -654,15 +662,6 @@ void drawPlayerOnionLayers( Player *player, int xOffset ) {
                 int next = ( i + j ) % a->frameCount;
                 drawPlayerAnimationFrame( player, &(getPlayerCurrentAnimation( player )->frames[next]), (Vector2) { xOffset * j, 0 }, Fade( WHITE, 0.5f ) );
             }
-            /*for ( int j = 1; j < a->frameCount - 1; j++ ) {
-                int next = ( i + j ) % a->frameCount;
-                drawPlayerAnimationFrame( player, &(getPlayerCurrentAnimation( player )->frames[next]), (Vector2) { xOffset * j, 0 }, Fade( WHITE, 0.5f ) );
-            }
-            int prev = ( i - 1 );
-            if ( prev == -1 ) {
-                prev = a->frameCount - 1;
-            }
-            drawPlayerAnimationFrame( player, &(getPlayerCurrentAnimation( player )->frames[prev]), (Vector2) { -xOffset, 0 }, Fade( WHITE, 0.5f ) );*/
         }
     }
     
@@ -1249,8 +1248,6 @@ AnimationFrame *getPlayerCurrentAnimationFrame( Player *player ) {
 Animation *getPlayerCurrentAnimation( Player *player ) {
 
     switch ( player->state ) {
-        case PLAYER_STATE_IDLE:
-            return &player->idleAnim;
         case PLAYER_STATE_WALKING_FORWARD:
             if ( player->lookingRight ) {
                 return &player->forwardAnim;
@@ -1261,10 +1258,6 @@ Animation *getPlayerCurrentAnimation( Player *player ) {
                 return &player->backwardAnim;
             }
             return &player->forwardAnim;
-        case PLAYER_STATE_CROUCHING:
-            return &player->crouchingAnim;
-        case PLAYER_STATE_JUMPING_STRAIGHT:
-            return &player->straightJumpAnim;
         case PLAYER_STATE_JUMPING_FORWARD:
             if ( player->lookingRight ) {
                 return &player->forwardJumpAnim;
@@ -1275,82 +1268,8 @@ Animation *getPlayerCurrentAnimation( Player *player ) {
                 return &player->backwardJumpAnim;
             }
             return &player->forwardJumpAnim;
-        case PLAYER_STATE_LP:
-            return &player->lpAnim;
-        case PLAYER_STATE_MP:
-            return &player->mpAnim;
-        case PLAYER_STATE_HP:
-            return &player->hpAnim;
-        case PLAYER_STATE_LK:
-            return &player->lkAnim;
-        case PLAYER_STATE_MK:
-            return &player->mkAnim;
-        case PLAYER_STATE_HK:
-            return &player->hkAnim;
-        case PLAYER_STATE_LP_CLOSE:
-            return &player->lpCloseAnim;
-        case PLAYER_STATE_MP_CLOSE:
-            return &player->mpCloseAnim;
-        case PLAYER_STATE_HP_CLOSE:
-            return &player->hpCloseAnim;
-        case PLAYER_STATE_LK_CLOSE:
-            return &player->lkCloseAnim;
-        case PLAYER_STATE_MK_CLOSE:
-            return &player->mkCloseAnim;
-        case PLAYER_STATE_HK_CLOSE:
-            return &player->hkCloseAnim;
-        case PLAYER_STATE_LP_CROUCH:
-            return &player->lpCrouchAnim;
-        case PLAYER_STATE_MP_CROUCH:
-            return &player->mpCrouchAnim;
-        case PLAYER_STATE_HP_CROUCH:
-            return &player->hpCrouchAnim;
-        case PLAYER_STATE_LK_CROUCH:
-            return &player->lkCrouchAnim;
-        case PLAYER_STATE_MK_CROUCH:
-            return &player->mkCrouchAnim;
-        case PLAYER_STATE_HK_CROUCH:
-            return &player->hkCrouchAnim;
-        case PLAYER_STATE_JUMP_COOLDOWN:
-            return &player->jumpCooldownAnim;
-        case PLAYER_STATE_LP_JUMP_STRAIGHT:
-            return &player->lpJumpStraightAnim;
-        case PLAYER_STATE_MP_JUMP_STRAIGHT:
-            return &player->mpJumpStraightAnim;
-        case PLAYER_STATE_HP_JUMP_STRAIGHT:
-            return &player->hpJumpStraightAnim;
-        case PLAYER_STATE_LK_JUMP_STRAIGHT:
-            return &player->lkJumpStraightAnim;
-        case PLAYER_STATE_MK_JUMP_STRAIGHT:
-            return &player->mkJumpStraightAnim;
-        case PLAYER_STATE_HK_JUMP_STRAIGHT:
-            return &player->hkJumpStraightAnim;
-        case PLAYER_STATE_LP_JUMP_FORWARD:
-            return &player->lpJumpForwardAnim;
-        case PLAYER_STATE_MP_JUMP_FORWARD:
-            return &player->mpJumpForwardAnim;
-        case PLAYER_STATE_HP_JUMP_FORWARD:
-            return &player->hpJumpForwardAnim;
-        case PLAYER_STATE_LK_JUMP_FORWARD:
-            return &player->lkJumpForwardAnim;
-        case PLAYER_STATE_MK_JUMP_FORWARD:
-            return &player->mkJumpForwardAnim;
-        case PLAYER_STATE_HK_JUMP_FORWARD:
-            return &player->hkJumpForwardAnim;
-        case PLAYER_STATE_LP_JUMP_BACKWARD:
-            return &player->lpJumpBackwardAnim;
-        case PLAYER_STATE_MP_JUMP_BACKWARD:
-            return &player->mpJumpBackwardAnim;
-        case PLAYER_STATE_HP_JUMP_BACKWARD:
-            return &player->hpJumpBackwardAnim;
-        case PLAYER_STATE_LK_JUMP_BACKWARD:
-            return &player->lkJumpBackwardAnim;
-        case PLAYER_STATE_MK_JUMP_BACKWARD:
-            return &player->mkJumpBackwardAnim;
-        case PLAYER_STATE_HK_JUMP_BACKWARD:
-            return &player->hkJumpBackwardAnim;
         default:
-            return NULL;
+            return player->animations[player->state];
     }
 
 }

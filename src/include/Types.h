@@ -26,11 +26,11 @@ typedef enum PlayerState {
     PLAYER_STATE_IDLE,
     PLAYER_STATE_WALKING_FORWARD,
     PLAYER_STATE_WALKING_BACKWARD,
-    PLAYER_STATE_CROUCHING,
     PLAYER_STATE_JUMPING_STRAIGHT,
     PLAYER_STATE_JUMPING_FORWARD,
     PLAYER_STATE_JUMPING_BACKWARD,
     PLAYER_STATE_JUMP_COOLDOWN,
+    PLAYER_STATE_CROUCHING,
     PLAYER_STATE_LP,
     PLAYER_STATE_MP,
     PLAYER_STATE_HP,
@@ -67,7 +67,7 @@ typedef enum PlayerState {
     PLAYER_STATE_LK_JUMP_BACKWARD,
     PLAYER_STATE_MK_JUMP_BACKWARD,
     PLAYER_STATE_HK_JUMP_BACKWARD,
-    PLAYER_STATE_LAST,
+    PLAYER_STATE_LAST,              // just to mark the last (circular behaviour)
 } PlayerState;
 
 typedef struct AnimationFrameBoxes {
@@ -171,6 +171,8 @@ typedef struct Player {
     Animation lkJumpBackwardAnim;
     Animation mkJumpBackwardAnim;
     Animation hkJumpBackwardAnim;
+
+    Animation lastAnim;
 
     int lpCloseTriggerDist;
     int mpCloseTriggerDist;
