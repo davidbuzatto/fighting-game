@@ -593,8 +593,8 @@ void initializePlayerRyu( float x, float y, Player *p, DurationMode animationDur
     p->defenceStandingAnim.frameCount = 2;
     p->defenceStandingAnim.currentFrame = 0;
     p->defenceStandingAnim.frameTimeCounter = 0.0f;
-    p->defenceStandingAnim.stopAtLastFrame = false;
-    p->defenceStandingAnim.runOnce = true;
+    p->defenceStandingAnim.stopAtLastFrame = true;
+    p->defenceStandingAnim.runOnce = false;
     p->defenceStandingAnim.finished = false;
     createAnimationFrames( &p->defenceStandingAnim, p->defenceStandingAnim.frameCount );
     p->defenceStandingAnim.frames[0] = (AnimationFrame) { {  1, 3569, -80, 96 }, 60, { 0, 0 }, .boxes = { 0 } };
@@ -603,8 +603,8 @@ void initializePlayerRyu( float x, float y, Player *p, DurationMode animationDur
     p->defenceCrouchAnim.frameCount = 2;
     p->defenceCrouchAnim.currentFrame = 0;
     p->defenceCrouchAnim.frameTimeCounter = 0.0f;
-    p->defenceCrouchAnim.stopAtLastFrame = false;
-    p->defenceCrouchAnim.runOnce = true;
+    p->defenceCrouchAnim.stopAtLastFrame = true;
+    p->defenceCrouchAnim.runOnce = false;
     p->defenceCrouchAnim.finished = false;
     createAnimationFrames( &p->defenceCrouchAnim, p->defenceCrouchAnim.frameCount );
     p->defenceCrouchAnim.frames[0] = (AnimationFrame) { {  1, 3666, -80, 65 }, 60, { 0, 0 }, .boxes = { 0 } };

@@ -545,7 +545,7 @@ static void updateGameWorldEditing( GameWorld *gw, float delta ) {
 
     if ( runPlayerCurrentAnimationOnce ) {
         updateAnimation( anim, DURATION_MODE, delta );
-        if ( anim->finished || anim->currentFrame == anim->frameCount - 1 ) {
+        if ( anim->finished ) {
             runPlayerCurrentAnimationOnce = false;
         }
     }

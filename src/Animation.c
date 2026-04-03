@@ -31,6 +31,7 @@ void updateAnimation( Animation *anim, DurationMode durationMode, float delta ) 
     }
 
     if ( anim->frameTimeCounter >= actualDuration ) {
+
         anim->frameTimeCounter = 0;
         anim->currentFrame++;
 
@@ -41,12 +42,14 @@ void updateAnimation( Animation *anim, DurationMode durationMode, float delta ) 
         }
 
         if ( anim->runOnce && anim->currentFrame >= anim->frameCount ) {
-            anim->currentFrame = anim->frameCount - 1;
+            //anim->currentFrame = anim->frameCount - 1;
+            anim->currentFrame = 0;
             anim->finished = true;
             return;
         }
 
         anim->currentFrame %= anim->frameCount;
+
     }
 
 }
