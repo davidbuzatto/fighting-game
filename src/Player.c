@@ -615,6 +615,7 @@ void initializePlayerRyu( float x, float y, Player *p, DurationMode animationDur
     p->lastAnim.currentFrame = 0;
     p->lastAnim.frameTimeCounter = 0.0f;
     p->lastAnim.stopAtLastFrame = false;
+    p->lastAnim.frames = NULL;
     p->lastAnim.runOnce = false;
     p->lastAnim.finished = false;
 
@@ -671,6 +672,7 @@ void initializePlayerRyu( float x, float y, Player *p, DurationMode animationDur
     p->animations[PLAYER_STATE_LAST] = &p->lastAnim;                        animationCount++;
     p->animationCount = animationCount;
 
+    // support animations
     p->onHitAnimation.frameCount = 3;
     p->onHitAnimation.currentFrame = 0;
     p->onHitAnimation.frameTimeCounter = 0.0f;
@@ -681,6 +683,10 @@ void initializePlayerRyu( float x, float y, Player *p, DurationMode animationDur
     p->onHitAnimation.frames[0] = (AnimationFrame) { {  8, 10, 20, 19 }, 30, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
     p->onHitAnimation.frames[1] = (AnimationFrame) { { 29, 10, 20, 19 }, 30, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
     p->onHitAnimation.frames[2] = (AnimationFrame) { { 71, 10, 20, 19 }, 30, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
+
+    int supportAnimationCount = 0;
+    p->supportAnimations[supportAnimationCount++] = &p->onHitAnimation;
+    p->supportAnimationCount = supportAnimationCount;
 
     p->onHitPos = (Vector2) { 0 };
     p->onHitPosActive = false;
@@ -698,6 +704,9 @@ void initializePlayerKen( float x, float y, Player *p, DurationMode animationDur
 void destroyPlayer( Player *player ) {
     for ( int i = 0; i < player->animationCount; i++ ) {
         destroyAnimationFrames( player->animations[i] );
+    }
+    for ( int i = 0; i < player->supportAnimationCount; i++ ) {
+        destroyAnimationFrames( player->supportAnimations[i] );
     }
     free( player );
 }
