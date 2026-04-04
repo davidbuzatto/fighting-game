@@ -14,3 +14,6 @@ Implementar especiais do Ken;
 Implementar animação no cenário e camadas.
 
 Hit/hurt boxes: https://doctorguile.github.io/ssf2st/
+Assets:
+    https://www.spriters-resource.com/snes/supersf2/
+    https://www.spriters-resource.com/arcade/streetfighter2/
