@@ -28,7 +28,7 @@
 #define DRAW_PLAYER_ONION true
 #define DRAW_MODEL_STAGE_TEXTURE false
 #define DURATION_MODE DURATION_MODE_MILLISECONDS
-#define INITIAL_GAME_MODE GAME_MODE_PLAYING
+#define INITIAL_GAME_MODE GAME_MODE_EDITING
 
 #define PLAYER_1_ANIMATIONS_FILE "resources/animations/ryu.json"
 #define PLAYER_2_ANIMATIONS_FILE "resources/animations/ken.json"
@@ -821,12 +821,12 @@ static void drawEditorHelp( void ) {
 
     DrawRectangle( 0, 0, GetScreenWidth(), GetScreenHeight(), Fade( BLACK, 0.88f ) );
 
-    int fs = 20;
-    int lh = 28;
+    int fs = 10;
+    int lh = 14;
     int col1 = 30;
-    int col2 = GetScreenWidth() / 2 + 20;
-    int desc1 = col1 + 210;   // description column for left side
-    int desc2 = col2 + 220;   // description column for right side
+    int col2 = GetScreenWidth() / 2 - 100;
+    int desc1 = col1 + 150;   // description column for left side
+    int desc2 = col2 + 150;   // description column for right side
     int yStart = 20;
 
     DrawText( "HELP  -  ANIMATION EDITOR        ( H to close )", col1, yStart, 20, YELLOW );
@@ -844,6 +844,11 @@ static void drawEditorHelp( void ) {
     DrawText( "1",             col1, yL, fs, GREEN ); DrawText( "collision box",     desc1, yL, fs, GREEN ); yL += lh;
     DrawText( "2 / 3 / 4",     col1, yL, fs, BLUE  ); DrawText( "hitbox 0 / 1 / 2",  desc1, yL, fs, BLUE  ); yL += lh;
     DrawText( "5 / 6 / 7",     col1, yL, fs, RED   ); DrawText( "hurtbox 0 / 1 / 2", desc1, yL, fs, RED   ); yL += lh;
+    yL += lh / 2;
+
+    DrawText( "HURTBOXES DAMAGE (PER FRAME)", col1, yL, fs, LIGHTGRAY ); yL += lh;
+    DrawText( "PAGE UP / PAGE DOWN",      col1, yL, fs, WHITE ); DrawText( "adjust damage", desc1, yL, fs, WHITE ); yL += lh;
+    DrawText( "+ RIGHT CTRL",   col1, yL, fs, WHITE ); DrawText( "step 1",          desc1, yL, fs, WHITE ); yL += lh;
     yL += lh / 2;
 
     DrawText( "BOX EDITING",    col1, yL, fs, LIGHTGRAY ); yL += lh;
@@ -875,18 +880,18 @@ static void drawEditorHelp( void ) {
     yR += lh / 2;
 
     DrawText( "COPY BOXES",   col2, yR, fs, LIGHTGRAY ); yR += lh;
-    DrawText( "CTRL + X",     col2, yR, fs, WHITE ); DrawText( "copy -> previous frame", desc2 - 30, yR, fs, WHITE ); yR += lh;
-    DrawText( "CTRL + C",     col2, yR, fs, WHITE ); DrawText( "copy -> next frame",     desc2 - 30, yR, fs, WHITE ); yR += lh;
-    DrawText( "CTRL+ALT + X", col2, yR, fs, WHITE ); DrawText( "copy all -> prev anim.", desc2 - 30, yR, fs, WHITE ); yR += lh;
-    DrawText( "CTRL+ALT + C", col2, yR, fs, WHITE ); DrawText( "copy all -> next anim.", desc2 - 30, yR, fs, WHITE ); yR += lh;
+    DrawText( "CTRL + X",     col2, yR, fs, WHITE ); DrawText( "copy -> previous frame", desc2, yR, fs, WHITE ); yR += lh;
+    DrawText( "CTRL + C",     col2, yR, fs, WHITE ); DrawText( "copy -> next frame",     desc2, yR, fs, WHITE ); yR += lh;
+    DrawText( "CTRL+ALT + X", col2, yR, fs, WHITE ); DrawText( "copy all -> prev anim.", desc2, yR, fs, WHITE ); yR += lh;
+    DrawText( "CTRL+ALT + C", col2, yR, fs, WHITE ); DrawText( "copy all -> next anim.", desc2, yR, fs, WHITE ); yR += lh;
     yR += lh / 2;
 
     DrawText( "FILE / GENERAL", col2, yR, fs, LIGHTGRAY ); yR += lh;
-    DrawText( "CTRL + S",       col2, yR, fs, WHITE ); DrawText( "save",                  desc2 - 30, yR, fs, WHITE ); yR += lh;
-    DrawText( "F1",             col2, yR, fs, WHITE ); DrawText( "toggle play/edit mode", desc2 - 30, yR, fs, WHITE ); yR += lh;
-    DrawText( "F2",             col2, yR, fs, WHITE ); DrawText( "show/hide boxes",       desc2 - 30, yR, fs, WHITE ); yR += lh;
-    DrawText( "F3",             col2, yR, fs, WHITE ); DrawText( "show/hide debug",       desc2 - 30, yR, fs, WHITE ); yR += lh;
-    DrawText( "H",              col2, yR, fs, WHITE ); DrawText( "show/hide help",        desc2 - 30, yR, fs, WHITE ); yR += lh;
+    DrawText( "CTRL + S",       col2, yR, fs, WHITE ); DrawText( "save",                  desc2, yR, fs, WHITE ); yR += lh;
+    DrawText( "F1",             col2, yR, fs, WHITE ); DrawText( "toggle play/edit mode", desc2, yR, fs, WHITE ); yR += lh;
+    DrawText( "F2",             col2, yR, fs, WHITE ); DrawText( "show/hide boxes",       desc2, yR, fs, WHITE ); yR += lh;
+    DrawText( "F3",             col2, yR, fs, WHITE ); DrawText( "show/hide debug",       desc2, yR, fs, WHITE ); yR += lh;
+    DrawText( "H",              col2, yR, fs, WHITE ); DrawText( "show/hide help",        desc2, yR, fs, WHITE ); yR += lh;
 
 }
 

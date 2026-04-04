@@ -1,4 +1,3 @@
-Help do damage!
 Implementar caixas de colisão (evitar sobreposição);
 
 Implementar animações de dano;
