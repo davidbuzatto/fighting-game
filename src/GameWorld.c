@@ -248,10 +248,12 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
 
 static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
 
-    remainingTimeCounter += delta;
-    if ( remainingTimeCounter >= 1.0f ) {
-        remainingTime--;
-        remainingTimeCounter = 0.0f;
+    if ( remainingTime > 0 ) {
+        remainingTimeCounter += delta;
+        if ( remainingTimeCounter >= 1.0f ) {
+            remainingTime--;
+            remainingTimeCounter = 0.0f;
+        }
     }
 
     if ( IsKeyPressed( KEY_R ) ) {
@@ -987,7 +989,7 @@ static void drawHud( GameWorld *gw ) {
 
     DrawText( "K.O", 421, 61, 36, RED );
     
-    const char *remainingTimeStr = TextFormat( "%d", remainingTime );
+    const char *remainingTimeStr = TextFormat( "%02d", remainingTime );
     Vector2 measureRemainingTime = measureTextUsingFont( remainingTimeStr, 4 );
     drawTextUsingFont( remainingTimeStr, GetScreenWidth() / 2 - measureRemainingTime.x / 2 + 5, 103, 4 );
 

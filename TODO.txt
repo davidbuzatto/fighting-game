@@ -11,5 +11,6 @@ Implementar bloqueio;
 Implementar o fluxo de inputs (gerar imagens);
 Implementar especiais do Ryu;
 Implementar especiais do Ken;
+Implementar animação no cenário e camadas.
 
 Hit/hurt boxes: https://doctorguile.github.io/ssf2st/
