@@ -23,13 +23,13 @@
 #include "Player.h"
 #include "Utils.h"
 
-#define SHOW_PLAYER_INPUT_BUFFER true
-#define SHOW_BOXES false
+#define SHOW_BOXES true
 #define SHOW_DEBUG_INFO false
-#define SHOW_MODEL_STAGE_TEXTURE false
 #define SHOW_PLAYER_ONION_MODE_EDITING true
+#define SHOW_PLAYER_INPUT_BUFFER true
+#define SHOW_MODEL_STAGE_TEXTURE false
 #define DURATION_MODE DURATION_MODE_MILLISECONDS
-#define INITIAL_GAME_MODE GAME_MODE_PLAYING
+#define INITIAL_GAME_MODE GAME_MODE_EDITING
 
 #define PLAYER_1_ANIMATIONS_FILE "resources/animations/ryu.json"
 #define PLAYER_2_ANIMATIONS_FILE "resources/animations/ken.json"
@@ -43,10 +43,12 @@ static void showAnimationFrameBoxDetail( Player *p, Rectangle *box, Camera2D cam
 static void drawInfoPanel( GameWorld *gw );
 static void drawEditorHelp( void );
 static void drawHud( GameWorld *gw );
-static void copyAnimationFrameBoxesPrevious( Player *p );
-static void copyAnimationFrameBoxesNext( Player *p );
-static void copyAllFrameBoxesToPreviousAnimation( Player *p );
-static void copyAllFrameBoxesToNextAnimation( Player *p );
+static void copyCurrentAnimationFrameBoxPrevious( Player *p );
+static void copyCurrentAnimationFrameBoxNext( Player *p );
+static void copyAllAnimationFrameBoxesPrevious( Player *p );
+static void copyAllAnimationFrameBoxesNext( Player *p );
+static void copyAllAnimationFrameBoxesToPreviousAnimation( Player *p );
+static void copyAllAnimationFrameBoxesToNextAnimation( Player *p );
 
 static void updateCameraPlaying( GameWorld *gw );
 static void updateCameraEditing( GameWorld *gw );
@@ -391,18 +393,23 @@ static void updateGameWorldEditing( GameWorld *gw, float delta ) {
 
     if ( IsKeyDown( KEY_LEFT_CONTROL ) && IsKeyPressed( KEY_X ) ) {
         if ( IsKeyDown( KEY_LEFT_ALT ) ) {
-            copyAllFrameBoxesToPreviousAnimation( gw->player1 );
+            copyAllAnimationFrameBoxesToPreviousAnimation( gw->player1 );
+        } if ( IsKeyDown( KEY_LEFT_SHIFT ) ) {
+            copyAllAnimationFrameBoxesPrevious( gw->player1 );
         } else {
-            copyAnimationFrameBoxesPrevious( gw->player1 );
+            copyCurrentAnimationFrameBoxPrevious( gw->player1 );
+            
         }
         return;
     }
 
     if ( IsKeyDown( KEY_LEFT_CONTROL ) && IsKeyPressed( KEY_C ) ) {
         if ( IsKeyDown( KEY_LEFT_ALT ) ) {
-            copyAllFrameBoxesToNextAnimation( gw->player1 );
+            copyAllAnimationFrameBoxesToNextAnimation( gw->player1 );
+        } else if ( IsKeyDown( KEY_LEFT_SHIFT ) ) {
+            copyAllAnimationFrameBoxesNext( gw->player1 );
         } else {
-            copyAnimationFrameBoxesNext( gw->player1 );
+            copyCurrentAnimationFrameBoxNext( gw->player1 );
         }
         return;
     }
@@ -813,7 +820,7 @@ static void drawInfoPanel( GameWorld *gw ) {
         hint = "O + arrows: adjust onion offset  |  + RIGHT CTRL: step 1";
         hintColor = BLACK;
     } else if ( IsKeyDown( KEY_LEFT_CONTROL ) ) {
-        hint = "CTRL+S: save  |  CTRL+X/C: copy boxes  |  CTRL+ALT+X/C: copy animation";
+        hint = "CTRL+S: save | CTRL[+SHIFT]+X/C: copy boxes | CTRL+ALT+X/C: copy animation";
         hintColor = BLACK;
     } else {
         hint = "arrows: navigate  |  1-7: select box  |  M/SPACE+arrows: move/resize  |  H: help";
@@ -893,14 +900,16 @@ static void drawEditorHelp( void ) {
     DrawText( "ONION SKIN",         col2, yR, fs, LIGHTGRAY ); yR += lh;
     DrawText( "F4",                 col2, yR, fs, WHITE ); DrawText( "toggle on/off", desc2, yR, fs, WHITE ); yR += lh;
     DrawText( "O + arrows",         col2, yR, fs, WHITE ); DrawText( "adjust offset", desc2, yR, fs, WHITE ); yR += lh;
-    DrawText( "O + RCTRL + arrows", col2, yR, fs, WHITE ); DrawText( "step 1",      desc2, yR, fs, WHITE ); yR += lh;
+    DrawText( "O + RCTRL + arrows", col2, yR, fs, WHITE ); DrawText( "step 1",        desc2, yR, fs, WHITE ); yR += lh;
     yR += lh / 2;
 
-    DrawText( "COPY BOXES",   col2, yR, fs, LIGHTGRAY ); yR += lh;
-    DrawText( "CTRL + X",     col2, yR, fs, WHITE ); DrawText( "copy -> previous frame", desc2, yR, fs, WHITE ); yR += lh;
-    DrawText( "CTRL + C",     col2, yR, fs, WHITE ); DrawText( "copy -> next frame",     desc2, yR, fs, WHITE ); yR += lh;
-    DrawText( "CTRL+ALT + X", col2, yR, fs, WHITE ); DrawText( "copy all -> prev anim.", desc2, yR, fs, WHITE ); yR += lh;
-    DrawText( "CTRL+ALT + C", col2, yR, fs, WHITE ); DrawText( "copy all -> next anim.", desc2, yR, fs, WHITE ); yR += lh;
+    DrawText( "COPY BOXES",     col2, yR, fs, LIGHTGRAY ); yR += lh;
+    DrawText( "CTRL + X",       col2, yR, fs, WHITE ); DrawText( "copy current -> previous frame", desc2, yR, fs, WHITE ); yR += lh;
+    DrawText( "CTRL + C",       col2, yR, fs, WHITE ); DrawText( "copy current -> next frame",     desc2, yR, fs, WHITE ); yR += lh;
+    DrawText( "CTRL+SHIFT + X", col2, yR, fs, WHITE ); DrawText( "copy all -> previous frame",     desc2, yR, fs, WHITE ); yR += lh;
+    DrawText( "CTRL+SHIFT + C", col2, yR, fs, WHITE ); DrawText( "copy all -> next frame",         desc2, yR, fs, WHITE ); yR += lh;
+    DrawText( "CTRL+ALT + X",   col2, yR, fs, WHITE ); DrawText( "copy all -> prev anim.",         desc2, yR, fs, WHITE ); yR += lh;
+    DrawText( "CTRL+ALT + C",   col2, yR, fs, WHITE ); DrawText( "copy all -> next anim.",         desc2, yR, fs, WHITE ); yR += lh;
     yR += lh / 2;
 
     DrawText( "FILE / GENERAL", col2, yR, fs, LIGHTGRAY ); yR += lh;
@@ -1010,7 +1019,66 @@ static void drawHud( GameWorld *gw ) {
 
 }
 
-static void copyAnimationFrameBoxesPrevious( Player *p ) {
+static void copyCurrentAnimationFrameBoxPrevious( Player *p ) {
+
+    Animation *a = getPlayerCurrentAnimation( p );
+    AnimationFrame *sourceAf = getPlayerCurrentAnimationFrame( p );
+
+    for ( int i = 0; i < a->frameCount; i++ ) {
+        if ( &a->frames[i] == sourceAf ) {
+
+            int prev = i - 1;
+            if ( prev == -1 ) {
+                prev = a->frameCount - 1;
+            }
+            AnimationFrame *destAf = &a->frames[prev];
+
+            switch ( editorMode ) {
+                case EDITOR_MODE_COLLISION_BOX: destAf->boxes.collisionBox = sourceAf->boxes.collisionBox; return;
+                case EDITOR_MODE_HIT_BOX_0:     destAf->boxes.hitboxes[0]  = sourceAf->boxes.hitboxes[0];  return;
+                case EDITOR_MODE_HIT_BOX_1:     destAf->boxes.hitboxes[1]  = sourceAf->boxes.hitboxes[1];  return;
+                case EDITOR_MODE_HIT_BOX_2:     destAf->boxes.hitboxes[2]  = sourceAf->boxes.hitboxes[2];  return;
+                case EDITOR_MODE_HURT_BOX_0:    destAf->boxes.hurtboxes[0] = sourceAf->boxes.hurtboxes[0]; return;
+                case EDITOR_MODE_HURT_BOX_1:    destAf->boxes.hurtboxes[1] = sourceAf->boxes.hurtboxes[1]; return;
+                case EDITOR_MODE_HURT_BOX_2:    destAf->boxes.hurtboxes[2] = sourceAf->boxes.hurtboxes[2]; return;
+                default: return;
+            }
+
+        }
+
+    }
+
+}
+
+static void copyCurrentAnimationFrameBoxNext( Player *p ) {
+
+    Animation *a = getPlayerCurrentAnimation( p );
+    AnimationFrame *sourceAf = getPlayerCurrentAnimationFrame( p );
+
+    for ( int i = 0; i < a->frameCount; i++ ) {
+        if ( &a->frames[i] == sourceAf ) {
+
+            int next = ( i + 1 ) % a->frameCount;
+            AnimationFrame *destAf = &a->frames[next];
+
+            switch ( editorMode ) {
+                case EDITOR_MODE_COLLISION_BOX: destAf->boxes.collisionBox = sourceAf->boxes.collisionBox; return;
+                case EDITOR_MODE_HIT_BOX_0:     destAf->boxes.hitboxes[0]  = sourceAf->boxes.hitboxes[0];  return;
+                case EDITOR_MODE_HIT_BOX_1:     destAf->boxes.hitboxes[1]  = sourceAf->boxes.hitboxes[1];  return;
+                case EDITOR_MODE_HIT_BOX_2:     destAf->boxes.hitboxes[2]  = sourceAf->boxes.hitboxes[2];  return;
+                case EDITOR_MODE_HURT_BOX_0:    destAf->boxes.hurtboxes[0] = sourceAf->boxes.hurtboxes[0]; return;
+                case EDITOR_MODE_HURT_BOX_1:    destAf->boxes.hurtboxes[1] = sourceAf->boxes.hurtboxes[1]; return;
+                case EDITOR_MODE_HURT_BOX_2:    destAf->boxes.hurtboxes[2] = sourceAf->boxes.hurtboxes[2]; return;
+                default: return;
+            }
+
+        }
+
+    }
+
+}
+
+static void copyAllAnimationFrameBoxesPrevious( Player *p ) {
         
     Animation *a = getPlayerCurrentAnimation( p );
     AnimationFrame *sourceAf = getPlayerCurrentAnimationFrame( p );
@@ -1029,7 +1097,7 @@ static void copyAnimationFrameBoxesPrevious( Player *p ) {
 
 }
 
-static void copyAnimationFrameBoxesNext( Player *p ) {
+static void copyAllAnimationFrameBoxesNext( Player *p ) {
         
     Animation *a = getPlayerCurrentAnimation( p );
     AnimationFrame *sourceAf = getPlayerCurrentAnimationFrame( p );
@@ -1045,7 +1113,7 @@ static void copyAnimationFrameBoxesNext( Player *p ) {
 
 }
 
-static void copyAllFrameBoxesToPreviousAnimation( Player *p ) {
+static void copyAllAnimationFrameBoxesToPreviousAnimation( Player *p ) {
 
     Animation *sourceA = getPlayerCurrentAnimation( p );
     Animation *destA = NULL;
@@ -1081,7 +1149,7 @@ static void copyAllFrameBoxesToPreviousAnimation( Player *p ) {
 
 }
 
-static void copyAllFrameBoxesToNextAnimation( Player *p ) {
+static void copyAllAnimationFrameBoxesToNextAnimation( Player *p ) {
         
     Animation *sourceA = getPlayerCurrentAnimation( p );
     Animation *destA = NULL;
