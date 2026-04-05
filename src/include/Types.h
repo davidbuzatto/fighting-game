@@ -95,6 +95,36 @@ typedef enum PlayerState {
     PLAYER_STATE_LAST,              // just to mark the last (circular behaviour)
 } PlayerState;
 
+static inline bool isAttackState( PlayerState s ) {
+    return s >= PLAYER_STATE_LP && s <= PLAYER_STATE_HK_JUMP_BACKWARD;
+}
+
+static inline bool isCrouchAttackState( PlayerState s ) {
+    return s >= PLAYER_STATE_LP_CROUCH && s <= PLAYER_STATE_HK_CROUCH;
+}
+
+static inline bool isJumpAttackState( PlayerState s ) {
+    return s >= PLAYER_STATE_LP_JUMP_STRAIGHT && s <= PLAYER_STATE_HK_JUMP_BACKWARD;
+}
+
+static inline bool isJumpState( PlayerState s ) {
+    return s == PLAYER_STATE_JUMPING_STRAIGHT ||
+           s == PLAYER_STATE_JUMPING_FORWARD  ||
+           s == PLAYER_STATE_JUMPING_BACKWARD;
+}
+
+static inline bool isHitState( PlayerState s ) {
+    return s >= PLAYER_STATE_HIT_UP_STANDING && s <= PLAYER_STATE_HIT_CROUCH;
+}
+
+static inline bool isDefenceState( PlayerState s ) {
+    return s == PLAYER_STATE_DEFENCE_STANDING || s == PLAYER_STATE_DEFENCE_CROUCH;
+}
+
+static inline bool isAirborneState( PlayerState s ) {
+    return isJumpState( s ) || isJumpAttackState( s );
+}
+
 typedef enum PlayerStartSide {
     PLAYER_START_SIDE_LEFT,
     PLAYER_START_SIDE_RIGHT,

@@ -52,6 +52,7 @@ static void updateCameraPlaying( GameWorld *gw );
 static void updateCameraEditing( GameWorld *gw );
 
 static void resolveCollisionPlayerStage( Player *player, GameWorld *gw );
+static void resolvePlayerPlayerCollision( Player *p1, Player *p2 );
 static void flipPlayers( GameWorld *gw );
 
 // editor
@@ -317,6 +318,8 @@ static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
 
     resolveCollisionPlayerStage( gw->player1, gw );
     resolveCollisionPlayerStage( gw->player2, gw );
+
+    resolvePlayerPlayerCollision( gw->player1, gw->player2 );
 
     resolvePlayerOponnentContact( gw->player1, gw->player2 );
     resolvePlayerOponnentContact( gw->player2, gw->player1 );
@@ -1162,12 +1165,57 @@ static void resolveCollisionPlayerStage( Player *player, GameWorld *gw ) {
     if ( player->pos.y + player->dim.y > gw->floor.y ) {
         player->pos.y = gw->floor.y - player->dim.y;
         player->vel.y = 0.0f;
-        if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ||
-             player->state == PLAYER_STATE_JUMPING_FORWARD  ||
-             player->state == PLAYER_STATE_JUMPING_BACKWARD ) {
+        if ( isAirborneState( player->state ) ) {
             resetPlayerAnimations( player );
             player->vel.x = 0.0f;
             player->state = PLAYER_STATE_JUMP_COOLDOWN;
+        }
+    }
+
+}
+
+static void resolvePlayerPlayerCollision( Player *p1, Player *p2 ) {
+
+    AnimationFrame *af1 = getPlayerCurrentAnimationFrame( p1 );
+    AnimationFrame *af2 = getPlayerCurrentAnimationFrame( p2 );
+
+    if ( af1 == NULL || af2 == NULL ) {
+        return;
+    }
+
+    Rectangle cb1 = af1->boxes.collisionBox;
+    Rectangle cb2 = af2->boxes.collisionBox;
+
+    // skip if either collision box is empty (not yet defined)
+    if ( ( cb1.width == 0 && cb1.height == 0 ) || ( cb2.width == 0 && cb2.height == 0 ) ) {
+        return;
+    }
+
+    // convert to world coordinates (same facing-aware logic as hitbox/hurtbox)
+    Rectangle wcb1 = {
+        p1->lookingRight ? p1->pos.x + cb1.x : p1->pos.x - cb1.x - cb1.width,
+        p1->pos.y + cb1.y,
+        cb1.width,
+        cb1.height
+    };
+
+    Rectangle wcb2 = {
+        p2->lookingRight ? p2->pos.x + cb2.x : p2->pos.x - cb2.x - cb2.width,
+        p2->pos.y + cb2.y,
+        cb2.width,
+        cb2.height
+    };
+
+    if ( CheckCollisionRecs( wcb1, wcb2 ) ) {
+        Rectangle overlap = GetCollisionRec( wcb1, wcb2 );
+        float pushDist = overlap.width / 2;
+
+        if ( p1->pos.x < p2->pos.x ) {
+            p1->pos.x -= pushDist;
+            p2->pos.x += pushDist;
+        } else {
+            p1->pos.x += pushDist;
+            p2->pos.x -= pushDist;
         }
     }
 

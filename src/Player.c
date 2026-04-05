@@ -881,7 +881,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
     Animation *activeAnim = NULL;
 
     // damage in progress: blocks all input
-    if ( player->state >= PLAYER_STATE_HIT_UP_STANDING && player->state <= PLAYER_STATE_HIT_CROUCH ) {
+    if ( isHitState( player->state ) ) {
         activeAnim = getPlayerCurrentAnimation( player );
         if ( activeAnim != NULL ) {
             updateAnimation( activeAnim, player->animationDurationMode, delta );
@@ -894,7 +894,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
     }
 
     // attack in progress: blocks all input
-    if ( player->state >= PLAYER_STATE_LP && player->state <= PLAYER_STATE_HK_JUMP_BACKWARD ) {
+    if ( isAttackState( player->state ) ) {
         activeAnim = getPlayerCurrentAnimation( player );
     }
 
@@ -902,10 +902,10 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
         updateAnimation( activeAnim, player->animationDurationMode, delta );
         if ( activeAnim->finished ) {
             // is crouch attack?
-            if ( player->state >= PLAYER_STATE_LP_CROUCH && player->state <= PLAYER_STATE_HK_CROUCH ) {
+            if ( isCrouchAttackState( player->state ) ) {
                 player->state = PLAYER_STATE_CROUCHING;
                 // is jump attack?
-            } else if ( player->state >= PLAYER_STATE_LP_JUMP_STRAIGHT && player->state <= PLAYER_STATE_HK_JUMP_BACKWARD ) {
+            } else if ( isJumpAttackState( player->state ) ) {
                 player->state = player->lastState;
             } else {
                 player->state = PLAYER_STATE_IDLE;
@@ -916,9 +916,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
     }
 
     // jump in progress: updates animation and blocks input
-    if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ||
-         player->state == PLAYER_STATE_JUMPING_FORWARD  ||
-         player->state == PLAYER_STATE_JUMPING_BACKWARD ) {
+    if ( isJumpState( player->state ) ) {
         switch ( player->state ) {
             case PLAYER_STATE_JUMPING_STRAIGHT:
                 updateAnimation( &player->straightJumpAnim, player->animationDurationMode, delta );

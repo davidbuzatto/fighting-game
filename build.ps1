@@ -46,6 +46,7 @@ if ( $compile -or $cleanAndCompile -or $compileAndRun -or $all ) {
         -std=c99 `
         -Wno-missing-braces `
         -I src/include/ `
+        -I src/include/parson `
         -L lib/ `
         -lraylib `
         -lopengl32 `
