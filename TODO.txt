@@ -3,17 +3,14 @@ Implementar bloqueio;
     Contato usando o efeito vermelho (baixo).
     Ajustar o tempo das animações de bloqueio (estão muito rápidas);
 
-Implementar caixas de colisão (evitar sobreposição);
-
+Implementar caixas de colisão (evitar sobreposição); -> falta popular os frames
 Efeito na barra no dando (decrementar);
-
 Implementar especiais do Ryu; -> possui um protótipo
-
 Refatorar (ajustar posição de funções, nomes de variáveis etc);
-
 Implementar especiais do Ken;
-
-Implementar animação no cenário e camadas.
+Adicionar música e efeitos sonoros;
+Implementar animação no cenário e camadas;
+Implementar dinâmica das partidas;
 
 Hit/hurt boxes: https://doctorguile.github.io/ssf2st/
 Assets:
