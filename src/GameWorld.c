@@ -289,8 +289,9 @@ static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
         gw->stageTexture = &rm.guileStageTexture;
     }
 
-    processInputPlayer( gw->player1, gw->player2, delta );
-    processInputPlayer( gw->player2, gw->player1, delta );
+    gw->frameCounter++;
+    processInputPlayer( gw->player1, gw->player2, delta, gw->frameCounter );
+    processInputPlayer( gw->player2, gw->player1, delta, gw->frameCounter );
 
     // camera
     playerDist = fabs( gw->player1->pos.x - gw->player2->pos.x ) * gw->camera.zoom;

@@ -3,6 +3,9 @@
 #include "raylib/raylib.h"
 
 #define PLAYER_INPUT_BUFFER_SIZE 14
+#define COMMAND_INPUT_WINDOW 30          // frames to complete a command input (~500ms at 60fps)
+#define MAX_COMMAND_SEQUENCE 6
+#define MAX_COMMANDS 10
 
 typedef enum GameMode {
     GAME_MODE_PLAYING,
@@ -125,6 +128,48 @@ static inline bool isAirborneState( PlayerState s ) {
     return isJumpState( s ) || isJumpAttackState( s );
 }
 
+static inline bool isAttackInput( InputType t ) {
+    return t >= INPUT_TYPE_LP && t <= INPUT_TYPE_HK;
+}
+
+static inline bool isPunchInput( InputType t ) {
+    return t == INPUT_TYPE_LP || t == INPUT_TYPE_MP || t == INPUT_TYPE_HP;
+}
+
+static inline bool isKickInput( InputType t ) {
+    return t == INPUT_TYPE_LK || t == INPUT_TYPE_MK || t == INPUT_TYPE_HK;
+}
+
+// mirrors a directional input for left-facing players
+// (commands are defined assuming right-facing)
+static inline InputType mirrorDirectional( InputType t ) {
+    switch ( t ) {
+        case INPUT_TYPE_RIGHT:      return INPUT_TYPE_LEFT;
+        case INPUT_TYPE_LEFT:       return INPUT_TYPE_RIGHT;
+        case INPUT_TYPE_RIGHT_DOWN: return INPUT_TYPE_LEFT_DOWN;
+        case INPUT_TYPE_LEFT_DOWN:  return INPUT_TYPE_RIGHT_DOWN;
+        case INPUT_TYPE_RIGHT_UP:   return INPUT_TYPE_LEFT_UP;
+        case INPUT_TYPE_LEFT_UP:    return INPUT_TYPE_RIGHT_UP;
+        default:                    return t;
+    }
+}
+
+typedef enum CommandType {
+    COMMAND_TYPE_HADOUKEN,
+    COMMAND_TYPE_SHORYUKEN,
+    COMMAND_TYPE_TATSUMAKI,
+    // add more as needed
+} CommandType;
+
+typedef struct CommandInput {
+    CommandType type;
+    InputType sequence[MAX_COMMAND_SEQUENCE];  // directional sequence (right-facing)
+    int sequenceLength;
+    bool requiresPunch;     // true = any punch completes the command
+    bool requiresKick;      // true = any kick completes the command
+    int frameWindow;        // max frames to complete the sequence
+} CommandInput;
+
 typedef enum PlayerStartSide {
     PLAYER_START_SIDE_LEFT,
     PLAYER_START_SIDE_RIGHT,
@@ -157,6 +202,11 @@ typedef struct Animation {
     bool runOnce;
     bool finished;
 } Animation;
+
+typedef struct InputBufferEntry {
+    InputType type;
+    int frame;          // frame number when this input was recorded
+} InputBufferEntry;
 
 typedef struct InputEntry {
     int key;
@@ -279,11 +329,14 @@ typedef struct Player {
     bool showBoxes;
     bool showDebugInfo;
 
-    InputType inputBuffer[PLAYER_INPUT_BUFFER_SIZE];
+    InputBufferEntry inputBuffer[PLAYER_INPUT_BUFFER_SIZE];
     int inputBufferHead;
     int inputBufferTail;
     int inputBufferSize;
+    InputType lastDirectionalState;   // directional state from previous frame
 
+    CommandInput commands[MAX_COMMANDS];
+    int commandCount;
 
 } Player;
 
@@ -300,5 +353,7 @@ typedef struct GameWorld {
     Player *player2;
 
     GameMode mode;
+
+    int frameCounter;   // incremented every frame, used for input buffer timing
 
 } GameWorld;

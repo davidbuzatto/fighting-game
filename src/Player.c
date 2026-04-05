@@ -14,8 +14,10 @@
 #include "Utils.h"
 
 static void drawPlayerAnimationFrameBoxes( Player *player, AnimationFrame *af, Vector2 offset );
-static void processInputAndFeedInputBuffer( Player *p );
-static void addInputToPlayerInputBuffer( Player *p, InputType input );
+static void processInputAndFeedInputBuffer( Player *p, int currentFrame );
+static void addInputToPlayerInputBuffer( Player *p, InputType input, int currentFrame );
+static InputType peekAttackButton( Player *p, int currentFrame );
+static CommandInput *checkCommandInputs( Player *p, int currentFrame, InputType *outButton );
 
 Player *createPlayer() {
     Player *p = (Player*) malloc( sizeof( Player ) );
@@ -46,6 +48,40 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->inputBufferHead = -1;
     p->inputBufferTail = -1;
     p->inputBufferSize = 0;
+    p->lastDirectionalState = INPUT_TYPE_NEUTRAL;
+
+    // command inputs (sequences defined for right-facing; auto-mirrored for left)
+    p->commandCount = 0;
+
+    // Hadouken: ↓ ↘ → + Punch
+    p->commands[p->commandCount++] = (CommandInput) {
+        .type = COMMAND_TYPE_HADOUKEN,
+        .sequence = { INPUT_TYPE_DOWN, INPUT_TYPE_RIGHT_DOWN, INPUT_TYPE_RIGHT },
+        .sequenceLength = 3,
+        .requiresPunch = true,
+        .requiresKick = false,
+        .frameWindow = COMMAND_INPUT_WINDOW,
+    };
+
+    // Shoryuken: → ↓ ↘ + Punch
+    p->commands[p->commandCount++] = (CommandInput) {
+        .type = COMMAND_TYPE_SHORYUKEN,
+        .sequence = { INPUT_TYPE_RIGHT, INPUT_TYPE_DOWN, INPUT_TYPE_RIGHT_DOWN },
+        .sequenceLength = 3,
+        .requiresPunch = true,
+        .requiresKick = false,
+        .frameWindow = COMMAND_INPUT_WINDOW,
+    };
+
+    // Tatsumaki: ↓ ↙ ← + Kick
+    p->commands[p->commandCount++] = (CommandInput) {
+        .type = COMMAND_TYPE_TATSUMAKI,
+        .sequence = { INPUT_TYPE_DOWN, INPUT_TYPE_LEFT_DOWN, INPUT_TYPE_LEFT },
+        .sequenceLength = 3,
+        .requiresPunch = false,
+        .requiresKick = true,
+        .frameWindow = COMMAND_INPUT_WINDOW,
+    };
 
     p->lpCloseTriggerDist = 50;
     p->mpCloseTriggerDist = 60;
@@ -750,7 +786,7 @@ void drawPlayerInputBuffer( Player *player ) {
 
     for ( int i = player->inputBufferHead; i <= player->inputBufferTail; i++ ) {
         int p = i % PLAYER_INPUT_BUFFER_SIZE;
-        InputType type = player->inputBuffer[p];
+        InputType type = player->inputBuffer[p].type;
         int x = startX - width / 2;
         int y = startY - height / 2 - step * c;
         DrawTexturePro(
@@ -874,9 +910,9 @@ static void drawPlayerAnimationFrameBoxes( Player *player, AnimationFrame *af, V
 
 }
 
-void processInputPlayer( Player *player, Player *opponent, float delta ) {
+void processInputPlayer( Player *player, Player *opponent, float delta, int currentFrame ) {
 
-    processInputAndFeedInputBuffer( player );
+    processInputAndFeedInputBuffer( player, currentFrame );
 
     Animation *activeAnim = NULL;
 
@@ -938,82 +974,96 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
             default:
                 break;
         }
-        // jump attack input
-        PlayerState jumpAttackState = PLAYER_STATE_IDLE;
-        Animation *jumpAttackAnim = NULL;
+        // jump attack input (from buffer)
+        InputType jumpButton = peekAttackButton( player, currentFrame );
 
-        if ( IsKeyPressed( player->kb.lp.key ) ) {
-            if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
-                jumpAttackState = PLAYER_STATE_LP_JUMP_STRAIGHT;
-                jumpAttackAnim = &player->lpJumpStraightAnim;
-            } else if ( player->state == PLAYER_STATE_JUMPING_FORWARD ) {
-                jumpAttackState = PLAYER_STATE_LP_JUMP_FORWARD;
-                jumpAttackAnim = &player->lpJumpForwardAnim;
-            } else {
-                jumpAttackState = PLAYER_STATE_LP_JUMP_BACKWARD;
-                jumpAttackAnim = &player->lpJumpBackwardAnim;
-            }
-        } else if ( IsKeyPressed( player->kb.mp.key ) ) {
-            if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
-                jumpAttackState = PLAYER_STATE_MP_JUMP_STRAIGHT;
-                jumpAttackAnim = &player->mpJumpStraightAnim;
-            } else if ( player->state == PLAYER_STATE_JUMPING_FORWARD ) {
-                jumpAttackState = PLAYER_STATE_MP_JUMP_FORWARD;
-                jumpAttackAnim = &player->mpJumpForwardAnim;
-            } else {
-                jumpAttackState = PLAYER_STATE_MP_JUMP_BACKWARD;
-                jumpAttackAnim = &player->mpJumpBackwardAnim;
-            }
-        } else if ( IsKeyPressed( player->kb.hp.key ) ) {
-            if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
-                jumpAttackState = PLAYER_STATE_HP_JUMP_STRAIGHT;
-                jumpAttackAnim = &player->hpJumpStraightAnim;
-            } else if ( player->state == PLAYER_STATE_JUMPING_FORWARD ) {
-                jumpAttackState = PLAYER_STATE_HP_JUMP_FORWARD;
-                jumpAttackAnim = &player->hpJumpForwardAnim;
-            } else {
-                jumpAttackState = PLAYER_STATE_HP_JUMP_BACKWARD;
-                jumpAttackAnim = &player->hpJumpBackwardAnim;
-            }
-        } else if ( IsKeyPressed( player->kb.lk.key ) ) {
-            if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
-                jumpAttackState = PLAYER_STATE_LK_JUMP_STRAIGHT;
-                jumpAttackAnim = &player->lkJumpStraightAnim;
-            } else if ( player->state == PLAYER_STATE_JUMPING_FORWARD ) {
-                jumpAttackState = PLAYER_STATE_LK_JUMP_FORWARD;
-                jumpAttackAnim = &player->lkJumpForwardAnim;
-            } else {
-                jumpAttackState = PLAYER_STATE_LK_JUMP_BACKWARD;
-                jumpAttackAnim = &player->lkJumpBackwardAnim;
-            }
-        } else if ( IsKeyPressed( player->kb.mk.key ) ) {
-            if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
-                jumpAttackState = PLAYER_STATE_MK_JUMP_STRAIGHT;
-                jumpAttackAnim = &player->mkJumpStraightAnim;
-            } else if ( player->state == PLAYER_STATE_JUMPING_FORWARD ) {
-                jumpAttackState = PLAYER_STATE_MK_JUMP_FORWARD;
-                jumpAttackAnim = &player->mkJumpForwardAnim;
-            } else {
-                jumpAttackState = PLAYER_STATE_MK_JUMP_BACKWARD;
-                jumpAttackAnim = &player->mkJumpBackwardAnim;
-            }
-        } else if ( IsKeyPressed( player->kb.hk.key ) ) {
-            if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
-                jumpAttackState = PLAYER_STATE_HK_JUMP_STRAIGHT;
-                jumpAttackAnim = &player->hkJumpStraightAnim;
-            } else if ( player->state == PLAYER_STATE_JUMPING_FORWARD ) {
-                jumpAttackState = PLAYER_STATE_HK_JUMP_FORWARD;
-                jumpAttackAnim = &player->hkJumpForwardAnim;
-            } else {
-                jumpAttackState = PLAYER_STATE_HK_JUMP_BACKWARD;
-                jumpAttackAnim = &player->hkJumpBackwardAnim;
-            }
-        }
+        if ( jumpButton != INPUT_TYPE_NEUTRAL ) {
 
-        if ( jumpAttackAnim != NULL ) {
-            resetAnimation( jumpAttackAnim );
-            player->lastState = player->state;   // preserve jump state for recovery after attack
-            player->state = jumpAttackState;
+            PlayerState jumpAttackState = PLAYER_STATE_IDLE;
+            Animation *jumpAttackAnim = NULL;
+
+            switch ( jumpButton ) {
+                case INPUT_TYPE_LP:
+                    if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
+                        jumpAttackState = PLAYER_STATE_LP_JUMP_STRAIGHT;
+                        jumpAttackAnim = &player->lpJumpStraightAnim;
+                    } else if ( player->state == PLAYER_STATE_JUMPING_FORWARD ) {
+                        jumpAttackState = PLAYER_STATE_LP_JUMP_FORWARD;
+                        jumpAttackAnim = &player->lpJumpForwardAnim;
+                    } else {
+                        jumpAttackState = PLAYER_STATE_LP_JUMP_BACKWARD;
+                        jumpAttackAnim = &player->lpJumpBackwardAnim;
+                    }
+                    break;
+                case INPUT_TYPE_MP:
+                    if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
+                        jumpAttackState = PLAYER_STATE_MP_JUMP_STRAIGHT;
+                        jumpAttackAnim = &player->mpJumpStraightAnim;
+                    } else if ( player->state == PLAYER_STATE_JUMPING_FORWARD ) {
+                        jumpAttackState = PLAYER_STATE_MP_JUMP_FORWARD;
+                        jumpAttackAnim = &player->mpJumpForwardAnim;
+                    } else {
+                        jumpAttackState = PLAYER_STATE_MP_JUMP_BACKWARD;
+                        jumpAttackAnim = &player->mpJumpBackwardAnim;
+                    }
+                    break;
+                case INPUT_TYPE_HP:
+                    if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
+                        jumpAttackState = PLAYER_STATE_HP_JUMP_STRAIGHT;
+                        jumpAttackAnim = &player->hpJumpStraightAnim;
+                    } else if ( player->state == PLAYER_STATE_JUMPING_FORWARD ) {
+                        jumpAttackState = PLAYER_STATE_HP_JUMP_FORWARD;
+                        jumpAttackAnim = &player->hpJumpForwardAnim;
+                    } else {
+                        jumpAttackState = PLAYER_STATE_HP_JUMP_BACKWARD;
+                        jumpAttackAnim = &player->hpJumpBackwardAnim;
+                    }
+                    break;
+                case INPUT_TYPE_LK:
+                    if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
+                        jumpAttackState = PLAYER_STATE_LK_JUMP_STRAIGHT;
+                        jumpAttackAnim = &player->lkJumpStraightAnim;
+                    } else if ( player->state == PLAYER_STATE_JUMPING_FORWARD ) {
+                        jumpAttackState = PLAYER_STATE_LK_JUMP_FORWARD;
+                        jumpAttackAnim = &player->lkJumpForwardAnim;
+                    } else {
+                        jumpAttackState = PLAYER_STATE_LK_JUMP_BACKWARD;
+                        jumpAttackAnim = &player->lkJumpBackwardAnim;
+                    }
+                    break;
+                case INPUT_TYPE_MK:
+                    if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
+                        jumpAttackState = PLAYER_STATE_MK_JUMP_STRAIGHT;
+                        jumpAttackAnim = &player->mkJumpStraightAnim;
+                    } else if ( player->state == PLAYER_STATE_JUMPING_FORWARD ) {
+                        jumpAttackState = PLAYER_STATE_MK_JUMP_FORWARD;
+                        jumpAttackAnim = &player->mkJumpForwardAnim;
+                    } else {
+                        jumpAttackState = PLAYER_STATE_MK_JUMP_BACKWARD;
+                        jumpAttackAnim = &player->mkJumpBackwardAnim;
+                    }
+                    break;
+                case INPUT_TYPE_HK:
+                    if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
+                        jumpAttackState = PLAYER_STATE_HK_JUMP_STRAIGHT;
+                        jumpAttackAnim = &player->hkJumpStraightAnim;
+                    } else if ( player->state == PLAYER_STATE_JUMPING_FORWARD ) {
+                        jumpAttackState = PLAYER_STATE_HK_JUMP_FORWARD;
+                        jumpAttackAnim = &player->hkJumpForwardAnim;
+                    } else {
+                        jumpAttackState = PLAYER_STATE_HK_JUMP_BACKWARD;
+                        jumpAttackAnim = &player->hkJumpBackwardAnim;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            if ( jumpAttackAnim != NULL ) {
+                resetAnimation( jumpAttackAnim );
+                player->lastState = player->state;   // preserve jump state for recovery after attack
+                player->state = jumpAttackState;
+            }
         }
 
         return;
@@ -1030,85 +1080,149 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
         return;
     }
 
-    // attack
-    PlayerState attackState = PLAYER_STATE_IDLE;
-    Animation *attackAnim = NULL;
-    float dist = distancePlayer( player, opponent );
+    // attack (from buffer)
+    // command inputs: checked BEFORE basic attacks (priority)
+    InputType cmdButton = INPUT_TYPE_NEUTRAL;
+    CommandInput *cmd = checkCommandInputs( player, currentFrame, &cmdButton );
 
-    if ( IsKeyPressed( player->kb.lp.key ) ) {
-        if ( player->state == PLAYER_STATE_CROUCHING ) {
-            attackState = PLAYER_STATE_LP_CROUCH;
-            attackAnim = &player->lpCrouchAnim;
-        } else if ( dist > player->lpCloseTriggerDist ) {
-            attackState = PLAYER_STATE_LP;
-            attackAnim = &player->lpAnim;
-        } else {
-            attackState = PLAYER_STATE_LP_CLOSE;
-            attackAnim = &player->lpCloseAnim;
+    if ( cmd != NULL ) {
+
+        // ---------------------------------------------------------------
+        // COMMAND INPUT MATCHED
+        // TODO: replace trace + return with actual state/animation change
+        //   - Add new PlayerState entries for each special move
+        //   - Add Animation fields to Player for each special
+        //   - Set player->state, resetAnimation, player->vel.x = 0, etc.
+        //   - For projectiles (hadouken), spawn a Projectile entity
+        //
+        //   Example when ready:
+        //     PlayerState specialState = getSpecialState( cmd, cmdButton );
+        //     Animation *specialAnim = getSpecialAnimation( player, specialState );
+        //     resetAnimation( specialAnim );
+        //     player->vel.x = 0.0f;
+        //     player->state = specialState;
+        //     player->lastState = player->state;
+        //     return;
+        // ---------------------------------------------------------------
+
+        const char *cmdName = "UNKNOWN";
+        switch ( cmd->type ) {
+            case COMMAND_TYPE_HADOUKEN:   cmdName = "HADOUKEN";   break;
+            case COMMAND_TYPE_SHORYUKEN:  cmdName = "SHORYUKEN";  break;
+            case COMMAND_TYPE_TATSUMAKI:  cmdName = "TATSUMAKI";  break;
         }
-    } else if ( IsKeyPressed( player->kb.mp.key ) ) {
-        if ( player->state == PLAYER_STATE_CROUCHING ) {
-            attackState = PLAYER_STATE_MP_CROUCH;
-            attackAnim = &player->mpCrouchAnim;
-        } else if ( dist > player->mpCloseTriggerDist ) {
-            attackState = PLAYER_STATE_MP;
-            attackAnim = &player->mpAnim;
-        } else {
-            attackState = PLAYER_STATE_MP_CLOSE;
-            attackAnim = &player->mpCloseAnim;
+
+        const char *btnName = "?";
+        switch ( cmdButton ) {
+            case INPUT_TYPE_LP: btnName = "LP"; break;
+            case INPUT_TYPE_MP: btnName = "MP"; break;
+            case INPUT_TYPE_HP: btnName = "HP"; break;
+            case INPUT_TYPE_LK: btnName = "LK"; break;
+            case INPUT_TYPE_MK: btnName = "MK"; break;
+            case INPUT_TYPE_HK: btnName = "HK"; break;
+            default: break;
         }
-    } else if ( IsKeyPressed( player->kb.hp.key ) ) {
-        if ( player->state == PLAYER_STATE_CROUCHING ) {
-            attackState = PLAYER_STATE_HP_CROUCH;
-            attackAnim = &player->hpCrouchAnim;
-        } else if ( dist > player->hpCloseTriggerDist ) {
-            attackState = PLAYER_STATE_HP;
-            attackAnim = &player->hpAnim;
-        } else {
-            attackState = PLAYER_STATE_HP_CLOSE;
-            attackAnim = &player->hpCloseAnim;
-        }
-    } else if ( IsKeyPressed( player->kb.lk.key ) ) {
-        if ( player->state == PLAYER_STATE_CROUCHING ) {
-            attackState = PLAYER_STATE_LK_CROUCH;
-            attackAnim = &player->lkCrouchAnim;
-        } else if ( dist > player->lkCloseTriggerDist ) {
-            attackState = PLAYER_STATE_LK;
-            attackAnim = &player->lkAnim;
-        } else {
-            attackState = PLAYER_STATE_LK_CLOSE;
-            attackAnim = &player->lkCloseAnim;
-        }
-    } else if ( IsKeyPressed( player->kb.mk.key ) ) {
-        if ( player->state == PLAYER_STATE_CROUCHING ) {
-            attackState = PLAYER_STATE_MK_CROUCH;
-            attackAnim = &player->mkCrouchAnim;
-        } else if ( dist > player->mkCloseTriggerDist ) {
-            attackState = PLAYER_STATE_MK;
-            attackAnim = &player->mkAnim;
-        } else {
-            attackState = PLAYER_STATE_MK_CLOSE;
-            attackAnim = &player->mkCloseAnim;
-        }
-    } else if ( IsKeyPressed( player->kb.hk.key ) ) {
-        if ( player->state == PLAYER_STATE_CROUCHING ) {
-            attackState = PLAYER_STATE_HK_CROUCH;
-            attackAnim = &player->hkCrouchAnim;
-        } else if ( dist > player->hkCloseTriggerDist ) {
-            attackState = PLAYER_STATE_HK;
-            attackAnim = &player->hkAnim;
-        } else {
-            attackState = PLAYER_STATE_HK_CLOSE;
-            attackAnim = &player->hkCloseAnim;
-        }
+
+        trace( "[%s] %s + %s detected! (player: %s, frame: %d)",
+               player->lookingRight ? "RIGHT" : "LEFT",
+               cmdName, btnName, player->name, currentFrame );
+
+        // for now, fall through to basic attack (remove this when special moves are implemented)
     }
 
-    if ( attackAnim != NULL ) {
-        resetAnimation( attackAnim );
-        player->vel.x = 0.0f;
-        player->state = attackState;
-        player->lastState = player->state;
-        return;
+    // basic attacks (from buffer)
+    InputType attackButton = peekAttackButton( player, currentFrame );
+
+    if ( attackButton != INPUT_TYPE_NEUTRAL ) {
+
+        PlayerState attackState = PLAYER_STATE_IDLE;
+        Animation *attackAnim = NULL;
+        float dist = distancePlayer( player, opponent );
+
+        switch ( attackButton ) {
+            case INPUT_TYPE_LP:
+                if ( player->state == PLAYER_STATE_CROUCHING ) {
+                    attackState = PLAYER_STATE_LP_CROUCH;
+                    attackAnim = &player->lpCrouchAnim;
+                } else if ( dist > player->lpCloseTriggerDist ) {
+                    attackState = PLAYER_STATE_LP;
+                    attackAnim = &player->lpAnim;
+                } else {
+                    attackState = PLAYER_STATE_LP_CLOSE;
+                    attackAnim = &player->lpCloseAnim;
+                }
+                break;
+            case INPUT_TYPE_MP:
+                if ( player->state == PLAYER_STATE_CROUCHING ) {
+                    attackState = PLAYER_STATE_MP_CROUCH;
+                    attackAnim = &player->mpCrouchAnim;
+                } else if ( dist > player->mpCloseTriggerDist ) {
+                    attackState = PLAYER_STATE_MP;
+                    attackAnim = &player->mpAnim;
+                } else {
+                    attackState = PLAYER_STATE_MP_CLOSE;
+                    attackAnim = &player->mpCloseAnim;
+                }
+                break;
+            case INPUT_TYPE_HP:
+                if ( player->state == PLAYER_STATE_CROUCHING ) {
+                    attackState = PLAYER_STATE_HP_CROUCH;
+                    attackAnim = &player->hpCrouchAnim;
+                } else if ( dist > player->hpCloseTriggerDist ) {
+                    attackState = PLAYER_STATE_HP;
+                    attackAnim = &player->hpAnim;
+                } else {
+                    attackState = PLAYER_STATE_HP_CLOSE;
+                    attackAnim = &player->hpCloseAnim;
+                }
+                break;
+            case INPUT_TYPE_LK:
+                if ( player->state == PLAYER_STATE_CROUCHING ) {
+                    attackState = PLAYER_STATE_LK_CROUCH;
+                    attackAnim = &player->lkCrouchAnim;
+                } else if ( dist > player->lkCloseTriggerDist ) {
+                    attackState = PLAYER_STATE_LK;
+                    attackAnim = &player->lkAnim;
+                } else {
+                    attackState = PLAYER_STATE_LK_CLOSE;
+                    attackAnim = &player->lkCloseAnim;
+                }
+                break;
+            case INPUT_TYPE_MK:
+                if ( player->state == PLAYER_STATE_CROUCHING ) {
+                    attackState = PLAYER_STATE_MK_CROUCH;
+                    attackAnim = &player->mkCrouchAnim;
+                } else if ( dist > player->mkCloseTriggerDist ) {
+                    attackState = PLAYER_STATE_MK;
+                    attackAnim = &player->mkAnim;
+                } else {
+                    attackState = PLAYER_STATE_MK_CLOSE;
+                    attackAnim = &player->mkCloseAnim;
+                }
+                break;
+            case INPUT_TYPE_HK:
+                if ( player->state == PLAYER_STATE_CROUCHING ) {
+                    attackState = PLAYER_STATE_HK_CROUCH;
+                    attackAnim = &player->hkCrouchAnim;
+                } else if ( dist > player->hkCloseTriggerDist ) {
+                    attackState = PLAYER_STATE_HK;
+                    attackAnim = &player->hkAnim;
+                } else {
+                    attackState = PLAYER_STATE_HK_CLOSE;
+                    attackAnim = &player->hkCloseAnim;
+                }
+                break;
+            default:
+                break;
+        }
+
+        if ( attackAnim != NULL ) {
+            resetAnimation( attackAnim );
+            player->vel.x = 0.0f;
+            player->state = attackState;
+            player->lastState = player->state;
+            return;
+        }
     }
 
     // jump
@@ -1351,38 +1465,148 @@ void drawOnHitPlayerAnimation( Player *p ) {
 
 }
 
-static void processInputAndFeedInputBuffer( Player *p ) {
+static InputType peekAttackButton( Player *p, int currentFrame ) {
+    if ( p->inputBufferSize == 0 ) {
+        return INPUT_TYPE_NEUTRAL;
+    }
+    InputBufferEntry *last = &p->inputBuffer[p->inputBufferTail % PLAYER_INPUT_BUFFER_SIZE];
+    if ( last->frame == currentFrame && isAttackInput( last->type ) ) {
+        return last->type;
+    }
+    return INPUT_TYPE_NEUTRAL;
+}
 
-    if ( IsKeyPressed( p->kb.right.key ) ) {
-        addInputToPlayerInputBuffer( p, p->kb.right.type );
-    } else if ( IsKeyPressed( p->kb.down.key ) ) {
-        addInputToPlayerInputBuffer( p, p->kb.down.type );
-    } else if ( IsKeyPressed( p->kb.left.key ) ) {
-        addInputToPlayerInputBuffer( p, p->kb.left.type );
-    } else if ( IsKeyPressed( p->kb.up.key ) ) {
-        addInputToPlayerInputBuffer( p, p->kb.up.type );
-    } else if ( IsKeyPressed( p->kb.lp.key ) ) {
-        addInputToPlayerInputBuffer( p, p->kb.lp.type );
+/**
+ * Searches the input buffer for a completed command input.
+ * Returns a pointer to the matched CommandInput, or NULL if no match.
+ * outButton receives the attack button that completed the command (LP, MP, HP, LK, MK, HK).
+ *
+ * Matching logic:
+ * 1. The most recent buffer entry (this frame) must be an attack button of the required type
+ * 2. Searching backwards from the button, the directional sequence must appear in order
+ * 3. Extra inputs between sequence steps are tolerated (leniency)
+ * 4. All entries must be within the command's frame window
+ * 5. Directionals are mirrored if the player is facing left
+ *
+ * Commands with longer sequences are checked first to avoid
+ * a shorter command (hadouken) eating a longer one (shoryuken).
+ */
+static CommandInput *checkCommandInputs( Player *p, int currentFrame, InputType *outButton ) {
+
+    if ( p->inputBufferSize < 2 ) {
+        return NULL;
+    }
+
+    // the most recent entry must be an attack button added this frame
+    InputBufferEntry *buttonEntry = &p->inputBuffer[p->inputBufferTail % PLAYER_INPUT_BUFFER_SIZE];
+    if ( buttonEntry->frame != currentFrame || !isAttackInput( buttonEntry->type ) ) {
+        return NULL;
+    }
+
+    InputType button = buttonEntry->type;
+
+    // try each command (longer sequences first — sort by sequenceLength desc would be ideal,
+    // but for now the order in the commands array determines priority)
+    for ( int c = 0; c < p->commandCount; c++ ) {
+
+        CommandInput *cmd = &p->commands[c];
+
+        // check button type requirement
+        if ( cmd->requiresPunch && !isPunchInput( button ) ) continue;
+        if ( cmd->requiresKick && !isKickInput( button ) ) continue;
+
+        // search backwards through buffer for the directional sequence
+        int seqIdx = cmd->sequenceLength - 1;  // start matching from end of sequence
+        bool matched = true;
+
+        for ( int i = p->inputBufferTail - 1; i >= p->inputBufferHead && seqIdx >= 0; i-- ) {
+            InputBufferEntry *entry = &p->inputBuffer[i % PLAYER_INPUT_BUFFER_SIZE];
+
+            // check time window: entry must be within frameWindow of the button press
+            if ( buttonEntry->frame - entry->frame > cmd->frameWindow ) {
+                matched = false;
+                break;
+            }
+
+            // get the expected directional (mirror if facing left)
+            InputType expected = cmd->sequence[seqIdx];
+            if ( !p->lookingRight ) {
+                expected = mirrorDirectional( expected );
+            }
+
+            if ( entry->type == expected ) {
+                seqIdx--;
+            }
+            // else: tolerate extra inputs (leniency) — just keep searching
+        }
+
+        if ( matched && seqIdx < 0 ) {
+            *outButton = button;
+            return cmd;
+        }
+    }
+
+    return NULL;
+}
+
+static void processInputAndFeedInputBuffer( Player *p, int currentFrame ) {
+
+    // compute current directional state from held keys
+    bool rightDown = IsKeyDown( p->kb.right.key );
+    bool leftDown  = IsKeyDown( p->kb.left.key );
+    bool downDown  = IsKeyDown( p->kb.down.key );
+    bool upDown    = IsKeyDown( p->kb.up.key );
+
+    InputType currentDir = INPUT_TYPE_NEUTRAL;
+
+    if ( rightDown && downDown ) {
+        currentDir = INPUT_TYPE_RIGHT_DOWN;
+    } else if ( leftDown && downDown ) {
+        currentDir = INPUT_TYPE_LEFT_DOWN;
+    } else if ( rightDown && upDown ) {
+        currentDir = INPUT_TYPE_RIGHT_UP;
+    } else if ( leftDown && upDown ) {
+        currentDir = INPUT_TYPE_LEFT_UP;
+    } else if ( rightDown ) {
+        currentDir = INPUT_TYPE_RIGHT;
+    } else if ( downDown ) {
+        currentDir = INPUT_TYPE_DOWN;
+    } else if ( leftDown ) {
+        currentDir = INPUT_TYPE_LEFT;
+    } else if ( upDown ) {
+        currentDir = INPUT_TYPE_UP;
+    }
+
+    // register only on state transitions (including neutral)
+    if ( currentDir != p->lastDirectionalState ) {
+        addInputToPlayerInputBuffer( p, currentDir, currentFrame );
+        p->lastDirectionalState = currentDir;
+    }
+
+    // buttons: independent from directionals (both can register in the same frame)
+    if ( IsKeyPressed( p->kb.lp.key ) ) {
+        addInputToPlayerInputBuffer( p, p->kb.lp.type, currentFrame );
     } else if ( IsKeyPressed( p->kb.mp.key ) ) {
-        addInputToPlayerInputBuffer( p, p->kb.mp.type );
+        addInputToPlayerInputBuffer( p, p->kb.mp.type, currentFrame );
     } else if ( IsKeyPressed( p->kb.hp.key ) ) {
-        addInputToPlayerInputBuffer( p, p->kb.hp.type );
+        addInputToPlayerInputBuffer( p, p->kb.hp.type, currentFrame );
     } else if ( IsKeyPressed( p->kb.lk.key ) ) {
-        addInputToPlayerInputBuffer( p, p->kb.lk.type );
+        addInputToPlayerInputBuffer( p, p->kb.lk.type, currentFrame );
     } else if ( IsKeyPressed( p->kb.mk.key ) ) {
-        addInputToPlayerInputBuffer( p, p->kb.mk.type );
+        addInputToPlayerInputBuffer( p, p->kb.mk.type, currentFrame );
     } else if ( IsKeyPressed( p->kb.hk.key ) ) {
-        addInputToPlayerInputBuffer( p, p->kb.hk.type );
+        addInputToPlayerInputBuffer( p, p->kb.hk.type, currentFrame );
     }
 
 }
 
-static void addInputToPlayerInputBuffer( Player *p, InputType input ) {
+static void addInputToPlayerInputBuffer( Player *p, InputType input, int currentFrame ) {
+
     if ( p->inputBufferSize == 0 ) {
         p->inputBufferHead = 0;
         p->inputBufferTail = 0;
         p->inputBufferSize++;
-        p->inputBuffer[p->inputBufferTail] = input;
+        p->inputBuffer[p->inputBufferTail] = (InputBufferEntry) { input, currentFrame };
     } else {
         if ( p->inputBufferSize >= PLAYER_INPUT_BUFFER_SIZE ) {
             p->inputBufferHead++;
@@ -1390,6 +1614,6 @@ static void addInputToPlayerInputBuffer( Player *p, InputType input ) {
             p->inputBufferSize++;
         }
         p->inputBufferTail++;
-        p->inputBuffer[p->inputBufferTail%PLAYER_INPUT_BUFFER_SIZE] = input;
+        p->inputBuffer[p->inputBufferTail % PLAYER_INPUT_BUFFER_SIZE] = (InputBufferEntry) { input, currentFrame };
     }
 }
