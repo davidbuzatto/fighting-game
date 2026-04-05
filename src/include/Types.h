@@ -6,6 +6,9 @@
 #define COMMAND_INPUT_WINDOW 30          // frames to complete a command input (~500ms at 60fps)
 #define MAX_COMMAND_SEQUENCE 6
 #define MAX_COMMANDS 10
+#define PUSHBACK_ON_HIT 120.0f          // fixed pushback speed applied to defender on hit
+#define PUSHBACK_ON_BLOCK 80.0f         // fixed pushback speed applied to defender on block
+#define PUSHBACK_DECAY 0.90f            // per-frame velocity decay during hit/block stun
 
 typedef enum GameMode {
     GAME_MODE_PLAYING,

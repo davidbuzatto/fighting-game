@@ -1,18 +1,18 @@
+Implementar bloqueio;
+    Chip damage nos especiais;
+    Contato usando o efeito vermelho (baixo).
+    Ajustar o tempo das animações de bloqueio (estão muito rápidas);
+
 Implementar caixas de colisão (evitar sobreposição);
 
-Implementar animações de dano;
-    Usar animações diferentes;
-    Personagem não pode se mover na animação de dano;
-    Aplicar deslocamento no personagem que toma o dano;
-Implementar bloqueio;
-    Animação pronta;
-    Cheap damage;
-    Contato usando o efeito vermelho (baixo).
-
 Efeito na barra no dando (decrementar);
-Implementar o fluxo de inputs (gerar imagens);
-Implementar especiais do Ryu;
+
+Implementar especiais do Ryu; -> possui um protótipo
+
+Refatorar (ajustar posição de funções, nomes de variáveis etc);
+
 Implementar especiais do Ken;
+
 Implementar animação no cenário e camadas.
 
 Hit/hurt boxes: https://doctorguile.github.io/ssf2st/
