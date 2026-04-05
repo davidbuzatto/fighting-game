@@ -10091,6 +10091,330 @@
             ]
         },
         {
+            "frameCount": 1,
+            "currentFrame": 0,
+            "frameTimeCounter": 0,
+            "stopAtLastFrame": false,
+            "runOnce": true,
+            "finished": false,
+            "frames": [
+                {
+                    "source": {
+                        "x": 1,
+                        "y": 142,
+                        "width": -64,
+                        "height": 96
+                    },
+                    "duration": 0,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": 0,
+                            "y": 0,
+                            "width": 0,
+                            "height": 0
+                        },
+                        "hitboxCount": 0,
+                        "hitboxes": [],
+                        "hurtboxCount": 0,
+                        "hurtboxes": []
+                    },
+                    "damageOnHurt": 0
+                }
+            ]
+        },
+        {
+            "frameCount": 1,
+            "currentFrame": 0,
+            "frameTimeCounter": 0,
+            "stopAtLastFrame": false,
+            "runOnce": true,
+            "finished": false,
+            "frames": [
+                {
+                    "source": {
+                        "x": 1,
+                        "y": 142,
+                        "width": -64,
+                        "height": 96
+                    },
+                    "duration": 0,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": 0,
+                            "y": 0,
+                            "width": 0,
+                            "height": 0
+                        },
+                        "hitboxCount": 0,
+                        "hitboxes": [],
+                        "hurtboxCount": 0,
+                        "hurtboxes": []
+                    },
+                    "damageOnHurt": 0
+                }
+            ]
+        },
+        {
+            "frameCount": 1,
+            "currentFrame": 0,
+            "frameTimeCounter": 0,
+            "stopAtLastFrame": false,
+            "runOnce": true,
+            "finished": false,
+            "frames": [
+                {
+                    "source": {
+                        "x": 1,
+                        "y": 142,
+                        "width": -64,
+                        "height": 96
+                    },
+                    "duration": 0,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": 0,
+                            "y": 0,
+                            "width": 0,
+                            "height": 0
+                        },
+                        "hitboxCount": 0,
+                        "hitboxes": [],
+                        "hurtboxCount": 0,
+                        "hurtboxes": []
+                    },
+                    "damageOnHurt": 0
+                }
+            ]
+        },
+        {
+            "frameCount": 1,
+            "currentFrame": 0,
+            "frameTimeCounter": 0,
+            "stopAtLastFrame": false,
+            "runOnce": true,
+            "finished": false,
+            "frames": [
+                {
+                    "source": {
+                        "x": 1,
+                        "y": 142,
+                        "width": -64,
+                        "height": 96
+                    },
+                    "duration": 0,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": 0,
+                            "y": 0,
+                            "width": 0,
+                            "height": 0
+                        },
+                        "hitboxCount": 0,
+                        "hitboxes": [],
+                        "hurtboxCount": 0,
+                        "hurtboxes": []
+                    },
+                    "damageOnHurt": 0
+                }
+            ]
+        },
+        {
+            "frameCount": 1,
+            "currentFrame": 0,
+            "frameTimeCounter": 0,
+            "stopAtLastFrame": false,
+            "runOnce": true,
+            "finished": false,
+            "frames": [
+                {
+                    "source": {
+                        "x": 1,
+                        "y": 142,
+                        "width": -64,
+                        "height": 96
+                    },
+                    "duration": 0,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": 0,
+                            "y": 0,
+                            "width": 0,
+                            "height": 0
+                        },
+                        "hitboxCount": 0,
+                        "hitboxes": [],
+                        "hurtboxCount": 0,
+                        "hurtboxes": []
+                    },
+                    "damageOnHurt": 0
+                }
+            ]
+        },
+        {
+            "frameCount": 1,
+            "currentFrame": 0,
+            "frameTimeCounter": 0,
+            "stopAtLastFrame": false,
+            "runOnce": true,
+            "finished": false,
+            "frames": [
+                {
+                    "source": {
+                        "x": 1,
+                        "y": 142,
+                        "width": -64,
+                        "height": 96
+                    },
+                    "duration": 0,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": 0,
+                            "y": 0,
+                            "width": 0,
+                            "height": 0
+                        },
+                        "hitboxCount": 0,
+                        "hitboxes": [],
+                        "hurtboxCount": 0,
+                        "hurtboxes": []
+                    },
+                    "damageOnHurt": 0
+                }
+            ]
+        },
+        {
+            "frameCount": 1,
+            "currentFrame": 0,
+            "frameTimeCounter": 0,
+            "stopAtLastFrame": false,
+            "runOnce": true,
+            "finished": false,
+            "frames": [
+                {
+                    "source": {
+                        "x": 1,
+                        "y": 142,
+                        "width": -64,
+                        "height": 96
+                    },
+                    "duration": 0,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": 0,
+                            "y": 0,
+                            "width": 0,
+                            "height": 0
+                        },
+                        "hitboxCount": 0,
+                        "hitboxes": [],
+                        "hurtboxCount": 0,
+                        "hurtboxes": []
+                    },
+                    "damageOnHurt": 0
+                }
+            ]
+        },
+        {
+            "frameCount": 1,
+            "currentFrame": 0,
+            "frameTimeCounter": 0,
+            "stopAtLastFrame": false,
+            "runOnce": true,
+            "finished": false,
+            "frames": [
+                {
+                    "source": {
+                        "x": 1,
+                        "y": 142,
+                        "width": -64,
+                        "height": 96
+                    },
+                    "duration": 0,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": 0,
+                            "y": 0,
+                            "width": 0,
+                            "height": 0
+                        },
+                        "hitboxCount": 0,
+                        "hitboxes": [],
+                        "hurtboxCount": 0,
+                        "hurtboxes": []
+                    },
+                    "damageOnHurt": 0
+                }
+            ]
+        },
+        {
+            "frameCount": 1,
+            "currentFrame": 0,
+            "frameTimeCounter": 0,
+            "stopAtLastFrame": false,
+            "runOnce": true,
+            "finished": false,
+            "frames": [
+                {
+                    "source": {
+                        "x": 1,
+                        "y": 142,
+                        "width": -64,
+                        "height": 96
+                    },
+                    "duration": 0,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": 0,
+                            "y": 0,
+                            "width": 0,
+                            "height": 0
+                        },
+                        "hitboxCount": 0,
+                        "hitboxes": [],
+                        "hurtboxCount": 0,
+                        "hurtboxes": []
+                    },
+                    "damageOnHurt": 0
+                }
+            ]
+        },
+        {
             "frameCount": 0,
             "currentFrame": 0,
             "frameTimeCounter": 0,

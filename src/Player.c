@@ -632,6 +632,87 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->defenceCrouchAnim.frames[0] = (AnimationFrame) { {  1, 3666, -80, 65 }, 0, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
     p->defenceCrouchAnim.frames[1] = (AnimationFrame) { { 82, 3666, -80, 65 }, 0, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
 
+    p->lpHadoukenAnim.frameCount = 1;
+    p->lpHadoukenAnim.currentFrame = 0;
+    p->lpHadoukenAnim.frameTimeCounter = 0.0f;
+    p->lpHadoukenAnim.stopAtLastFrame = false;
+    p->lpHadoukenAnim.runOnce = true;
+    p->lpHadoukenAnim.finished = false;
+    createAnimationFrames( &p->lpHadoukenAnim, p->lpHadoukenAnim.frameCount );
+    p->lpHadoukenAnim.frames[0] = (AnimationFrame) { { 1, 142, -64, 96 }, 0, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
+
+    p->mpHadoukenAnim.frameCount = 1;
+    p->mpHadoukenAnim.currentFrame = 0;
+    p->mpHadoukenAnim.frameTimeCounter = 0.0f;
+    p->mpHadoukenAnim.stopAtLastFrame = false;
+    p->mpHadoukenAnim.runOnce = true;
+    p->mpHadoukenAnim.finished = false;
+    createAnimationFrames( &p->mpHadoukenAnim, p->mpHadoukenAnim.frameCount );
+    p->mpHadoukenAnim.frames[0] = (AnimationFrame) { { 1, 142, -64, 96 }, 0, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
+
+    p->hpHadoukenAnim.frameCount = 1;
+    p->hpHadoukenAnim.currentFrame = 0;
+    p->hpHadoukenAnim.frameTimeCounter = 0.0f;
+    p->hpHadoukenAnim.stopAtLastFrame = false;
+    p->hpHadoukenAnim.runOnce = true;
+    p->hpHadoukenAnim.finished = false;
+    createAnimationFrames( &p->hpHadoukenAnim, p->hpHadoukenAnim.frameCount );
+    p->hpHadoukenAnim.frames[0] = (AnimationFrame) { { 1, 142, -64, 96 }, 0, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
+
+    p->lpShoryukenAnim.frameCount = 1;
+    p->lpShoryukenAnim.currentFrame = 0;
+    p->lpShoryukenAnim.frameTimeCounter = 0.0f;
+    p->lpShoryukenAnim.stopAtLastFrame = false;
+    p->lpShoryukenAnim.runOnce = true;
+    p->lpShoryukenAnim.finished = false;
+    createAnimationFrames( &p->lpShoryukenAnim, p->lpShoryukenAnim.frameCount );
+    p->lpShoryukenAnim.frames[0] = (AnimationFrame) { { 1, 142, -64, 96 }, 0, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
+
+    p->mpShoryukenAnim.frameCount = 1;
+    p->mpShoryukenAnim.currentFrame = 0;
+    p->mpShoryukenAnim.frameTimeCounter = 0.0f;
+    p->mpShoryukenAnim.stopAtLastFrame = false;
+    p->mpShoryukenAnim.runOnce = true;
+    p->mpShoryukenAnim.finished = false;
+    createAnimationFrames( &p->mpShoryukenAnim, p->mpShoryukenAnim.frameCount );
+    p->mpShoryukenAnim.frames[0] = (AnimationFrame) { { 1, 142, -64, 96 }, 0, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
+
+    p->hpShoryukenAnim.frameCount = 1;
+    p->hpShoryukenAnim.currentFrame = 0;
+    p->hpShoryukenAnim.frameTimeCounter = 0.0f;
+    p->hpShoryukenAnim.stopAtLastFrame = false;
+    p->hpShoryukenAnim.runOnce = true;
+    p->hpShoryukenAnim.finished = false;
+    createAnimationFrames( &p->hpShoryukenAnim, p->hpShoryukenAnim.frameCount );
+    p->hpShoryukenAnim.frames[0] = (AnimationFrame) { { 1, 142, -64, 96 }, 0, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
+
+    p->lkTatsumakiAnim.frameCount = 1;
+    p->lkTatsumakiAnim.currentFrame = 0;
+    p->lkTatsumakiAnim.frameTimeCounter = 0.0f;
+    p->lkTatsumakiAnim.stopAtLastFrame = false;
+    p->lkTatsumakiAnim.runOnce = true;
+    p->lkTatsumakiAnim.finished = false;
+    createAnimationFrames( &p->lkTatsumakiAnim, p->lkTatsumakiAnim.frameCount );
+    p->lkTatsumakiAnim.frames[0] = (AnimationFrame) { { 1, 142, -64, 96 }, 0, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
+
+    p->mkTatsumakiAnim.frameCount = 1;
+    p->mkTatsumakiAnim.currentFrame = 0;
+    p->mkTatsumakiAnim.frameTimeCounter = 0.0f;
+    p->mkTatsumakiAnim.stopAtLastFrame = false;
+    p->mkTatsumakiAnim.runOnce = true;
+    p->mkTatsumakiAnim.finished = false;
+    createAnimationFrames( &p->mkTatsumakiAnim, p->mkTatsumakiAnim.frameCount );
+    p->mkTatsumakiAnim.frames[0] = (AnimationFrame) { { 1, 142, -64, 96 }, 0, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
+
+    p->hkTatsumakiAnim.frameCount = 1;
+    p->hkTatsumakiAnim.currentFrame = 0;
+    p->hkTatsumakiAnim.frameTimeCounter = 0.0f;
+    p->hkTatsumakiAnim.stopAtLastFrame = false;
+    p->hkTatsumakiAnim.runOnce = true;
+    p->hkTatsumakiAnim.finished = false;
+    createAnimationFrames( &p->hkTatsumakiAnim, p->hkTatsumakiAnim.frameCount );
+    p->hkTatsumakiAnim.frames[0] = (AnimationFrame) { { 1, 142, -64, 96 }, 0, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
+
     p->lastAnim.frameCount = 0;
     p->lastAnim.currentFrame = 0;
     p->lastAnim.frameTimeCounter = 0.0f;
@@ -690,6 +771,15 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->animations[PLAYER_STATE_HIT_CROUCH] = &p->hitCrouchAnim;             animationCount++;
     p->animations[PLAYER_STATE_DEFENCE_STANDING] = &p->defenceStandingAnim; animationCount++;
     p->animations[PLAYER_STATE_DEFENCE_CROUCH] = &p->defenceCrouchAnim;     animationCount++;
+    p->animations[PLAYER_STATE_SPECIAL_LP_HADOUKEN] = &p->lpHadoukenAnim;   animationCount++;
+    p->animations[PLAYER_STATE_SPECIAL_MP_HADOUKEN] = &p->mpHadoukenAnim;   animationCount++;
+    p->animations[PLAYER_STATE_SPECIAL_HP_HADOUKEN] = &p->hpHadoukenAnim;   animationCount++;
+    p->animations[PLAYER_STATE_SPECIAL_LP_SHORYUKEN] = &p->lpShoryukenAnim; animationCount++;
+    p->animations[PLAYER_STATE_SPECIAL_MP_SHORYUKEN] = &p->mpShoryukenAnim; animationCount++;
+    p->animations[PLAYER_STATE_SPECIAL_HP_SHORYUKEN] = &p->hpShoryukenAnim; animationCount++;
+    p->animations[PLAYER_STATE_SPECIAL_LK_TATSUMAKI] = &p->lkTatsumakiAnim; animationCount++;
+    p->animations[PLAYER_STATE_SPECIAL_MK_TATSUMAKI] = &p->mkTatsumakiAnim; animationCount++;
+    p->animations[PLAYER_STATE_SPECIAL_HK_TATSUMAKI] = &p->hkTatsumakiAnim; animationCount++;
     p->animations[PLAYER_STATE_LAST] = &p->lastAnim;                        animationCount++;
     p->animationCount = animationCount;
 

@@ -98,6 +98,15 @@ typedef enum PlayerState {
     PLAYER_STATE_HIT_CROUCH,
     PLAYER_STATE_DEFENCE_STANDING,
     PLAYER_STATE_DEFENCE_CROUCH,
+    PLAYER_STATE_SPECIAL_LP_HADOUKEN,
+    PLAYER_STATE_SPECIAL_MP_HADOUKEN,
+    PLAYER_STATE_SPECIAL_HP_HADOUKEN,
+    PLAYER_STATE_SPECIAL_LP_SHORYUKEN,
+    PLAYER_STATE_SPECIAL_MP_SHORYUKEN,
+    PLAYER_STATE_SPECIAL_HP_SHORYUKEN,
+    PLAYER_STATE_SPECIAL_LK_TATSUMAKI,
+    PLAYER_STATE_SPECIAL_MK_TATSUMAKI,
+    PLAYER_STATE_SPECIAL_HK_TATSUMAKI,
     PLAYER_STATE_LAST,              // just to mark the last (circular behaviour)
 } PlayerState;
 
@@ -298,6 +307,16 @@ typedef struct Player {
     Animation hitCrouchAnim;
     Animation defenceStandingAnim;
     Animation defenceCrouchAnim;
+
+    Animation lpHadoukenAnim;
+    Animation mpHadoukenAnim;
+    Animation hpHadoukenAnim;
+    Animation lpShoryukenAnim;
+    Animation mpShoryukenAnim;
+    Animation hpShoryukenAnim;
+    Animation lkTatsumakiAnim;
+    Animation mkTatsumakiAnim;
+    Animation hkTatsumakiAnim;
 
     Animation lastAnim;
 

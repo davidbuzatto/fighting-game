@@ -92,6 +92,7 @@ void initGameWindow( GameWindow *gameWindow ) {
         }
 
         InitWindow( gameWindow->width, gameWindow->height, gameWindow->title );
+        SetExitKey( 0 );
 
         if ( gameWindow->initAudio ) {
             InitAudioDevice();
