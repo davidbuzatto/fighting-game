@@ -9,6 +9,7 @@ Implementar bloqueio;
     Cheap damage;
     Contato usando o efeito vermelho (baixo).
 
+Efeito na barra no dando (decrementar);
 Implementar o fluxo de inputs (gerar imagens);
 Implementar especiais do Ryu;
 Implementar especiais do Ken;
@@ -18,3 +19,4 @@ Hit/hurt boxes: https://doctorguile.github.io/ssf2st/
 Assets:
     https://www.spriters-resource.com/snes/supersf2/
     https://www.spriters-resource.com/arcade/streetfighter2/
+    https://wiki.supercombo.gg/w/Super_Street_Fighter_2_Turbo/Ryu

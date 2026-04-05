@@ -23,12 +23,13 @@
 #include "Player.h"
 #include "Utils.h"
 
-#define SHOW_BOXES true
+#define SHOW_PLAYER_INPUT_BUFFER true
+#define SHOW_BOXES false
 #define SHOW_DEBUG_INFO false
-#define DRAW_PLAYER_ONION true
-#define DRAW_MODEL_STAGE_TEXTURE false
+#define SHOW_MODEL_STAGE_TEXTURE false
+#define SHOW_PLAYER_ONION_MODE_EDITING true
 #define DURATION_MODE DURATION_MODE_MILLISECONDS
-#define INITIAL_GAME_MODE GAME_MODE_EDITING
+#define INITIAL_GAME_MODE GAME_MODE_PLAYING
 
 #define PLAYER_1_ANIMATIONS_FILE "resources/animations/ryu.json"
 #define PLAYER_2_ANIMATIONS_FILE "resources/animations/ken.json"
@@ -55,7 +56,8 @@ static void flipPlayers( GameWorld *gw );
 
 // editor
 static EditorMode editorMode = EDITOR_MODE_COLLISION_BOX;
-static bool drawPlayerOnion = DRAW_PLAYER_ONION;
+static bool showPlayerOnionEditing = SHOW_PLAYER_ONION_MODE_EDITING;
+static bool showPlayerInputBuffer = SHOW_PLAYER_INPUT_BUFFER;
 static bool runPlayerCurrentAnimation = false;
 static bool runPlayerCurrentAnimationOnce = false;
 static int onionOffset = 40;
@@ -104,34 +106,34 @@ GameWorld* createGameWorld( void ) {
     Player *player1 = createPlayer();
     Player *player2 = createPlayer();
 
-    initializePlayerRyu( gw->stageTexture->width / 2 - 78, 542, player1, DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
-    initializePlayerKen( gw->stageTexture->width / 2 + 50, 542, player2, DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
+    initializePlayerRyu( gw->stageTexture->width / 2 - 78, 542, player1, PLAYER_START_SIDE_LEFT, DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
+    initializePlayerKen( gw->stageTexture->width / 2 + 50, 542, player2, PLAYER_START_SIDE_RIGHT, DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
     flipPlayerSide( player2 );
 
     player1->kb = (PlayerKeyBindings) {
-        .left = KEY_LEFT,
-        .right = KEY_RIGHT,
-        .up = KEY_UP,
-        .down = KEY_DOWN,
-        .lp = KEY_KP_4,
-        .mp = KEY_KP_5,
-        .hp = KEY_KP_6,
-        .lk = KEY_KP_1,
-        .mk = KEY_KP_2,
-        .hk = KEY_KP_3,
+        .left  = { KEY_LEFT,  INPUT_TYPE_LEFT },
+        .right = { KEY_RIGHT, INPUT_TYPE_RIGHT },
+        .up    = { KEY_UP,    INPUT_TYPE_UP },
+        .down  = { KEY_DOWN,  INPUT_TYPE_DOWN },
+        .lp    = { KEY_KP_4,  INPUT_TYPE_LP },
+        .mp    = { KEY_KP_5,  INPUT_TYPE_MP },
+        .hp    = { KEY_KP_6,  INPUT_TYPE_HP },
+        .lk    = { KEY_KP_1,  INPUT_TYPE_LK },
+        .mk    = { KEY_KP_2,  INPUT_TYPE_MK },
+        .hk    = { KEY_KP_3,  INPUT_TYPE_HK },
     };
 
     player2->kb = (PlayerKeyBindings) {
-        .left = KEY_A,
-        .right = KEY_D,
-        .up = KEY_W,
-        .down = KEY_S,
-        .lp = KEY_T,
-        .mp = KEY_Y,
-        .hp = KEY_U,
-        .lk = KEY_G,
-        .mk = KEY_H,
-        .hk = KEY_J,
+        .left  = { KEY_A, INPUT_TYPE_LEFT },
+        .right = { KEY_D, INPUT_TYPE_RIGHT },
+        .up    = { KEY_W, INPUT_TYPE_UP },
+        .down  = { KEY_S, INPUT_TYPE_DOWN },
+        .lp    = { KEY_T, INPUT_TYPE_LP },
+        .mp    = { KEY_Y, INPUT_TYPE_MP },
+        .hp    = { KEY_U, INPUT_TYPE_HP },
+        .lk    = { KEY_G, INPUT_TYPE_LK },
+        .mk    = { KEY_H, INPUT_TYPE_MK },
+        .hk    = { KEY_J, INPUT_TYPE_HK },
     };
 
     gw->player1 = player1;
@@ -194,7 +196,11 @@ void updateGameWorld( GameWorld *gw, float delta ) {
     }
 
     if ( IsKeyPressed( KEY_F4 ) ) {
-        drawPlayerOnion = !drawPlayerOnion;
+        showPlayerOnionEditing = !showPlayerOnionEditing;
+    }
+
+    if ( IsKeyPressed( KEY_F5 ) ) {
+        showPlayerInputBuffer = !showPlayerInputBuffer;
     }
 
     if ( gw->mode == GAME_MODE_PLAYING ) {
@@ -225,13 +231,13 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
 
     ClearBackground( WHITE );
     
-    if ( DRAW_MODEL_STAGE_TEXTURE ) {
+    if ( SHOW_MODEL_STAGE_TEXTURE ) {
         DrawTexture( rm.modelStageTexture, 0, 0, WHITE );
     }
 
     BeginMode2D( gw->camera );
 
-    if ( !DRAW_MODEL_STAGE_TEXTURE ) {
+    if ( !SHOW_MODEL_STAGE_TEXTURE ) {
         DrawTexture( *gw->stageTexture, 0, GetScreenHeight() - gw->stageTexture->height, WHITE );
     }
     drawPlayer( gw->player2 );
@@ -241,6 +247,11 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
     drawOnHitPlayerAnimation( gw->player2 );
 
     EndMode2D();
+
+    if ( showPlayerInputBuffer ) {
+        drawPlayerInputBuffer( gw->player1 );
+        drawPlayerInputBuffer( gw->player2 );
+    }
 
     drawHud( gw );
 
@@ -347,7 +358,7 @@ static void drawGameWorldEditing( GameWorld *gw ) {
 
     }
 
-    if ( drawPlayerOnion ) {
+    if ( showPlayerOnionEditing ) {
         drawPlayerOnionLayers( gw->player1, onionOffset );
     } else {
         drawPlayer( gw->player1 );
@@ -717,7 +728,7 @@ static void drawInfoPanel( GameWorld *gw ) {
         DrawText( TextFormat( "Duration: %d", af->duration ), 210, 55, 20, BLACK );
         DrawText( TextFormat( "Damage on Hurt: %d", af->damageOnHurt ), 380, 55, 20, BLACK );
     }
-    if ( drawPlayerOnion ) {
+    if ( showPlayerOnionEditing ) {
         DrawText( TextFormat( "Onion: %d", onionOffset ), 620, 55, 20, DARKBLUE );
     }
 

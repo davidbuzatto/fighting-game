@@ -13,36 +13,16 @@
 #include "Types.h"
 #include "Utils.h"
 
-#define TRACK_STATE_SIZE 14
-static PlayerState states[TRACK_STATE_SIZE] = { 0 };
-static int head = -1;
-static int tail = -1;
-static int count = 0;
-
 static void drawPlayerAnimationFrameBoxes( Player *player, AnimationFrame *af, Vector2 offset );
-
-static void addState( int state ) {
-    if ( count == 0 ) {
-        states[0] = state;
-        head = 0;
-        tail = 0;
-        count++;
-    } else {
-        tail++;
-        count++;
-        states[tail%TRACK_STATE_SIZE] = state;
-        if ( count > TRACK_STATE_SIZE ) {
-            head++;
-        }
-    }
-}
+static void processInputAndFeedInputBuffer( Player *p );
+static void addInputToPlayerInputBuffer( Player *p, InputType input );
 
 Player *createPlayer() {
     Player *p = (Player*) malloc( sizeof( Player ) );
     return p;
 }
 
-void initializePlayerRyu( float x, float y, Player *p, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo ) {
+void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo ) {
 
     p->pos.x = x;
     p->pos.y = y;
@@ -59,8 +39,13 @@ void initializePlayerRyu( float x, float y, Player *p, DurationMode animationDur
     p->health = 100;
     strcpy( p->name, "Ryu" );
     p->lookingRight = true;
+    p->startSide = startSide;
     p->showBoxes = showBoxes;
     p->showDebugInfo = showDebugInfo;
+
+    p->inputBufferHead = -1;
+    p->inputBufferTail = -1;
+    p->inputBufferSize = 0;
 
     p->lpCloseTriggerDist = 50;
     p->mpCloseTriggerDist = 60;
@@ -693,9 +678,9 @@ void initializePlayerRyu( float x, float y, Player *p, DurationMode animationDur
 
 }
 
-void initializePlayerKen( float x, float y, Player *p, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo ) {
+void initializePlayerKen( float x, float y, Player *p, PlayerStartSide startSide, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo ) {
 
-    initializePlayerRyu( x, y, p, animationDurationMode, showBoxes, showDebugInfo );
+    initializePlayerRyu( x, y, p, startSide, animationDurationMode, showBoxes, showDebugInfo );
     p->texture = &rm.kenTexture;
     strcpy( p->name, "Ken" );
 
@@ -723,6 +708,62 @@ void drawPlayer( Player *player ) {
         DrawText( TextFormat( "x: %.2f", player->pos.x ), player->pos.x + 5, player->pos.y - 20, 10, BLACK );
         DrawText( TextFormat( "y: %.2f", player->pos.y ), player->pos.x + 5, player->pos.y - 10, 10, BLACK );
         
+    }
+
+}
+
+void drawPlayerInputBuffer( Player *player ) {
+
+    int backWidth = 100;
+
+    if ( player->startSide == PLAYER_START_SIDE_LEFT ) {
+        DrawRectangleGradientH( 0, 0, backWidth, GetScreenHeight(), Fade( BLACK, 0.7f ), BLANK );
+    } else {
+        DrawRectangleGradientH( GetScreenWidth() - backWidth, 0, backWidth, GetScreenHeight(), BLANK, Fade( BLACK, 0.7f ) );
+    }
+
+    if ( player->inputBufferSize == 0 ) {
+        return;
+    }
+
+    int margin = 35;
+    int step = 35;
+    int width = 23;
+    int height = width;
+
+    int startX = margin;
+    int startY = 120 + step * ( player->inputBufferSize - 1 );
+    int lineStart = 0;
+
+    int sliceX = 1;
+    int sliceY = 1;
+    int sliceW = 23;
+    int sliceH = 23;
+    int sliceDiv = 1;
+
+    if ( player->startSide == PLAYER_START_SIDE_RIGHT ) {
+        startX = GetScreenWidth() - margin;
+        lineStart = startX - width;
+    }
+
+    int c = 0;
+
+    for ( int i = player->inputBufferHead; i <= player->inputBufferTail; i++ ) {
+        int p = i % PLAYER_INPUT_BUFFER_SIZE;
+        InputType type = player->inputBuffer[p];
+        int x = startX - width / 2;
+        int y = startY - height / 2 - step * c;
+        DrawTexturePro(
+            rm.inputIconsTexture,
+            (Rectangle) { sliceX + ( sliceW + sliceDiv ) * type, sliceY, sliceW, sliceH },
+            (Rectangle) { x, y, width, height },
+            (Vector2) { 0 },
+            0.0f,
+            WHITE
+        );
+        y = y + height + ( step - height ) / 2;
+        DrawLineEx( (Vector2) { lineStart, y }, (Vector2) { lineStart + x + width + 10, y }, 2.0f, Fade( WHITE, 0.5f ) );
+        c++;
     }
 
 }
@@ -835,6 +876,8 @@ static void drawPlayerAnimationFrameBoxes( Player *player, AnimationFrame *af, V
 
 void processInputPlayer( Player *player, Player *opponent, float delta ) {
 
+    processInputAndFeedInputBuffer( player );
+
     Animation *activeAnim = NULL;
 
     // damage in progress: blocks all input
@@ -901,7 +944,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
         PlayerState jumpAttackState = PLAYER_STATE_IDLE;
         Animation *jumpAttackAnim = NULL;
 
-        if ( IsKeyPressed( player->kb.lp ) ) {
+        if ( IsKeyPressed( player->kb.lp.key ) ) {
             if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
                 jumpAttackState = PLAYER_STATE_LP_JUMP_STRAIGHT;
                 jumpAttackAnim = &player->lpJumpStraightAnim;
@@ -912,7 +955,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
                 jumpAttackState = PLAYER_STATE_LP_JUMP_BACKWARD;
                 jumpAttackAnim = &player->lpJumpBackwardAnim;
             }
-        } else if ( IsKeyPressed( player->kb.mp ) ) {
+        } else if ( IsKeyPressed( player->kb.mp.key ) ) {
             if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
                 jumpAttackState = PLAYER_STATE_MP_JUMP_STRAIGHT;
                 jumpAttackAnim = &player->mpJumpStraightAnim;
@@ -923,7 +966,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
                 jumpAttackState = PLAYER_STATE_MP_JUMP_BACKWARD;
                 jumpAttackAnim = &player->mpJumpBackwardAnim;
             }
-        } else if ( IsKeyPressed( player->kb.hp ) ) {
+        } else if ( IsKeyPressed( player->kb.hp.key ) ) {
             if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
                 jumpAttackState = PLAYER_STATE_HP_JUMP_STRAIGHT;
                 jumpAttackAnim = &player->hpJumpStraightAnim;
@@ -934,7 +977,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
                 jumpAttackState = PLAYER_STATE_HP_JUMP_BACKWARD;
                 jumpAttackAnim = &player->hpJumpBackwardAnim;
             }
-        } else if ( IsKeyPressed( player->kb.lk ) ) {
+        } else if ( IsKeyPressed( player->kb.lk.key ) ) {
             if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
                 jumpAttackState = PLAYER_STATE_LK_JUMP_STRAIGHT;
                 jumpAttackAnim = &player->lkJumpStraightAnim;
@@ -945,7 +988,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
                 jumpAttackState = PLAYER_STATE_LK_JUMP_BACKWARD;
                 jumpAttackAnim = &player->lkJumpBackwardAnim;
             }
-        } else if ( IsKeyPressed( player->kb.mk ) ) {
+        } else if ( IsKeyPressed( player->kb.mk.key ) ) {
             if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
                 jumpAttackState = PLAYER_STATE_MK_JUMP_STRAIGHT;
                 jumpAttackAnim = &player->mkJumpStraightAnim;
@@ -956,7 +999,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
                 jumpAttackState = PLAYER_STATE_MK_JUMP_BACKWARD;
                 jumpAttackAnim = &player->mkJumpBackwardAnim;
             }
-        } else if ( IsKeyPressed( player->kb.hk ) ) {
+        } else if ( IsKeyPressed( player->kb.hk.key ) ) {
             if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
                 jumpAttackState = PLAYER_STATE_HK_JUMP_STRAIGHT;
                 jumpAttackAnim = &player->hkJumpStraightAnim;
@@ -994,7 +1037,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
     Animation *attackAnim = NULL;
     float dist = distancePlayer( player, opponent );
 
-    if ( IsKeyPressed( player->kb.lp ) ) {
+    if ( IsKeyPressed( player->kb.lp.key ) ) {
         if ( player->state == PLAYER_STATE_CROUCHING ) {
             attackState = PLAYER_STATE_LP_CROUCH;
             attackAnim = &player->lpCrouchAnim;
@@ -1005,7 +1048,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
             attackState = PLAYER_STATE_LP_CLOSE;
             attackAnim = &player->lpCloseAnim;
         }
-    } else if ( IsKeyPressed( player->kb.mp ) ) {
+    } else if ( IsKeyPressed( player->kb.mp.key ) ) {
         if ( player->state == PLAYER_STATE_CROUCHING ) {
             attackState = PLAYER_STATE_MP_CROUCH;
             attackAnim = &player->mpCrouchAnim;
@@ -1016,7 +1059,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
             attackState = PLAYER_STATE_MP_CLOSE;
             attackAnim = &player->mpCloseAnim;
         }
-    } else if ( IsKeyPressed( player->kb.hp ) ) {
+    } else if ( IsKeyPressed( player->kb.hp.key ) ) {
         if ( player->state == PLAYER_STATE_CROUCHING ) {
             attackState = PLAYER_STATE_HP_CROUCH;
             attackAnim = &player->hpCrouchAnim;
@@ -1027,7 +1070,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
             attackState = PLAYER_STATE_HP_CLOSE;
             attackAnim = &player->hpCloseAnim;
         }
-    } else if ( IsKeyPressed( player->kb.lk ) ) {
+    } else if ( IsKeyPressed( player->kb.lk.key ) ) {
         if ( player->state == PLAYER_STATE_CROUCHING ) {
             attackState = PLAYER_STATE_LK_CROUCH;
             attackAnim = &player->lkCrouchAnim;
@@ -1038,7 +1081,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
             attackState = PLAYER_STATE_LK_CLOSE;
             attackAnim = &player->lkCloseAnim;
         }
-    } else if ( IsKeyPressed( player->kb.mk ) ) {
+    } else if ( IsKeyPressed( player->kb.mk.key ) ) {
         if ( player->state == PLAYER_STATE_CROUCHING ) {
             attackState = PLAYER_STATE_MK_CROUCH;
             attackAnim = &player->mkCrouchAnim;
@@ -1049,7 +1092,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
             attackState = PLAYER_STATE_MK_CLOSE;
             attackAnim = &player->mkCloseAnim;
         }
-    } else if ( IsKeyPressed( player->kb.hk ) ) {
+    } else if ( IsKeyPressed( player->kb.hk.key ) ) {
         if ( player->state == PLAYER_STATE_CROUCHING ) {
             attackState = PLAYER_STATE_HK_CROUCH;
             attackAnim = &player->hkCrouchAnim;
@@ -1071,13 +1114,13 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
     }
 
     // jump
-    if ( IsKeyDown( player->kb.up ) && player->state != PLAYER_STATE_CROUCHING ) {
-        if ( IsKeyDown( player->kb.right ) ) {
+    if ( IsKeyDown( player->kb.up.key ) && player->state != PLAYER_STATE_CROUCHING ) {
+        if ( IsKeyDown( player->kb.right.key ) ) {
             player->vel.y = -player->jumpSpeed;
             player->vel.x = player->forwardSpeed * 1.6f;
             resetAnimation( &player->forwardJumpAnim );
             player->state = PLAYER_STATE_JUMPING_FORWARD;
-        } else if ( IsKeyDown( player->kb.left ) ) {
+        } else if ( IsKeyDown( player->kb.left.key ) ) {
             player->vel.y = -player->jumpSpeed;
             player->vel.x = -player->backwardSpeed * 2.0f;
             resetAnimation( &player->backwardJumpAnim );
@@ -1093,16 +1136,16 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
     }
 
     // floor movement
-    if ( IsKeyDown( player->kb.down ) ) {
+    if ( IsKeyDown( player->kb.down.key ) ) {
         if ( player->state != PLAYER_STATE_CROUCHING ) {
             resetAnimation( &player->crouchingAnim );
         }
         player->vel.x = 0.0f;
         player->state = PLAYER_STATE_CROUCHING;
-    } else if ( IsKeyDown( player->kb.right ) ) {
+    } else if ( IsKeyDown( player->kb.right.key ) ) {
         player->vel.x = player->forwardSpeed;
         player->state = PLAYER_STATE_WALKING_FORWARD;
-    } else if ( IsKeyDown( player->kb.left ) ) {
+    } else if ( IsKeyDown( player->kb.left.key ) ) {
         player->vel.x = -player->backwardSpeed;
         player->state = PLAYER_STATE_WALKING_BACKWARD;
     } else {
@@ -1134,10 +1177,6 @@ void processInputPlayer( Player *player, Player *opponent, float delta ) {
             break;
         default:
             break;
-    }
-
-    if ( player->lastState != player->state ) {
-        addState( player->lastState );
     }
 
     player->lastState = player->state;
@@ -1312,4 +1351,47 @@ void drawOnHitPlayerAnimation( Player *p ) {
         WHITE
     );
 
+}
+
+static void processInputAndFeedInputBuffer( Player *p ) {
+
+    if ( IsKeyPressed( p->kb.right.key ) ) {
+        addInputToPlayerInputBuffer( p, p->kb.right.type );
+    } else if ( IsKeyPressed( p->kb.down.key ) ) {
+        addInputToPlayerInputBuffer( p, p->kb.down.type );
+    } else if ( IsKeyPressed( p->kb.left.key ) ) {
+        addInputToPlayerInputBuffer( p, p->kb.left.type );
+    } else if ( IsKeyPressed( p->kb.up.key ) ) {
+        addInputToPlayerInputBuffer( p, p->kb.up.type );
+    } else if ( IsKeyPressed( p->kb.lp.key ) ) {
+        addInputToPlayerInputBuffer( p, p->kb.lp.type );
+    } else if ( IsKeyPressed( p->kb.mp.key ) ) {
+        addInputToPlayerInputBuffer( p, p->kb.mp.type );
+    } else if ( IsKeyPressed( p->kb.hp.key ) ) {
+        addInputToPlayerInputBuffer( p, p->kb.hp.type );
+    } else if ( IsKeyPressed( p->kb.lk.key ) ) {
+        addInputToPlayerInputBuffer( p, p->kb.lk.type );
+    } else if ( IsKeyPressed( p->kb.mk.key ) ) {
+        addInputToPlayerInputBuffer( p, p->kb.mk.type );
+    } else if ( IsKeyPressed( p->kb.hk.key ) ) {
+        addInputToPlayerInputBuffer( p, p->kb.hk.type );
+    }
+
+}
+
+static void addInputToPlayerInputBuffer( Player *p, InputType input ) {
+    if ( p->inputBufferSize == 0 ) {
+        p->inputBufferHead = 0;
+        p->inputBufferTail = 0;
+        p->inputBufferSize++;
+        p->inputBuffer[p->inputBufferTail] = input;
+    } else {
+        if ( p->inputBufferSize >= PLAYER_INPUT_BUFFER_SIZE ) {
+            p->inputBufferHead++;
+        } else {
+            p->inputBufferSize++;
+        }
+        p->inputBufferTail++;
+        p->inputBuffer[p->inputBufferTail%PLAYER_INPUT_BUFFER_SIZE] = input;
+    }
 }

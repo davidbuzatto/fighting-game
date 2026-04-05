@@ -23,6 +23,7 @@ typedef struct ResourceManager {
 
     Texture2D effectsTexture;
     Texture2D fontsTexture;
+    Texture2D inputIconsTexture;
 
     //Sound soundExample;
     //Music musicExample;

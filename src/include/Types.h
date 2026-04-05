@@ -2,6 +2,8 @@
 
 #include "raylib/raylib.h"
 
+#define PLAYER_INPUT_BUFFER_SIZE 14
+
 typedef enum GameMode {
     GAME_MODE_PLAYING,
     GAME_MODE_EDITING,
@@ -21,6 +23,24 @@ typedef enum DurationMode {
     DURATION_MODE_MILLISECONDS,
     DURATION_MODE_FRAMES,
 } DurationMode;
+
+typedef enum InputType {
+    INPUT_TYPE_RIGHT,
+    INPUT_TYPE_DOWN,
+    INPUT_TYPE_LEFT,
+    INPUT_TYPE_UP,
+    INPUT_TYPE_RIGHT_DOWN,
+    INPUT_TYPE_LEFT_DOWN,
+    INPUT_TYPE_LEFT_UP,
+    INPUT_TYPE_RIGHT_UP,
+    INPUT_TYPE_LP,
+    INPUT_TYPE_MP,
+    INPUT_TYPE_HP,
+    INPUT_TYPE_LK,
+    INPUT_TYPE_MK,
+    INPUT_TYPE_HK,
+    INPUT_TYPE_NEUTRAL
+} InputType;
 
 typedef enum PlayerState {
     PLAYER_STATE_IDLE,
@@ -75,6 +95,11 @@ typedef enum PlayerState {
     PLAYER_STATE_LAST,              // just to mark the last (circular behaviour)
 } PlayerState;
 
+typedef enum PlayerStartSide {
+    PLAYER_START_SIDE_LEFT,
+    PLAYER_START_SIDE_RIGHT,
+} PlayerStartSide;
+
 typedef struct AnimationFrameBoxes {
     Rectangle collisionBox;
     int hitboxCount;
@@ -103,17 +128,22 @@ typedef struct Animation {
     bool finished;
 } Animation;
 
+typedef struct InputEntry {
+    int key;
+    InputType type;
+} InputEntry;
+
 typedef struct PlayerKeyBindings {
-    int left;
-    int right;
-    int up;
-    int down;
-    int lp;
-    int mp;
-    int hp;
-    int lk;
-    int mk;
-    int hk;
+    InputEntry left;
+    InputEntry right;
+    InputEntry up;
+    InputEntry down;
+    InputEntry lp;
+    InputEntry mp;
+    InputEntry hp;
+    InputEntry lk;
+    InputEntry mk;
+    InputEntry hk;
 } PlayerKeyBindings;
 
 typedef struct Player {
@@ -212,11 +242,18 @@ typedef struct Player {
     char name[100];
 
     bool lookingRight;
+    PlayerStartSide startSide;
 
     PlayerKeyBindings kb;
 
     bool showBoxes;
     bool showDebugInfo;
+
+    InputType inputBuffer[PLAYER_INPUT_BUFFER_SIZE];
+    int inputBufferHead;
+    int inputBufferTail;
+    int inputBufferSize;
+
 
 } Player;
 
