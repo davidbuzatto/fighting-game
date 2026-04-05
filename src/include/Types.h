@@ -315,6 +315,10 @@ typedef struct Player {
     Vector2 onHitPos;
     bool onHitPosActive;
 
+    Animation onBlockAnimation;
+    Vector2 onBlockPos;
+    bool onBlockPosActive;
+
     Animation *supportAnimations[80];
     int supportAnimationCount;
 

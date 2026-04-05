@@ -249,6 +249,9 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
     drawOnHitPlayerAnimation( gw->player1 );
     drawOnHitPlayerAnimation( gw->player2 );
 
+    drawOnBlockPlayerAnimation( gw->player1 );
+    drawOnBlockPlayerAnimation( gw->player2 );
+
     EndMode2D();
 
     if ( showPlayerInputBuffer ) {

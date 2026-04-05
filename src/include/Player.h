@@ -23,3 +23,4 @@ void resetPlayerAnimations( Player *player );
 
 void resolvePlayerOponnentContact( Player *p, Player *o );
 void drawOnHitPlayerAnimation( Player *p );
+void drawOnBlockPlayerAnimation( Player *p );

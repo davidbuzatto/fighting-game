@@ -1,8 +1,6 @@
 Implementar bloqueio;
-    Chip damage nos especiais;
-    Contato usando o efeito vermelho (baixo).
+    Chip damage nos especiais.
 
-Efeito na barra no dano (decrementar);
 Implementar especiais do Ryu; -> possui um protótipo
 Refatorar (ajustar posição de funções, nomes de variáveis etc);
 Implementar especiais do Ken;

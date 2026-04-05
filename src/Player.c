@@ -705,12 +705,29 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->onHitAnimation.frames[1] = (AnimationFrame) { { 29, 10, 20, 19 }, 30, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
     p->onHitAnimation.frames[2] = (AnimationFrame) { { 71, 10, 20, 19 }, 30, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
 
+    p->onBlockAnimation.frameCount = 5;
+    p->onBlockAnimation.currentFrame = 0;
+    p->onBlockAnimation.frameTimeCounter = 0.0f;
+    p->onBlockAnimation.stopAtLastFrame = false;
+    p->onBlockAnimation.runOnce = true;
+    p->onBlockAnimation.finished = false;
+    createAnimationFrames( &p->onBlockAnimation, p->onBlockAnimation.frameCount );
+    p->onBlockAnimation.frames[0] = (AnimationFrame) { {  12, 106, 32, 32 }, 30, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
+    p->onBlockAnimation.frames[1] = (AnimationFrame) { {  45, 106, 32, 32 }, 30, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
+    p->onBlockAnimation.frames[2] = (AnimationFrame) { {  78, 106, 32, 32 }, 30, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
+    p->onBlockAnimation.frames[3] = (AnimationFrame) { { 111, 106, 32, 32 }, 30, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
+    p->onBlockAnimation.frames[4] = (AnimationFrame) { { 144, 106, 32, 32 }, 30, { 0, 0 }, .boxes = { 0 }, true, true, 0 };
+
     int supportAnimationCount = 0;
     p->supportAnimations[supportAnimationCount++] = &p->onHitAnimation;
+    p->supportAnimations[supportAnimationCount++] = &p->onBlockAnimation;
     p->supportAnimationCount = supportAnimationCount;
 
     p->onHitPos = (Vector2) { 0 };
     p->onHitPosActive = false;
+
+    p->onBlockPos = (Vector2) { 0 };
+    p->onBlockPosActive = false;
 
 }
 
@@ -1340,6 +1357,14 @@ void updatePlayer( Player *player, Player *opponent, float gravity, float delta 
         }
     }
     
+    if ( player->onBlockPosActive ) {
+        updateAnimation( &player->onBlockAnimation, DURATION_MODE_MILLISECONDS, delta );
+        if ( player->onBlockAnimation.finished ) {
+            player->onBlockPosActive = false;
+            resetAnimation( &player->onBlockAnimation );
+        }
+    }
+    
 }
 
 void flipPlayerSide( Player *player ) {
@@ -1488,20 +1513,28 @@ void resolvePlayerOponnentContact( Player *p, Player *o ) {
                 float pushDir = ( o->pos.x > p->pos.x ) ? 1.0f : -1.0f;
 
                 if ( blocked ) {
+
                     // block successful
                     o->state = defenderCrouching ? PLAYER_STATE_DEFENCE_CROUCH : PLAYER_STATE_DEFENCE_STANDING;
                     o->vel.x = pushDir * PUSHBACK_ON_BLOCK;
                     // no damage on normal block (chip damage for specials will be added later)
+
+                    Rectangle inter = getRectangleIntersection( hurtbox, hitbox );
+                    p->onBlockPos = (Vector2) { inter.x + inter.width / 2, inter.y + inter.height / 2 };
+                    p->onBlockPosActive = true;
+
                 } else {
+
                     // hit connects
                     o->health -= paf->damageOnHurt;
                     o->state = PLAYER_STATE_HIT_UP_STANDING;
                     o->vel.x = pushDir * PUSHBACK_ON_HIT;
-                }
 
-                Rectangle inter = getRectangleIntersection( hurtbox, hitbox );
-                p->onHitPos = (Vector2) { inter.x + inter.width / 2, inter.y + inter.height / 2 };
-                p->onHitPosActive = true;
+                    Rectangle inter = getRectangleIntersection( hurtbox, hitbox );
+                    p->onHitPos = (Vector2) { inter.x + inter.width / 2, inter.y + inter.height / 2 };
+                    p->onHitPosActive = true;
+
+                }
 
                 return;
 
@@ -1525,6 +1558,25 @@ void drawOnHitPlayerAnimation( Player *p ) {
         rm.effectsTexture,
         (Rectangle) { af->source.x, af->source.y, af->source.width, af->source.height },
         (Rectangle) { p->onHitPos.x - af->source.width / 2, p->onHitPos.y - af->source.height / 2, af->source.width, af->source.height },
+        (Vector2) { 0 },
+        0.0f, 
+        WHITE
+    );
+
+}
+
+void drawOnBlockPlayerAnimation( Player *p ) {
+
+    if ( !p->onBlockPosActive ) {
+        return;
+    }
+
+    AnimationFrame *af = getAnimationCurrentFrame( &p->onBlockAnimation );
+
+    DrawTexturePro( 
+        rm.effectsTexture,
+        (Rectangle) { af->source.x, af->source.y, af->source.width, af->source.height },
+        (Rectangle) { p->onBlockPos.x - af->source.width / 2, p->onBlockPos.y - af->source.height / 2, af->source.width, af->source.height },
         (Vector2) { 0 },
         0.0f, 
         WHITE
