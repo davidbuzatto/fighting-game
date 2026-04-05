@@ -1,6 +1,7 @@
 Implementar bloqueio;
     Chip damage nos especiais.
 
+Automatizar criação dos frames baseado no primeiro.
 Implementar especiais do Ryu; -> possui um protótipo
 
 Refatorar (ajustar posição de funções, nomes de variáveis etc);
