@@ -2,6 +2,7 @@ Implementar bloqueio;
     Chip damage nos especiais.
 
 Implementar especiais do Ryu; -> possui um protótipo
+
 Refatorar (ajustar posição de funções, nomes de variáveis etc);
 Implementar especiais do Ken;
 Adicionar música e efeitos sonoros;
