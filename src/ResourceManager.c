@@ -60,7 +60,7 @@ void loadResourcesResourceManager( void ) {
     rm.modelStageTexture = LoadTexture( "resources/images/stages/model.png" );
 
     rm.effectsTexture = loadTextureReplacingColor( 
-        "resources/images/effects.png", 
+        "resources/images/misc/effects.png", 
         (Color[]) { 
             (Color) { 0, 85, 127, 255 }
         }, 
@@ -70,7 +70,7 @@ void loadResourcesResourceManager( void ) {
         1
     );
 
-    rm.fontsTexture = LoadTexture( "resources/images/fonts.png" );
+    rm.fontsTexture = LoadTexture( "resources/images/misc/fonts.png" );
 
 }
 
