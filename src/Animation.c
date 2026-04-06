@@ -8,6 +8,39 @@ void createAnimationFrames( Animation *anim, int frameCount ) {
     anim->frames = (AnimationFrame*) malloc( sizeof( AnimationFrame ) * frameCount );
 }
 
+void initAnimationFrames( AnimationFrame *frames, int frameCount, int startX, int startY, int sourceW, int sourceH, int offsetX, int offsetY, bool backwards ) {
+
+    int step = abs( sourceW ) + 1;
+
+    for ( int i = 0; i < frameCount; i++ ) {
+
+        int p = !backwards ? i : frameCount - i - 1;
+
+        frames[i] = (AnimationFrame) { 
+            .source = { 
+                startX + step * p, 
+                startY, 
+                sourceW, 
+                sourceH
+            }, 
+            .duration = 0,
+            .offset = { offsetX, offsetY },
+            .boxes = { 
+                .collisionBox = { 0 },
+                .hitboxCount = 3,
+                .hitboxes = { 0 },
+                .hurtboxCount = 3,
+                .hurtboxes = { 0 }
+            }, 
+            .hitboxesActive = true, 
+            .hurtboxesActive = true,
+            .damageOnHurt = 0
+        };
+
+    }
+
+}
+
 void destroyAnimationFrames( Animation *anim ) {
     free( anim->frames );
 }
