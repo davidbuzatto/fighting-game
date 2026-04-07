@@ -11982,7 +11982,7 @@
                             }
                         ]
                     },
-                    "damageOnHurt": 0
+                    "damageOnHurt": 10
                 },
                 {
                     "source": {
@@ -12046,7 +12046,7 @@
                             }
                         ]
                     },
-                    "damageOnHurt": 0
+                    "damageOnHurt": 10
                 },
                 {
                     "source": {
@@ -12376,7 +12376,7 @@
                             }
                         ]
                     },
-                    "damageOnHurt": 0
+                    "damageOnHurt": 15
                 },
                 {
                     "source": {
@@ -12440,7 +12440,7 @@
                             }
                         ]
                     },
-                    "damageOnHurt": 0
+                    "damageOnHurt": 15
                 },
                 {
                     "source": {
@@ -12770,7 +12770,7 @@
                             }
                         ]
                     },
-                    "damageOnHurt": 0
+                    "damageOnHurt": 20
                 },
                 {
                     "source": {
@@ -12834,7 +12834,7 @@
                             }
                         ]
                     },
-                    "damageOnHurt": 0
+                    "damageOnHurt": 20
                 },
                 {
                     "source": {
@@ -13292,7 +13292,7 @@
                             }
                         ]
                     },
-                    "damageOnHurt": 0
+                    "damageOnHurt": 10
                 },
                 {
                     "source": {
@@ -13356,7 +13356,7 @@
                             }
                         ]
                     },
-                    "damageOnHurt": 0
+                    "damageOnHurt": 10
                 },
                 {
                     "source": {
@@ -13681,7 +13681,7 @@
             ]
         },
         {
-            "frameCount": 10,
+            "frameCount": 22,
             "currentFrame": 0,
             "frameTimeCounter": 0,
             "stopAtLastFrame": false,
@@ -13942,7 +13942,7 @@
                             }
                         ]
                     },
-                    "damageOnHurt": 0
+                    "damageOnHurt": 10
                 },
                 {
                     "source": {
@@ -14006,7 +14006,775 @@
                             }
                         ]
                     },
+                    "damageOnHurt": 10
+                },
+                {
+                    "source": {
+                        "x": 646,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -11,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -18,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": -64,
+                                "y": 17,
+                                "width": 67,
+                                "height": 30
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
                     "damageOnHurt": 0
+                },
+                {
+                    "source": {
+                        "x": 775,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -11,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -18,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 0
+                },
+                {
+                    "source": {
+                        "x": 388,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -19,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -26,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": -2,
+                                "y": 17,
+                                "width": 67,
+                                "height": 30
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 10
+                },
+                {
+                    "source": {
+                        "x": 517,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -19,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -26,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 10
+                },
+                {
+                    "source": {
+                        "x": 646,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -11,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -18,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": -64,
+                                "y": 17,
+                                "width": 67,
+                                "height": 30
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 0
+                },
+                {
+                    "source": {
+                        "x": 775,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -11,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -18,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 0
+                },
+                {
+                    "source": {
+                        "x": 388,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -19,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -26,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": -2,
+                                "y": 17,
+                                "width": 67,
+                                "height": 30
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 10
+                },
+                {
+                    "source": {
+                        "x": 517,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -19,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -26,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 10
+                },
+                {
+                    "source": {
+                        "x": 646,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -11,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -18,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": -64,
+                                "y": 17,
+                                "width": 67,
+                                "height": 30
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 0
+                },
+                {
+                    "source": {
+                        "x": 775,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -11,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -18,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 0
+                },
+                {
+                    "source": {
+                        "x": 388,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -19,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -26,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": -2,
+                                "y": 17,
+                                "width": 67,
+                                "height": 30
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 10
+                },
+                {
+                    "source": {
+                        "x": 517,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -19,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -26,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 10
                 },
                 {
                     "source": {
@@ -14331,7 +15099,7 @@
             ]
         },
         {
-            "frameCount": 10,
+            "frameCount": 26,
             "currentFrame": 0,
             "frameTimeCounter": 0,
             "stopAtLastFrame": false,
@@ -14592,7 +15360,7 @@
                             }
                         ]
                     },
-                    "damageOnHurt": 0
+                    "damageOnHurt": 10
                 },
                 {
                     "source": {
@@ -14656,7 +15424,1031 @@
                             }
                         ]
                     },
+                    "damageOnHurt": 10
+                },
+                {
+                    "source": {
+                        "x": 646,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -11,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -18,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": -64,
+                                "y": 17,
+                                "width": 67,
+                                "height": 30
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
                     "damageOnHurt": 0
+                },
+                {
+                    "source": {
+                        "x": 775,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -11,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -18,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 0
+                },
+                {
+                    "source": {
+                        "x": 388,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -19,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -26,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": -2,
+                                "y": 17,
+                                "width": 67,
+                                "height": 30
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 10
+                },
+                {
+                    "source": {
+                        "x": 517,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -19,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -26,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 10
+                },
+                {
+                    "source": {
+                        "x": 646,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -11,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -18,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": -64,
+                                "y": 17,
+                                "width": 67,
+                                "height": 30
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 0
+                },
+                {
+                    "source": {
+                        "x": 775,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -11,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -18,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 0
+                },
+                {
+                    "source": {
+                        "x": 388,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -19,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -26,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": -2,
+                                "y": 17,
+                                "width": 67,
+                                "height": 30
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 10
+                },
+                {
+                    "source": {
+                        "x": 517,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -19,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -26,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 10
+                },
+                {
+                    "source": {
+                        "x": 646,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -11,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -18,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": -64,
+                                "y": 17,
+                                "width": 67,
+                                "height": 30
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 0
+                },
+                {
+                    "source": {
+                        "x": 775,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -11,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -18,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 0
+                },
+                {
+                    "source": {
+                        "x": 388,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -19,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -26,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": -2,
+                                "y": 17,
+                                "width": 67,
+                                "height": 30
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 10
+                },
+                {
+                    "source": {
+                        "x": 517,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -19,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -26,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 10
+                },
+                {
+                    "source": {
+                        "x": 646,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -11,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -18,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": -64,
+                                "y": 17,
+                                "width": 67,
+                                "height": 30
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 0
+                },
+                {
+                    "source": {
+                        "x": 775,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -11,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -18,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 0
+                },
+                {
+                    "source": {
+                        "x": 388,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -19,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -26,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": -2,
+                                "y": 17,
+                                "width": 67,
+                                "height": 30
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 10
+                },
+                {
+                    "source": {
+                        "x": 517,
+                        "y": 3456,
+                        "width": -128,
+                        "height": 112
+                    },
+                    "duration": 50,
+                    "offset": {
+                        "x": 0,
+                        "y": 0
+                    },
+                    "boxes": {
+                        "collisionBox": {
+                            "x": -19,
+                            "y": 10,
+                            "width": 33,
+                            "height": 45
+                        },
+                        "hitboxCount": 3,
+                        "hitboxes": [
+                            {
+                                "x": -26,
+                                "y": -10,
+                                "width": 40,
+                                "height": 71
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ],
+                        "hurtboxCount": 3,
+                        "hurtboxes": [
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            },
+                            {
+                                "x": 0,
+                                "y": 0,
+                                "width": 0,
+                                "height": 0
+                            }
+                        ]
+                    },
+                    "damageOnHurt": 10
                 },
                 {
                     "source": {

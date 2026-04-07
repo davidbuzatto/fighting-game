@@ -1,14 +1,12 @@
 Implementar bloqueio;
     Chip damage nos especiais.
 
-Implementar especiais do Ryu; -> possui um protótipo
-
-Refatorar (ajustar posição de funções, nomes de variáveis etc);
 Implementar especiais do Ken;
 Adicionar música e efeitos sonoros;
 Implementar animação no cenário e camadas;
 Implementar dinâmica das partidas;
 Ajustar TODOS os frames com framedata (https://wiki.supercombo.gg/w/Super_Street_Fighter_2_Turbo/Ryu)
+Refatorar (ajustar posição de funções, nomes de variáveis etc);
 Implementar quedas?
 
 Hit/hurt boxes: https://doctorguile.github.io/ssf2st/

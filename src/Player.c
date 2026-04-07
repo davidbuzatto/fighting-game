@@ -538,7 +538,7 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->lpHadoukenAnim.runOnce = true;
     p->lpHadoukenAnim.finished = false;
     createAnimationFrames( &p->lpHadoukenAnim, p->lpHadoukenAnim.frameCount );
-    initAnimationFrames( p->lpHadoukenAnim.frames, p->lpHadoukenAnim.frameCount, 1, 3230, -128, 96, 32, 0, false ); // verficar offset
+    initAnimationFrames( p->lpHadoukenAnim.frames, p->lpHadoukenAnim.frameCount, 1, 3230, -128, 96, 32, 0, false ); // verificar offset
     for ( int i = 4; i < p->lpHadoukenAnim.frameCount; i++ ) {
         p->lpHadoukenAnim.frames[i] = p->lpHadoukenAnim.frames[3];
     }
@@ -550,7 +550,7 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->mpHadoukenAnim.runOnce = true;
     p->mpHadoukenAnim.finished = false;
     createAnimationFrames( &p->mpHadoukenAnim, p->mpHadoukenAnim.frameCount );
-    initAnimationFrames( p->mpHadoukenAnim.frames, p->mpHadoukenAnim.frameCount, 1, 3230, -128, 96, 32, 0, false ); // verficar offset
+    initAnimationFrames( p->mpHadoukenAnim.frames, p->mpHadoukenAnim.frameCount, 1, 3230, -128, 96, 32, 0, false ); // verificar offset
     for ( int i = 4; i < p->mpHadoukenAnim.frameCount; i++ ) {
         p->mpHadoukenAnim.frames[i] = p->mpHadoukenAnim.frames[3];
     }
@@ -562,7 +562,7 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->hpHadoukenAnim.runOnce = true;
     p->hpHadoukenAnim.finished = false;
     createAnimationFrames( &p->hpHadoukenAnim, p->hpHadoukenAnim.frameCount );
-    initAnimationFrames( p->hpHadoukenAnim.frames, p->hpHadoukenAnim.frameCount, 1, 3230, -128, 96, 32, 0, false ); // verficar offset
+    initAnimationFrames( p->hpHadoukenAnim.frames, p->hpHadoukenAnim.frameCount, 1, 3230, -128, 96, 32, 0, false ); // verificar offset
     for ( int i = 4; i < p->hpHadoukenAnim.frameCount; i++ ) {
         p->hpHadoukenAnim.frames[i] = p->hpHadoukenAnim.frames[3];
     }
@@ -574,7 +574,7 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->lpShoryukenAnim.runOnce = true;
     p->lpShoryukenAnim.finished = false;
     createAnimationFrames( &p->lpShoryukenAnim, p->lpShoryukenAnim.frameCount );
-    initAnimationFrames( p->lpShoryukenAnim.frames, p->lpShoryukenAnim.frameCount, 1, 3327, -96, 128, 16, 0, false ); // verficar offset
+    initAnimationFrames( p->lpShoryukenAnim.frames, p->lpShoryukenAnim.frameCount, 1, 3327, -96, 128, 16, 0, false ); // verificar offset
 
     p->mpShoryukenAnim.frameCount = 6;
     p->mpShoryukenAnim.currentFrame = 0;
@@ -583,7 +583,7 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->mpShoryukenAnim.runOnce = true;
     p->mpShoryukenAnim.finished = false;
     createAnimationFrames( &p->mpShoryukenAnim, p->mpShoryukenAnim.frameCount );
-    initAnimationFrames( p->mpShoryukenAnim.frames, p->mpShoryukenAnim.frameCount, 1, 3327, -96, 128, 16, 0, false ); // verficar offset
+    initAnimationFrames( p->mpShoryukenAnim.frames, p->mpShoryukenAnim.frameCount, 1, 3327, -96, 128, 16, 0, false ); // verificar offset
 
     p->hpShoryukenAnim.frameCount = 6;
     p->hpShoryukenAnim.currentFrame = 0;
@@ -592,7 +592,7 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->hpShoryukenAnim.runOnce = true;
     p->hpShoryukenAnim.finished = false;
     createAnimationFrames( &p->hpShoryukenAnim, p->hpShoryukenAnim.frameCount );
-    initAnimationFrames( p->hpShoryukenAnim.frames, p->hpShoryukenAnim.frameCount, 1, 3327, -96, 128, 16, 0, false ); // verficar offset
+    initAnimationFrames( p->hpShoryukenAnim.frames, p->hpShoryukenAnim.frameCount, 1, 3327, -96, 128, 16, 0, false ); // verificar offset
 
     p->lkTatsumakiAnim.frameCount = 10;
     p->lkTatsumakiAnim.currentFrame = 0;
@@ -601,25 +601,43 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->lkTatsumakiAnim.runOnce = true;
     p->lkTatsumakiAnim.finished = false;
     createAnimationFrames( &p->lkTatsumakiAnim, p->lkTatsumakiAnim.frameCount );
-    initAnimationFrames( p->lkTatsumakiAnim.frames, p->lkTatsumakiAnim.frameCount, 1, 3456, -128, 112, 0, 0, false ); // verficar offset
+    initAnimationFrames( p->lkTatsumakiAnim.frames, p->lkTatsumakiAnim.frameCount, 1, 3456, -128, 112, 0, 0, false ); // verificar offset
 
-    p->mkTatsumakiAnim.frameCount = 10;
+    p->mkTatsumakiAnim.frameCount = 22;
     p->mkTatsumakiAnim.currentFrame = 0;
     p->mkTatsumakiAnim.frameTimeCounter = 0.0f;
     p->mkTatsumakiAnim.stopAtLastFrame = false;
     p->mkTatsumakiAnim.runOnce = true;
     p->mkTatsumakiAnim.finished = false;
     createAnimationFrames( &p->mkTatsumakiAnim, p->mkTatsumakiAnim.frameCount );
-    initAnimationFrames( p->mkTatsumakiAnim.frames, p->mkTatsumakiAnim.frameCount, 1, 3456, -128, 112, 0, 0, false ); // verficar offset
+    initAnimationFrames( p->mkTatsumakiAnim.frames, p->mkTatsumakiAnim.frameCount, 1, 3456, -128, 112, 0, 0, false ); // verificar offset
+    int start = 9;
+    for ( int i = 21; i >= 19; i-- ) {
+        p->mkTatsumakiAnim.frames[i] = p->mkTatsumakiAnim.frames[start--];
+    }
+    for ( int i = 0; i < 3; i++ ) {
+        for ( int j = 3; j <= 6; j++ ) {
+            p->mkTatsumakiAnim.frames[j+4*(i+1)] = p->mkTatsumakiAnim.frames[j];
+        }
+    }
 
-    p->hkTatsumakiAnim.frameCount = 10;
+    p->hkTatsumakiAnim.frameCount = 26;
     p->hkTatsumakiAnim.currentFrame = 0;
     p->hkTatsumakiAnim.frameTimeCounter = 0.0f;
     p->hkTatsumakiAnim.stopAtLastFrame = false;
     p->hkTatsumakiAnim.runOnce = true;
     p->hkTatsumakiAnim.finished = false;
     createAnimationFrames( &p->hkTatsumakiAnim, p->hkTatsumakiAnim.frameCount );
-    initAnimationFrames( p->hkTatsumakiAnim.frames, p->hkTatsumakiAnim.frameCount, 1, 3456, -128, 112, 0, 0, false ); // verficar offset
+    initAnimationFrames( p->hkTatsumakiAnim.frames, p->hkTatsumakiAnim.frameCount, 1, 3456, -128, 112, 0, 0, false ); // verificar offset
+    start = 9;
+    for ( int i = 25; i >= 23; i-- ) {
+        p->hkTatsumakiAnim.frames[i] = p->hkTatsumakiAnim.frames[start--];
+    }
+    for ( int i = 0; i < 4; i++ ) {
+        for ( int j = 3; j <= 6; j++ ) {
+            p->hkTatsumakiAnim.frames[j+4*(i+1)] = p->hkTatsumakiAnim.frames[j];
+        }
+    }
 
     p->lastAnim.frameCount = 0;
     p->lastAnim.currentFrame = 0;
@@ -1132,56 +1150,106 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
 
     if ( cmd != NULL ) {
 
-        // ---------------------------------------------------------------
-        // COMMAND INPUT MATCHED
-        // TODO: replace trace + return with actual state/animation change
-        //   - Add new PlayerState entries for each special move
-        //   - Add Animation fields to Player for each special
-        //   - Set player->state, resetAnimation, player->vel.x = 0, etc.
-        //   - For projectiles (hadouken), spawn a Projectile entity
-        //
-        //   Example when ready:
-        //     PlayerState specialState = getSpecialState( cmd, cmdButton );
-        //     Animation *specialAnim = getSpecialAnimation( player, specialState );
-        //     resetAnimation( specialAnim );
-        //     player->vel.x = 0.0f;
-        //     player->state = specialState;
-        //     player->lastState = player->state;
-        //     return;
-        // ---------------------------------------------------------------
+        // TODO: needs to be generalized (in the future)
+        // trace for debug
 
-        unsigned int specialState = 0;
+        PlayerState specialState = PLAYER_STATE_LAST;
 
         const char *cmdName = "UNKNOWN";
+
+        bool isHadouken = false;
+        bool isShoryuken = false;
+        bool isTatsumaki = false;
+
         switch ( cmd->type ) {
-            case COMMAND_TYPE_HADOUKEN:   cmdName = "HADOUKEN";   specialState = PLAYER_STATE_SPECIAL_LP_HADOUKEN;  break;
-            case COMMAND_TYPE_SHORYUKEN:  cmdName = "SHORYUKEN";  specialState = PLAYER_STATE_SPECIAL_LP_SHORYUKEN; player->vel.y = -500.0f; break;
-            case COMMAND_TYPE_TATSUMAKI:  cmdName = "TATSUMAKI";  specialState = PLAYER_STATE_SPECIAL_LK_TATSUMAKI; player->vel.x = 400.0f; break; // solve for x
+            case COMMAND_TYPE_HADOUKEN:
+                cmdName = "HADOUKEN";
+                isHadouken = true;
+                break;
+            case COMMAND_TYPE_SHORYUKEN:
+                cmdName = "SHORYUKEN";
+                specialState = PLAYER_STATE_SPECIAL_LP_SHORYUKEN;
+                isShoryuken = true;
+                break;
+            case COMMAND_TYPE_TATSUMAKI:
+                cmdName = "TATSUMAKI";
+                specialState = PLAYER_STATE_SPECIAL_LK_TATSUMAKI;
+                isTatsumaki = true;
+                break;
         }
 
+        
+        float velX = 0.0f;
+        float velY = 0.0f;
+
         const char *btnName = "?";
+
         switch ( cmdButton ) {
-            case INPUT_TYPE_LP: btnName = "LP"; break;
-            case INPUT_TYPE_MP: btnName = "MP"; specialState += 1; break;
-            case INPUT_TYPE_HP: btnName = "HP"; specialState += 2; break;
-            case INPUT_TYPE_LK: btnName = "LK"; break;
-            case INPUT_TYPE_MK: btnName = "MK"; specialState += 1; break;
-            case INPUT_TYPE_HK: btnName = "HK"; specialState += 2; break;
+            case INPUT_TYPE_LP:
+                btnName = "LP";
+                if ( isHadouken ) {
+                    specialState = PLAYER_STATE_SPECIAL_LP_HADOUKEN;
+                } else if ( isShoryuken ) {
+                    specialState = PLAYER_STATE_SPECIAL_LP_SHORYUKEN;
+                    velY = -300.0f;
+                }
+                break;
+            case INPUT_TYPE_MP:
+                btnName = "MP";
+                if ( isHadouken ) {
+                    specialState = PLAYER_STATE_SPECIAL_MP_HADOUKEN;
+                } else if ( isShoryuken ) {
+                    specialState = PLAYER_STATE_SPECIAL_MP_SHORYUKEN;
+                    velY = -400.0f;
+                }
+                break;
+            case INPUT_TYPE_HP:
+                btnName = "HP";
+                if ( isHadouken ) {
+                    specialState = PLAYER_STATE_SPECIAL_HP_HADOUKEN;
+                } else if ( isShoryuken ) {
+                    specialState = PLAYER_STATE_SPECIAL_HP_SHORYUKEN;
+                    velY = -500.0f;
+                }
+                break;
+            case INPUT_TYPE_LK:
+                btnName = "LK";
+                if ( isTatsumaki ) {
+                    specialState = PLAYER_STATE_SPECIAL_LK_TATSUMAKI;
+                    velX = 80.0f;
+                }
+                break;
+            case INPUT_TYPE_MK:
+                btnName = "MK";
+                if ( isTatsumaki ) {
+                    specialState = PLAYER_STATE_SPECIAL_MK_TATSUMAKI;
+                    velX = 160.0f;
+                }
+                break;
+            case INPUT_TYPE_HK:
+                btnName = "HK";
+                if ( isTatsumaki ) {
+                    specialState = PLAYER_STATE_SPECIAL_HK_TATSUMAKI;
+                    velX = 200.0f;
+                }
+                break;
             default: break;
         }
 
-        trace( "[%s] %s + %s detected! (player: %s, frame: %d)",
+        /*trace( "[%s] %s + %s detected! (player: %s, frame: %d)",
                player->lookingRight ? "RIGHT" : "LEFT",
-               cmdName, btnName, player->name, currentFrame );
+               cmdName, btnName, player->name, currentFrame );*/
 
-        player->state = specialState;
-        resetAnimation( getPlayerCurrentAnimation( player ) );
-        player->vel.x = 0.0f;
-        player->lastState = player->state;
+        if ( specialState != PLAYER_STATE_LAST ) {
+            player->state = specialState;
+            player->vel.x = player->lookingRight ? velX : -velX;
+            player->vel.y = velY;
+            resetAnimation( getPlayerCurrentAnimation( player ) );
+            player->lastState = player->state;
+        }
 
         return;
 
-        // for now, fall through to basic attack (remove this when special moves are implemented)
     }
 
     // basic attacks (from buffer)
@@ -1644,7 +1712,7 @@ static CommandInput *checkCommandInputs( Player *p, int currentFrame, InputType 
 
     InputType button = buttonEntry->type;
 
-    // try each command (longer sequences first — sort by sequenceLength desc would be ideal,
+    // try each command (longer sequences first - sort by sequenceLength desc would be ideal,
     // but for now the order in the commands array determines priority)
     for ( int c = 0; c < p->commandCount; c++ ) {
 
@@ -1659,6 +1727,7 @@ static CommandInput *checkCommandInputs( Player *p, int currentFrame, InputType 
         bool matched = true;
 
         for ( int i = p->inputBufferTail - 1; i >= p->inputBufferHead && seqIdx >= 0; i-- ) {
+
             InputBufferEntry *entry = &p->inputBuffer[i % PLAYER_INPUT_BUFFER_SIZE];
 
             // check time window: entry must be within frameWindow of the button press
@@ -1676,16 +1745,20 @@ static CommandInput *checkCommandInputs( Player *p, int currentFrame, InputType 
             if ( entry->type == expected ) {
                 seqIdx--;
             }
+
             // else: tolerate extra inputs (leniency) — just keep searching
+
         }
 
         if ( matched && seqIdx < 0 ) {
             *outButton = button;
             return cmd;
         }
+
     }
 
     return NULL;
+
 }
 
 static void processInputAndFeedInputBuffer( Player *p, int currentFrame ) {
