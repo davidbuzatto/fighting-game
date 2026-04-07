@@ -1605,7 +1605,11 @@ void resolvePlayerOponnentContact( Player *p, Player *o ) {
                     // block successful
                     o->state = defenderCrouching ? PLAYER_STATE_DEFENCE_CROUCH : PLAYER_STATE_DEFENCE_STANDING;
                     o->vel.x = pushDir * PUSHBACK_ON_BLOCK;
-                    // no damage on normal block (chip damage for specials will be added later)
+
+                    // chip damage for specials
+                    if ( isSpecialMoveState( p->state ) ) {
+                        o->health -= 1;
+                    }
 
                     Rectangle inter = getRectangleIntersection( hurtbox, hitbox );
                     p->onBlockPos = (Vector2) { inter.x + inter.width / 2, inter.y + inter.height / 2 };

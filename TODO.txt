@@ -1,10 +1,10 @@
-Implementar bloqueio;
-    Chip damage nos especiais.
+Implementar hadouken;
+Implementar especiais do Ken; hadouken é diferente e shoryuken tbm
 
-Implementar especiais do Ken;
 Adicionar música e efeitos sonoros;
 Implementar animação no cenário e camadas;
 Implementar dinâmica das partidas;
+Joystick;
 Ajustar TODOS os frames com framedata (https://wiki.supercombo.gg/w/Super_Street_Fighter_2_Turbo/Ryu)
 Refatorar (ajustar posição de funções, nomes de variáveis etc);
 Implementar quedas?
