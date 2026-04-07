@@ -140,6 +140,10 @@ static inline bool isAirborneState( PlayerState s ) {
     return isJumpState( s ) || isJumpAttackState( s );
 }
 
+static inline bool isSpecialMoveState( PlayerState s ) {
+    return s >= PLAYER_STATE_SPECIAL_LP_HADOUKEN && s <= PLAYER_STATE_SPECIAL_HK_TATSUMAKI;
+}
+
 static inline bool isAttackInput( InputType t ) {
     return t >= INPUT_TYPE_LP && t <= INPUT_TYPE_HK;
 }

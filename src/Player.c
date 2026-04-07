@@ -531,7 +531,7 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     createAnimationFrames( &p->defenceCrouchAnim, p->defenceCrouchAnim.frameCount );
     initAnimationFrames( p->defenceCrouchAnim.frames, p->defenceCrouchAnim.frameCount, 1, 3666, -80, 65, 0, 0, false );
 
-    p->lpHadoukenAnim.frameCount = 4;
+    p->lpHadoukenAnim.frameCount = 9;
     p->lpHadoukenAnim.currentFrame = 0;
     p->lpHadoukenAnim.frameTimeCounter = 0.0f;
     p->lpHadoukenAnim.stopAtLastFrame = false;
@@ -539,8 +539,11 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->lpHadoukenAnim.finished = false;
     createAnimationFrames( &p->lpHadoukenAnim, p->lpHadoukenAnim.frameCount );
     initAnimationFrames( p->lpHadoukenAnim.frames, p->lpHadoukenAnim.frameCount, 1, 3230, -128, 96, 32, 0, false ); // verficar offset
+    for ( int i = 4; i < p->lpHadoukenAnim.frameCount; i++ ) {
+        p->lpHadoukenAnim.frames[i] = p->lpHadoukenAnim.frames[3];
+    }
 
-    p->mpHadoukenAnim.frameCount = 4;
+    p->mpHadoukenAnim.frameCount = 9;
     p->mpHadoukenAnim.currentFrame = 0;
     p->mpHadoukenAnim.frameTimeCounter = 0.0f;
     p->mpHadoukenAnim.stopAtLastFrame = false;
@@ -548,8 +551,11 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->mpHadoukenAnim.finished = false;
     createAnimationFrames( &p->mpHadoukenAnim, p->mpHadoukenAnim.frameCount );
     initAnimationFrames( p->mpHadoukenAnim.frames, p->mpHadoukenAnim.frameCount, 1, 3230, -128, 96, 32, 0, false ); // verficar offset
+    for ( int i = 4; i < p->mpHadoukenAnim.frameCount; i++ ) {
+        p->mpHadoukenAnim.frames[i] = p->mpHadoukenAnim.frames[3];
+    }
 
-    p->hpHadoukenAnim.frameCount = 4;
+    p->hpHadoukenAnim.frameCount = 9;
     p->hpHadoukenAnim.currentFrame = 0;
     p->hpHadoukenAnim.frameTimeCounter = 0.0f;
     p->hpHadoukenAnim.stopAtLastFrame = false;
@@ -557,6 +563,9 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->hpHadoukenAnim.finished = false;
     createAnimationFrames( &p->hpHadoukenAnim, p->hpHadoukenAnim.frameCount );
     initAnimationFrames( p->hpHadoukenAnim.frames, p->hpHadoukenAnim.frameCount, 1, 3230, -128, 96, 32, 0, false ); // verficar offset
+    for ( int i = 4; i < p->hpHadoukenAnim.frameCount; i++ ) {
+        p->hpHadoukenAnim.frames[i] = p->hpHadoukenAnim.frames[3];
+    }
 
     p->lpShoryukenAnim.frameCount = 6;
     p->lpShoryukenAnim.currentFrame = 0;
@@ -585,32 +594,32 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     createAnimationFrames( &p->hpShoryukenAnim, p->hpShoryukenAnim.frameCount );
     initAnimationFrames( p->hpShoryukenAnim.frames, p->hpShoryukenAnim.frameCount, 1, 3327, -96, 128, 16, 0, false ); // verficar offset
 
-    p->lkTatsumakiAnim.frameCount = 12;
+    p->lkTatsumakiAnim.frameCount = 10;
     p->lkTatsumakiAnim.currentFrame = 0;
     p->lkTatsumakiAnim.frameTimeCounter = 0.0f;
     p->lkTatsumakiAnim.stopAtLastFrame = false;
     p->lkTatsumakiAnim.runOnce = true;
     p->lkTatsumakiAnim.finished = false;
     createAnimationFrames( &p->lkTatsumakiAnim, p->lkTatsumakiAnim.frameCount );
-    initAnimationFrames( p->lkTatsumakiAnim.frames, p->lkTatsumakiAnim.frameCount, 1, 3456, -128, 112, 32, 0, false ); // verficar offset
+    initAnimationFrames( p->lkTatsumakiAnim.frames, p->lkTatsumakiAnim.frameCount, 1, 3456, -128, 112, 0, 0, false ); // verficar offset
 
-    p->mkTatsumakiAnim.frameCount = 12;
+    p->mkTatsumakiAnim.frameCount = 10;
     p->mkTatsumakiAnim.currentFrame = 0;
     p->mkTatsumakiAnim.frameTimeCounter = 0.0f;
     p->mkTatsumakiAnim.stopAtLastFrame = false;
     p->mkTatsumakiAnim.runOnce = true;
     p->mkTatsumakiAnim.finished = false;
     createAnimationFrames( &p->mkTatsumakiAnim, p->mkTatsumakiAnim.frameCount );
-    initAnimationFrames( p->mkTatsumakiAnim.frames, p->mkTatsumakiAnim.frameCount, 1, 3456, -128, 112, 32, 0, false ); // verficar offset
+    initAnimationFrames( p->mkTatsumakiAnim.frames, p->mkTatsumakiAnim.frameCount, 1, 3456, -128, 112, 0, 0, false ); // verficar offset
 
-    p->hkTatsumakiAnim.frameCount = 12;
+    p->hkTatsumakiAnim.frameCount = 10;
     p->hkTatsumakiAnim.currentFrame = 0;
     p->hkTatsumakiAnim.frameTimeCounter = 0.0f;
     p->hkTatsumakiAnim.stopAtLastFrame = false;
     p->hkTatsumakiAnim.runOnce = true;
     p->hkTatsumakiAnim.finished = false;
     createAnimationFrames( &p->hkTatsumakiAnim, p->hkTatsumakiAnim.frameCount );
-    initAnimationFrames( p->hkTatsumakiAnim.frames, p->hkTatsumakiAnim.frameCount, 1, 3456, -128, 112, 32, 0, false ); // verficar offset
+    initAnimationFrames( p->hkTatsumakiAnim.frames, p->hkTatsumakiAnim.frameCount, 1, 3456, -128, 112, 0, 0, false ); // verficar offset
 
     p->lastAnim.frameCount = 0;
     p->lastAnim.currentFrame = 0;
@@ -922,6 +931,19 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
 
     Animation *activeAnim = NULL;
 
+    // special move in progress: blocks all input
+    if ( isSpecialMoveState( player->state ) ) {
+        activeAnim = getPlayerCurrentAnimation( player );
+        if ( activeAnim != NULL ) {
+            updateAnimation( activeAnim, player->animationDurationMode, delta );
+            if ( activeAnim->finished ) {
+                player->state = PLAYER_STATE_IDLE;
+                resetAnimation( activeAnim );
+            }
+        }
+        return;
+    }
+
     // damage in progress: blocks all input
     if ( isHitState( player->state ) ) {
         activeAnim = getPlayerCurrentAnimation( player );
@@ -1128,27 +1150,36 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
         //     return;
         // ---------------------------------------------------------------
 
+        unsigned int specialState = 0;
+
         const char *cmdName = "UNKNOWN";
         switch ( cmd->type ) {
-            case COMMAND_TYPE_HADOUKEN:   cmdName = "HADOUKEN";   break;
-            case COMMAND_TYPE_SHORYUKEN:  cmdName = "SHORYUKEN";  break;
-            case COMMAND_TYPE_TATSUMAKI:  cmdName = "TATSUMAKI";  break;
+            case COMMAND_TYPE_HADOUKEN:   cmdName = "HADOUKEN";   specialState = PLAYER_STATE_SPECIAL_LP_HADOUKEN;  break;
+            case COMMAND_TYPE_SHORYUKEN:  cmdName = "SHORYUKEN";  specialState = PLAYER_STATE_SPECIAL_LP_SHORYUKEN; player->vel.y = -500.0f; break;
+            case COMMAND_TYPE_TATSUMAKI:  cmdName = "TATSUMAKI";  specialState = PLAYER_STATE_SPECIAL_LK_TATSUMAKI; player->vel.x = 400.0f; break; // solve for x
         }
 
         const char *btnName = "?";
         switch ( cmdButton ) {
             case INPUT_TYPE_LP: btnName = "LP"; break;
-            case INPUT_TYPE_MP: btnName = "MP"; break;
-            case INPUT_TYPE_HP: btnName = "HP"; break;
+            case INPUT_TYPE_MP: btnName = "MP"; specialState += 1; break;
+            case INPUT_TYPE_HP: btnName = "HP"; specialState += 2; break;
             case INPUT_TYPE_LK: btnName = "LK"; break;
-            case INPUT_TYPE_MK: btnName = "MK"; break;
-            case INPUT_TYPE_HK: btnName = "HK"; break;
+            case INPUT_TYPE_MK: btnName = "MK"; specialState += 1; break;
+            case INPUT_TYPE_HK: btnName = "HK"; specialState += 2; break;
             default: break;
         }
 
         trace( "[%s] %s + %s detected! (player: %s, frame: %d)",
                player->lookingRight ? "RIGHT" : "LEFT",
                cmdName, btnName, player->name, currentFrame );
+
+        player->state = specialState;
+        resetAnimation( getPlayerCurrentAnimation( player ) );
+        player->vel.x = 0.0f;
+        player->lastState = player->state;
+
+        return;
 
         // for now, fall through to basic attack (remove this when special moves are implemented)
     }

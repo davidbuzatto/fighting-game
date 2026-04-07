@@ -29,7 +29,7 @@
 #define SHOW_PLAYER_INPUT_BUFFER true
 #define SHOW_MODEL_STAGE_TEXTURE false
 #define DURATION_MODE DURATION_MODE_MILLISECONDS
-#define INITIAL_GAME_MODE GAME_MODE_EDITING
+#define INITIAL_GAME_MODE GAME_MODE_PLAYING
 
 #define PLAYER_1_ANIMATIONS_FILE "resources/animations/ryu.json"
 #define PLAYER_2_ANIMATIONS_FILE "resources/animations/ken.json"
@@ -49,6 +49,7 @@ static void copyAllAnimationFrameBoxesPrevious( Player *p );
 static void copyAllAnimationFrameBoxesNext( Player *p );
 static void copyAllAnimationFrameBoxesToPreviousAnimation( Player *p );
 static void copyAllAnimationFrameBoxesToNextAnimation( Player *p );
+static void adjustAllAnimationFrameBoxes( Player *p, int offsetX, int offsetY );
 
 static void updateCameraPlaying( GameWorld *gw );
 static void updateCameraEditing( GameWorld *gw );
@@ -392,6 +393,10 @@ static void updateGameWorldEditing( GameWorld *gw, float delta ) {
         storePlayerAnimations( gw->player1, true, false, PLAYER_1_ANIMATIONS_FILE );
         saveTimer = 90;
         return;
+    }
+
+    if ( IsKeyPressed( KEY_BACKSPACE ) ) {
+        adjustAllAnimationFrameBoxes( gw->player1, 32, 0 );
     }
 
     if ( IsKeyDown( KEY_LEFT_CONTROL ) && IsKeyPressed( KEY_X ) ) {
@@ -1181,6 +1186,32 @@ static void copyAllAnimationFrameBoxesToNextAnimation( Player *p ) {
             destAf->boxes = sourceAf->boxes;
         }
 
+    }
+
+}
+
+static void adjustAllAnimationFrameBoxes( Player *p, int offsetX, int offsetY ) {
+        
+    Animation *a = getPlayerCurrentAnimation( p );
+
+    for ( int i = 0; i < a->frameCount; i++ ) {
+        AnimationFrameBoxes *afb = &a->frames[i].boxes;
+        afb->collisionBox.x -= offsetX;
+        afb->collisionBox.y -= offsetY;
+        for ( int j = 0; j < afb->hitboxCount; j++ ) {
+            Rectangle *r = &afb->hitboxes[j];
+            if ( r->width != 0 && r->height != 0 ) {
+                r->x -= offsetX;
+                r->y -= offsetY;
+            }
+        }
+        for ( int j = 0; j < afb->hurtboxCount; j++ ) {
+            Rectangle *r = &afb->hurtboxes[j];
+            if ( r->width != 0 && r->height != 0 ) {
+                r->x -= offsetX;
+                r->y -= offsetY;
+            }
+        }
     }
 
 }
