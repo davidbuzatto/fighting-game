@@ -46,6 +46,14 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->showBoxes = showBoxes;
     p->showDebugInfo = showDebugInfo;
 
+    p->sounds.attackLowSound = rm.ryuAttackLowSound;
+    p->sounds.attackMidSound = rm.ryuAttackMidSound;
+    p->sounds.attackHighSound = rm.ryuAttackHighSound;
+    p->sounds.hitSound = rm.ryuHitSound;
+    p->sounds.hadoukenSound = rm.ryuHadoukenSound;
+    p->sounds.shoryukenSound = rm.ryuShoryukenSound;
+    p->sounds.tatsumakiSound = rm.ryuTatsumakiSound;
+
     p->inputBufferHead = -1;
     p->inputBufferTail = -1;
     p->inputBufferSize = 0;
@@ -756,6 +764,14 @@ void initializePlayerKen( float x, float y, Player *p, PlayerStartSide startSide
     p->texture = &rm.kenTexture;
     strcpy( p->name, "Ken" );
 
+    p->sounds.attackLowSound = rm.kenAttackLowSound;
+    p->sounds.attackMidSound = rm.kenAttackMidSound;
+    p->sounds.attackHighSound = rm.kenAttackHighSound;
+    p->sounds.hitSound = rm.kenHitSound;
+    p->sounds.hadoukenSound = rm.kenHadoukenSound;
+    p->sounds.shoryukenSound = rm.kenShoryukenSound;
+    p->sounds.tatsumakiSound = rm.kenTatsumakiSound;
+
 }
 
 void destroyPlayer( Player *player ) {
@@ -1101,6 +1117,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
                         jumpAttackState = PLAYER_STATE_LP_JUMP_BACKWARD;
                         jumpAttackAnim = &player->lpJumpBackwardAnim;
                     }
+                    PlaySound( player->sounds.attackLowSound );
                     break;
                 case INPUT_TYPE_MP:
                     if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
@@ -1113,6 +1130,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
                         jumpAttackState = PLAYER_STATE_MP_JUMP_BACKWARD;
                         jumpAttackAnim = &player->mpJumpBackwardAnim;
                     }
+                    PlaySound( player->sounds.attackMidSound );
                     break;
                 case INPUT_TYPE_HP:
                     if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
@@ -1125,6 +1143,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
                         jumpAttackState = PLAYER_STATE_HP_JUMP_BACKWARD;
                         jumpAttackAnim = &player->hpJumpBackwardAnim;
                     }
+                    PlaySound( player->sounds.attackHighSound );
                     break;
                 case INPUT_TYPE_LK:
                     if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
@@ -1137,6 +1156,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
                         jumpAttackState = PLAYER_STATE_LK_JUMP_BACKWARD;
                         jumpAttackAnim = &player->lkJumpBackwardAnim;
                     }
+                    PlaySound( player->sounds.attackLowSound );
                     break;
                 case INPUT_TYPE_MK:
                     if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
@@ -1149,6 +1169,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
                         jumpAttackState = PLAYER_STATE_MK_JUMP_BACKWARD;
                         jumpAttackAnim = &player->mkJumpBackwardAnim;
                     }
+                    PlaySound( player->sounds.attackMidSound );
                     break;
                 case INPUT_TYPE_HK:
                     if ( player->state == PLAYER_STATE_JUMPING_STRAIGHT ) {
@@ -1161,6 +1182,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
                         jumpAttackState = PLAYER_STATE_HK_JUMP_BACKWARD;
                         jumpAttackAnim = &player->hkJumpBackwardAnim;
                     }
+                    PlaySound( player->sounds.attackHighSound );
                     break;
                 default:
                     break;
@@ -1204,21 +1226,25 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
         bool isHadouken = false;
         bool isShoryuken = false;
         bool isTatsumaki = false;
+        Sound soundToPlay;
 
         switch ( cmd->type ) {
             case COMMAND_TYPE_HADOUKEN:
                 cmdName = "HADOUKEN";
                 isHadouken = true;
+                soundToPlay = player->sounds.hadoukenSound;
                 break;
             case COMMAND_TYPE_SHORYUKEN:
                 cmdName = "SHORYUKEN";
                 specialState = PLAYER_STATE_SPECIAL_LP_SHORYUKEN;
                 isShoryuken = true;
+                soundToPlay = player->sounds.shoryukenSound;
                 break;
             case COMMAND_TYPE_TATSUMAKI:
                 cmdName = "TATSUMAKI";
                 specialState = PLAYER_STATE_SPECIAL_LK_TATSUMAKI;
                 isTatsumaki = true;
+                soundToPlay = player->sounds.tatsumakiSound;
                 break;
         }
 
@@ -1290,6 +1316,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
                    specialState == PLAYER_STATE_SPECIAL_HP_HADOUKEN ) && player->projectile->active ) {
                 return;
             }
+            PlaySound( soundToPlay );
             player->state = specialState;
             player->vel.x = player->lookingRight ? velX : -velX;
             player->vel.y = velY;
@@ -1322,6 +1349,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
                     attackState = PLAYER_STATE_LP_CLOSE;
                     attackAnim = &player->lpCloseAnim;
                 }
+                PlaySound( player->sounds.attackLowSound );
                 break;
             case INPUT_TYPE_MP:
                 if ( player->state == PLAYER_STATE_CROUCHING ) {
@@ -1334,6 +1362,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
                     attackState = PLAYER_STATE_MP_CLOSE;
                     attackAnim = &player->mpCloseAnim;
                 }
+                PlaySound( player->sounds.attackMidSound );
                 break;
             case INPUT_TYPE_HP:
                 if ( player->state == PLAYER_STATE_CROUCHING ) {
@@ -1346,6 +1375,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
                     attackState = PLAYER_STATE_HP_CLOSE;
                     attackAnim = &player->hpCloseAnim;
                 }
+                PlaySound( player->sounds.attackHighSound );
                 break;
             case INPUT_TYPE_LK:
                 if ( player->state == PLAYER_STATE_CROUCHING ) {
@@ -1358,6 +1388,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
                     attackState = PLAYER_STATE_LK_CLOSE;
                     attackAnim = &player->lkCloseAnim;
                 }
+                PlaySound( player->sounds.attackLowSound );
                 break;
             case INPUT_TYPE_MK:
                 if ( player->state == PLAYER_STATE_CROUCHING ) {
@@ -1370,6 +1401,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
                     attackState = PLAYER_STATE_MK_CLOSE;
                     attackAnim = &player->mkCloseAnim;
                 }
+                PlaySound( player->sounds.attackMidSound );
                 break;
             case INPUT_TYPE_HK:
                 if ( player->state == PLAYER_STATE_CROUCHING ) {
@@ -1382,6 +1414,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
                     attackState = PLAYER_STATE_HK_CLOSE;
                     attackAnim = &player->hkCloseAnim;
                 }
+                PlaySound( player->sounds.attackHighSound );
                 break;
             default:
                 break;
@@ -1679,6 +1712,8 @@ void resolvePlayerOponnentContact( Player *p, Player *o ) {
 
                 }
 
+                PlaySound( p->sounds.hitSound );
+
                 return;
 
             }
@@ -1801,6 +1836,8 @@ void resolvePlayerOponnentProjectileContact( Player *p, Player *o ) {
 
             pProj->runImpactAnim = true;
             pProj->active = false;
+
+            PlaySound( p->sounds.hitSound );
 
             return;
 

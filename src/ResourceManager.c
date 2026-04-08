@@ -83,6 +83,24 @@ void loadResourcesResourceManager( void ) {
         1
     );
 
+    rm.ryuAttackLowSound = LoadSound( "resources/sfx/attack-low.wav" );
+    rm.ryuAttackMidSound = LoadSound( "resources/sfx/attack-mid.wav" );
+    rm.ryuAttackHighSound = LoadSound( "resources/sfx/attack-high.wav" );
+    rm.ryuHitSound = LoadSound( "resources/sfx/hit.wav" );
+    rm.ryuHadoukenSound = LoadSound( "resources/sfx/ryu-hadouken.wav" );
+    rm.ryuShoryukenSound = LoadSound( "resources/sfx/ryu-shoryuken.wav" );
+    rm.ryuTatsumakiSound = LoadSound( "resources/sfx/ryu-tatsumaki.wav" );
+
+    rm.kenAttackLowSound = LoadSound( "resources/sfx/attack-low.wav" );
+    rm.kenAttackMidSound = LoadSound( "resources/sfx/attack-mid.wav" );
+    rm.kenAttackHighSound = LoadSound( "resources/sfx/attack-high.wav" );
+    rm.kenHitSound = LoadSound( "resources/sfx/hit.wav" );
+    rm.kenHadoukenSound = LoadSound( "resources/sfx/ken-hadouken.wav" );
+    rm.kenShoryukenSound = LoadSound( "resources/sfx/ken-shoryuken.wav" );
+    rm.kenTatsumakiSound = LoadSound( "resources/sfx/ken-tatsumaki.wav" );
+
+    rm.kenTheme = LoadMusicStream( "resources/themes/ken.mp3" );
+
 }
 
 void unloadResourcesResourceManager( void ) {
@@ -101,6 +119,21 @@ void unloadResourcesResourceManager( void ) {
     UnloadTexture( rm.fontsTexture );
     UnloadTexture( rm.inputIconsTexture );
 
-    //UnloadSound( rm.soundExample );
-    //UnloadMusicStream( rm.musicExample );
+    UnloadSound( rm.ryuAttackLowSound );
+    UnloadSound( rm.ryuAttackMidSound );
+    UnloadSound( rm.ryuAttackHighSound );
+    UnloadSound( rm.ryuHitSound );
+    UnloadSound( rm.ryuHadoukenSound );
+    UnloadSound( rm.ryuShoryukenSound );
+    UnloadSound( rm.ryuTatsumakiSound );
+    UnloadSound( rm.kenAttackLowSound );
+    UnloadSound( rm.kenAttackMidSound );
+    UnloadSound( rm.kenAttackHighSound );
+    UnloadSound( rm.kenHitSound );
+    UnloadSound( rm.kenHadoukenSound );
+    UnloadSound( rm.kenShoryukenSound );
+    UnloadSound( rm.kenTatsumakiSound );
+
+    UnloadMusicStream( rm.kenTheme );
+
 }

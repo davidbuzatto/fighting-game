@@ -206,6 +206,16 @@ typedef struct Projectile {
     Animation impactAnim;
 } Projectile;
 
+typedef struct PlayerSounds {
+    Sound attackLowSound;
+    Sound attackMidSound;
+    Sound attackHighSound;
+    Sound hitSound;
+    Sound hadoukenSound;
+    Sound shoryukenSound;
+    Sound tatsumakiSound;
+} PlayerSounds;
+
 typedef struct Player {
 
     Texture2D *texture;
@@ -333,6 +343,8 @@ typedef struct Player {
 
     CommandInput commands[MAX_COMMANDS];
     int commandCount;
+
+    PlayerSounds sounds;
 
 } Player;
 

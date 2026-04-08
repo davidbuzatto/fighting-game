@@ -25,8 +25,24 @@ typedef struct ResourceManager {
     Texture2D fontsTexture;
     Texture2D inputIconsTexture;
 
-    //Sound soundExample;
-    //Music musicExample;
+    Sound ryuAttackLowSound;
+    Sound ryuAttackMidSound;
+    Sound ryuAttackHighSound;
+    Sound ryuHitSound;
+    Sound ryuHadoukenSound;
+    Sound ryuShoryukenSound;
+    Sound ryuTatsumakiSound;
+
+    Sound kenAttackLowSound;
+    Sound kenAttackMidSound;
+    Sound kenAttackHighSound;
+    Sound kenHitSound;
+    Sound kenHadoukenSound;
+    Sound kenShoryukenSound;
+    Sound kenTatsumakiSound;
+
+    Music kenTheme;
+
 } ResourceManager;
 
 /**

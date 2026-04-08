@@ -271,6 +271,11 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
 
 static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
 
+    if ( !IsMusicStreamPlaying( rm.kenTheme ) )  {
+        PlayMusicStream( rm.kenTheme );
+    }
+    UpdateMusicStream( rm.kenTheme );
+
     if ( remainingTime > 0 ) {
         remainingTimeCounter += delta;
         if ( remainingTimeCounter >= 1.0f ) {
