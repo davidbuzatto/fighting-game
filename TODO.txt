@@ -1,5 +1,4 @@
 Implementar hadouken;
-Implementar especiais do Ken; hadouken é diferente e shoryuken tbm
 
 Adicionar música e efeitos sonoros;
 Implementar animação no cenário e camadas;
