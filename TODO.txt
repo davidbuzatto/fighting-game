@@ -1,3 +1,6 @@
+Bug: 
+    Enroscando no canto quando usa tatsu (ajustar usando a caixa de colisão ao invés do limite da câmera?);
+    
 Adicionar música e efeitos sonoros;
 Implementar animação no cenário e camadas;
 Implementar dinâmica das partidas;
