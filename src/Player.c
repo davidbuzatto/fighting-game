@@ -9,6 +9,7 @@
 #include "Animation.h"
 #include "Macros.h"
 #include "Player.h"
+#include "Projectile.h"
 #include "ResourceManager.h"
 #include "Types.h"
 #include "Utils.h"
@@ -745,6 +746,8 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->onBlockPos = (Vector2) { 0 };
     p->onBlockPosActive = false;
 
+    p->projectile = createProjectile();
+
 }
 
 void initializePlayerKen( float x, float y, Player *p, PlayerStartSide startSide, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo ) {
@@ -762,6 +765,7 @@ void destroyPlayer( Player *player ) {
     for ( int i = 0; i < player->supportAnimationCount; i++ ) {
         destroyAnimationFrames( player->supportAnimations[i] );
     }
+    free( player->projectile );
     free( player );
 }
 
@@ -951,14 +955,52 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
 
     // special move in progress: blocks all input
     if ( isSpecialMoveState( player->state ) ) {
+
         activeAnim = getPlayerCurrentAnimation( player );
+
         if ( activeAnim != NULL ) {
+
             updateAnimation( activeAnim, player->animationDurationMode, delta );
+
+            if ( !player->projectile->active && activeAnim->currentFrame == 5 ) {
+                if ( player->state == PLAYER_STATE_SPECIAL_LP_HADOUKEN  ) {
+                    setupProjectile( 
+                        player->projectile, 
+                        PROJECTILE_TYPE_LOW, 
+                        player->pos.x + ( player->lookingRight ? 80 : -80 ), 
+                        player->pos.y + 40, 
+                        player->lookingRight ? 100 : -100,
+                        //0,
+                        0
+                    );
+                } else if ( player->state == PLAYER_STATE_SPECIAL_MP_HADOUKEN  ) {
+                    setupProjectile( 
+                        player->projectile, 
+                        PROJECTILE_TYPE_MID, 
+                        player->pos.x + ( player->lookingRight ? 80 : -80 ), 
+                        player->pos.y + 40, 
+                        player->lookingRight ? 150 : -150,
+                        0
+                    );
+                } else if ( player->state == PLAYER_STATE_SPECIAL_HP_HADOUKEN  ) {
+                    setupProjectile( 
+                        player->projectile, 
+                        PROJECTILE_TYPE_HIGH, 
+                        player->pos.x + ( player->lookingRight ? 80 : -80 ), 
+                        player->pos.y + 40, 
+                        player->lookingRight ? 200 : - 200,
+                        0
+                    );
+                }
+            }
+
             if ( activeAnim->finished ) {
                 player->state = PLAYER_STATE_IDLE;
                 resetAnimation( activeAnim );
             }
+
         }
+
         return;
     }
 
@@ -1236,11 +1278,16 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
             default: break;
         }
 
-        /*trace( "[%s] %s + %s detected! (player: %s, frame: %d)",
+        trace( "[%s] %s + %s detected! (player: %s, frame: %d)",
                player->lookingRight ? "RIGHT" : "LEFT",
-               cmdName, btnName, player->name, currentFrame );*/
+               cmdName, btnName, player->name, currentFrame );
 
         if ( specialState != PLAYER_STATE_LAST ) {
+            if ( ( specialState == PLAYER_STATE_SPECIAL_LP_HADOUKEN ||
+                   specialState == PLAYER_STATE_SPECIAL_MP_HADOUKEN || 
+                   specialState == PLAYER_STATE_SPECIAL_HP_HADOUKEN ) && player->projectile->active ) {
+                return;
+            }
             player->state = specialState;
             player->vel.x = player->lookingRight ? velX : -velX;
             player->vel.y = velY;
@@ -1452,6 +1499,8 @@ void updatePlayer( Player *player, Player *opponent, float gravity, float delta 
             resetAnimation( &player->onBlockAnimation );
         }
     }
+
+    updateProjectile( player->projectile, delta );
     
 }
 
@@ -1832,4 +1881,8 @@ static void addInputToPlayerInputBuffer( Player *p, InputType input, int current
         p->inputBufferTail++;
         p->inputBuffer[p->inputBufferTail % PLAYER_INPUT_BUFFER_SIZE] = (InputBufferEntry) { input, currentFrame };
     }
+}
+
+void drawPlayerProjectile( Player *p ) {
+    drawProjectile( p->projectile );
 }

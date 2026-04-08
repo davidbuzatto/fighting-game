@@ -21,9 +21,10 @@
 #include "ResourceManager.h"
 #include "Types.h"
 #include "Player.h"
+#include "Projectile.h"
 #include "Utils.h"
 
-#define SHOW_BOXES true
+#define SHOW_BOXES false
 #define SHOW_DEBUG_INFO false
 #define SHOW_PLAYER_ONION_MODE_EDITING true
 #define SHOW_PLAYER_INPUT_BUFFER true
@@ -212,6 +213,7 @@ void updateGameWorld( GameWorld *gw, float delta ) {
     } else {
         updateGameWorldEditing( gw, delta );
     }
+
 }
 
 /**
@@ -252,6 +254,8 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
 
     drawOnBlockPlayerAnimation( gw->player1 );
     drawOnBlockPlayerAnimation( gw->player2 );
+
+    drawPlayerProjectile( gw->player1 );
 
     EndMode2D();
 

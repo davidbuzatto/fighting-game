@@ -110,72 +110,23 @@ typedef enum PlayerState {
     PLAYER_STATE_LAST,              // just to mark the last (circular behaviour)
 } PlayerState;
 
-static inline bool isAttackState( PlayerState s ) {
-    return s >= PLAYER_STATE_LP && s <= PLAYER_STATE_HK_JUMP_BACKWARD;
-}
-
-static inline bool isCrouchAttackState( PlayerState s ) {
-    return s >= PLAYER_STATE_LP_CROUCH && s <= PLAYER_STATE_HK_CROUCH;
-}
-
-static inline bool isJumpAttackState( PlayerState s ) {
-    return s >= PLAYER_STATE_LP_JUMP_STRAIGHT && s <= PLAYER_STATE_HK_JUMP_BACKWARD;
-}
-
-static inline bool isJumpState( PlayerState s ) {
-    return s == PLAYER_STATE_JUMPING_STRAIGHT ||
-           s == PLAYER_STATE_JUMPING_FORWARD  ||
-           s == PLAYER_STATE_JUMPING_BACKWARD;
-}
-
-static inline bool isHitState( PlayerState s ) {
-    return s >= PLAYER_STATE_HIT_UP_STANDING && s <= PLAYER_STATE_HIT_CROUCH;
-}
-
-static inline bool isDefenceState( PlayerState s ) {
-    return s == PLAYER_STATE_DEFENCE_STANDING || s == PLAYER_STATE_DEFENCE_CROUCH;
-}
-
-static inline bool isAirborneState( PlayerState s ) {
-    return isJumpState( s ) || isJumpAttackState( s );
-}
-
-static inline bool isSpecialMoveState( PlayerState s ) {
-    return s >= PLAYER_STATE_SPECIAL_LP_HADOUKEN && s <= PLAYER_STATE_SPECIAL_HK_TATSUMAKI;
-}
-
-static inline bool isAttackInput( InputType t ) {
-    return t >= INPUT_TYPE_LP && t <= INPUT_TYPE_HK;
-}
-
-static inline bool isPunchInput( InputType t ) {
-    return t == INPUT_TYPE_LP || t == INPUT_TYPE_MP || t == INPUT_TYPE_HP;
-}
-
-static inline bool isKickInput( InputType t ) {
-    return t == INPUT_TYPE_LK || t == INPUT_TYPE_MK || t == INPUT_TYPE_HK;
-}
-
-// mirrors a directional input for left-facing players
-// (commands are defined assuming right-facing)
-static inline InputType mirrorDirectional( InputType t ) {
-    switch ( t ) {
-        case INPUT_TYPE_RIGHT:      return INPUT_TYPE_LEFT;
-        case INPUT_TYPE_LEFT:       return INPUT_TYPE_RIGHT;
-        case INPUT_TYPE_RIGHT_DOWN: return INPUT_TYPE_LEFT_DOWN;
-        case INPUT_TYPE_LEFT_DOWN:  return INPUT_TYPE_RIGHT_DOWN;
-        case INPUT_TYPE_RIGHT_UP:   return INPUT_TYPE_LEFT_UP;
-        case INPUT_TYPE_LEFT_UP:    return INPUT_TYPE_RIGHT_UP;
-        default:                    return t;
-    }
-}
-
 typedef enum CommandType {
     COMMAND_TYPE_HADOUKEN,
     COMMAND_TYPE_SHORYUKEN,
     COMMAND_TYPE_TATSUMAKI,
     // add more as needed
 } CommandType;
+
+typedef enum PlayerStartSide {
+    PLAYER_START_SIDE_LEFT,
+    PLAYER_START_SIDE_RIGHT,
+} PlayerStartSide;
+
+typedef enum ProjectileType {
+    PROJECTILE_TYPE_LOW,
+    PROJECTILE_TYPE_MID,
+    PROJECTILE_TYPE_HIGH,
+} ProjectileType;
 
 typedef struct CommandInput {
     CommandType type;
@@ -185,11 +136,6 @@ typedef struct CommandInput {
     bool requiresKick;      // true = any kick completes the command
     int frameWindow;        // max frames to complete the sequence
 } CommandInput;
-
-typedef enum PlayerStartSide {
-    PLAYER_START_SIDE_LEFT,
-    PLAYER_START_SIDE_RIGHT,
-} PlayerStartSide;
 
 typedef struct AnimationFrameBoxes {
     Rectangle collisionBox;
@@ -241,6 +187,22 @@ typedef struct PlayerKeyBindings {
     InputEntry mk;
     InputEntry hk;
 } PlayerKeyBindings;
+
+typedef struct Projectile {
+    ProjectileType type;
+    bool active;
+    Vector2 pos;
+    Vector2 vel;
+    Rectangle hurtbox;
+    Animation startupAnim;
+    Animation continuousAnimLP;
+    Animation continuousAnimDetailLP;
+    Animation continuousAnimMP;
+    Animation continuousAnimDetailMP;
+    Animation continuousAnimHP;
+    Animation continuousAnimDetailHP;
+    Animation impactAnim;
+} Projectile;
 
 typedef struct Player {
 
@@ -345,6 +307,8 @@ typedef struct Player {
     Animation *supportAnimations[80];
     int supportAnimationCount;
 
+    Projectile *projectile;
+
     PlayerState state;
     PlayerState lastState;
 
@@ -387,3 +351,63 @@ typedef struct GameWorld {
     int frameCounter;   // incremented every frame, used for input buffer timing
 
 } GameWorld;
+
+static inline bool isAttackState( PlayerState s ) {
+    return s >= PLAYER_STATE_LP && s <= PLAYER_STATE_HK_JUMP_BACKWARD;
+}
+
+static inline bool isCrouchAttackState( PlayerState s ) {
+    return s >= PLAYER_STATE_LP_CROUCH && s <= PLAYER_STATE_HK_CROUCH;
+}
+
+static inline bool isJumpAttackState( PlayerState s ) {
+    return s >= PLAYER_STATE_LP_JUMP_STRAIGHT && s <= PLAYER_STATE_HK_JUMP_BACKWARD;
+}
+
+static inline bool isJumpState( PlayerState s ) {
+    return s == PLAYER_STATE_JUMPING_STRAIGHT ||
+           s == PLAYER_STATE_JUMPING_FORWARD  ||
+           s == PLAYER_STATE_JUMPING_BACKWARD;
+}
+
+static inline bool isHitState( PlayerState s ) {
+    return s >= PLAYER_STATE_HIT_UP_STANDING && s <= PLAYER_STATE_HIT_CROUCH;
+}
+
+static inline bool isDefenceState( PlayerState s ) {
+    return s == PLAYER_STATE_DEFENCE_STANDING || s == PLAYER_STATE_DEFENCE_CROUCH;
+}
+
+static inline bool isAirborneState( PlayerState s ) {
+    return isJumpState( s ) || isJumpAttackState( s );
+}
+
+static inline bool isSpecialMoveState( PlayerState s ) {
+    return s >= PLAYER_STATE_SPECIAL_LP_HADOUKEN && s <= PLAYER_STATE_SPECIAL_HK_TATSUMAKI;
+}
+
+static inline bool isAttackInput( InputType t ) {
+    return t >= INPUT_TYPE_LP && t <= INPUT_TYPE_HK;
+}
+
+static inline bool isPunchInput( InputType t ) {
+    return t == INPUT_TYPE_LP || t == INPUT_TYPE_MP || t == INPUT_TYPE_HP;
+}
+
+static inline bool isKickInput( InputType t ) {
+    return t == INPUT_TYPE_LK || t == INPUT_TYPE_MK || t == INPUT_TYPE_HK;
+}
+
+// mirrors a directional input for left-facing players
+// (commands are defined assuming right-facing)
+static inline InputType mirrorDirectional( InputType t ) {
+    switch ( t ) {
+        case INPUT_TYPE_RIGHT:      return INPUT_TYPE_LEFT;
+        case INPUT_TYPE_LEFT:       return INPUT_TYPE_RIGHT;
+        case INPUT_TYPE_RIGHT_DOWN: return INPUT_TYPE_LEFT_DOWN;
+        case INPUT_TYPE_LEFT_DOWN:  return INPUT_TYPE_RIGHT_DOWN;
+        case INPUT_TYPE_RIGHT_UP:   return INPUT_TYPE_LEFT_UP;
+        case INPUT_TYPE_LEFT_UP:    return INPUT_TYPE_RIGHT_UP;
+        default:                    return t;
+    }
+}
