@@ -256,6 +256,7 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
     drawOnBlockPlayerAnimation( gw->player2 );
 
     drawPlayerProjectile( gw->player1 );
+    drawPlayerProjectile( gw->player2 );
 
     EndMode2D();
 
@@ -313,8 +314,8 @@ static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
         adjust = true;
     }
 
-    updatePlayer( gw->player1, gw->player2, gw->gravity, delta );
-    updatePlayer( gw->player2, gw->player1, gw->gravity, delta );
+    updatePlayer( gw->player1, gw->player2, gw->camera, gw->gravity, delta );
+    updatePlayer( gw->player2, gw->player1, gw->camera, gw->gravity, delta );
 
     // camera
     if ( adjust ) {
@@ -334,6 +335,9 @@ static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
 
     resolvePlayerOponnentContact( gw->player1, gw->player2 );
     resolvePlayerOponnentContact( gw->player2, gw->player1 );
+
+    resolvePlayerOponnentProjectileContact( gw->player1, gw->player2 );
+    resolvePlayerOponnentProjectileContact( gw->player2, gw->player1 );
 
     flipPlayers( gw );
 
@@ -377,7 +381,7 @@ static void drawGameWorldEditing( GameWorld *gw ) {
     } else {
         drawPlayer( gw->player1 );
     }
-
+    
     EndMode2D();
 
     drawInfoPanel( gw );

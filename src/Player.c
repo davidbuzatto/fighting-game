@@ -967,16 +967,17 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
                     setupProjectile( 
                         player->projectile, 
                         PROJECTILE_TYPE_LOW, 
+                        15,
                         player->pos.x + ( player->lookingRight ? 80 : -80 ), 
                         player->pos.y + 40, 
                         player->lookingRight ? 100 : -100,
-                        //0,
                         0
                     );
                 } else if ( player->state == PLAYER_STATE_SPECIAL_MP_HADOUKEN  ) {
                     setupProjectile( 
                         player->projectile, 
                         PROJECTILE_TYPE_MID, 
+                        20,
                         player->pos.x + ( player->lookingRight ? 80 : -80 ), 
                         player->pos.y + 40, 
                         player->lookingRight ? 150 : -150,
@@ -986,6 +987,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
                     setupProjectile( 
                         player->projectile, 
                         PROJECTILE_TYPE_HIGH, 
+                        25,
                         player->pos.x + ( player->lookingRight ? 80 : -80 ), 
                         player->pos.y + 40, 
                         player->lookingRight ? 200 : - 200,
@@ -1464,7 +1466,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
 
 }
 
-void updatePlayer( Player *player, Player *opponent, float gravity, float delta ) {
+void updatePlayer( Player *player, Player *opponent, Camera2D camera, float gravity, float delta ) {
 
     // positioning and physics
     player->pos.x += player->vel.x * delta;
@@ -1500,7 +1502,7 @@ void updatePlayer( Player *player, Player *opponent, float gravity, float delta 
         }
     }
 
-    updateProjectile( player->projectile, delta );
+    updateProjectile( player->projectile, camera, delta );
     
 }
 
@@ -1680,6 +1682,127 @@ void resolvePlayerOponnentContact( Player *p, Player *o ) {
                 return;
 
             }
+
+        }
+
+    }
+
+}
+
+void resolvePlayerOponnentProjectileContact( Player *p, Player *o ) {
+
+    if ( !p->projectile->active ) {
+        return;
+    }
+
+    AnimationFrame *paf = getPlayerCurrentAnimationFrame( p );
+    AnimationFrame *oaf = getPlayerCurrentAnimationFrame( o );
+
+    // skip if defender is already in hitstun or blockstun
+    if ( isHitState( o->state ) || isDefenceState( o->state ) ) {
+        return;
+    }
+
+    Projectile *pProj = p->projectile;
+    Projectile *oProj = o->projectile;
+
+    Rectangle pProjHurt = {
+        pProj->pos.x + pProj->hurtbox.x - pProj->hurtbox.width / 2,
+        pProj->pos.y + pProj->hurtbox.y - pProj->hurtbox.height / 2,
+        pProj->hurtbox.width,
+        pProj->hurtbox.height
+    };
+
+    if ( oProj->active ) {
+
+        Rectangle oProjHurt = {
+            oProj->pos.x + oProj->hurtbox.x - oProj->hurtbox.width / 2,
+            oProj->pos.y + oProj->hurtbox.y - oProj->hurtbox.height / 2,
+            oProj->hurtbox.width,
+            oProj->hurtbox.height
+        };
+
+        if ( CheckCollisionRecs( pProjHurt, oProjHurt ) ) {
+            pProj->runImpactAnim = true;
+            pProj->active = false;
+            oProj->runImpactAnim = true;
+            oProj->active = false;
+            return;
+        }
+
+    }
+
+    for ( int j = 0; j < oaf->boxes.hitboxCount; j++ ) {
+        
+        Rectangle *oHit = &oaf->boxes.hitboxes[j];
+        if ( oHit->width == 0 && oHit->height == 0 ) {
+            continue;
+        }
+
+        Rectangle hitbox = {
+            o->pos.x,
+            o->pos.y + oHit->y,
+            oHit->width,
+            oHit->height
+        };
+
+        if ( o->lookingRight ) {
+            hitbox.x += oHit->x;
+        } else {
+            hitbox.x -= oHit->x + oHit->width;
+        }
+
+        if ( CheckCollisionRecs( pProjHurt, hitbox ) ) {
+
+            paf->hurtboxesActive = false;
+
+            bool holdingBack = false;
+            if ( p->pos.x < o->pos.x ) {
+                holdingBack = IsKeyDown( o->kb.right.key );
+            } else {
+                holdingBack = IsKeyDown( o->kb.left.key );
+            }
+
+            bool canBlock = o->state == PLAYER_STATE_IDLE ||
+                            o->state == PLAYER_STATE_WALKING_FORWARD ||
+                            o->state == PLAYER_STATE_WALKING_BACKWARD ||
+                            o->state == PLAYER_STATE_CROUCHING;
+
+            bool isCrouchAttack = isCrouchAttackState( p->state );
+            bool defenderCrouching = o->state == PLAYER_STATE_CROUCHING;
+            bool heightMatch = isCrouchAttack ? defenderCrouching : !defenderCrouching;
+            bool blocked = holdingBack && canBlock && heightMatch;
+
+            float pushDir = ( o->pos.x > p->pos.x ) ? 1.0f : -1.0f;
+
+            if ( blocked ) {
+
+                o->state = defenderCrouching ? PLAYER_STATE_DEFENCE_CROUCH : PLAYER_STATE_DEFENCE_STANDING;
+                o->vel.x = pushDir * PUSHBACK_ON_BLOCK;
+
+                // chip damage for specials
+                o->health -= 1;
+
+                Rectangle inter = getRectangleIntersection( pProjHurt, hitbox );
+                p->onBlockPos = (Vector2) { inter.x + inter.width / 2, inter.y + inter.height / 2 };
+                p->onBlockPosActive = true;
+
+            } else {
+
+                o->health -= pProj->damageOnHurt;
+                o->state = PLAYER_STATE_HIT_UP_STANDING;
+                o->vel.x = pushDir * PUSHBACK_ON_HIT;
+
+                Rectangle inter = getRectangleIntersection( pProjHurt, hitbox );
+                p->onHitPos = (Vector2) { inter.x + inter.width / 2, inter.y + inter.height / 2 };
+                p->onHitPosActive = true;
+
+            }
+
+            pProj->runImpactAnim = true;
+            pProj->active = false;
+
+            return;
 
         }
 

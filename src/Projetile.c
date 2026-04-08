@@ -18,9 +18,12 @@ Projectile *createProjectile( void ) {
 
     Projectile *p = (Projectile*) malloc( sizeof( Projectile ) );
 
+    p->active = false;
     p->pos = (Vector2) { 0 };
     p->vel = (Vector2) { 0 };
     p->hurtbox = (Rectangle) { 0, 0, 35, 25 };
+    p->damageOnHurt = 0;
+    p->runImpactAnim = false;
 
     p->startupAnim.frameCount = 3;
     p->startupAnim.currentFrame = 0;
@@ -99,10 +102,8 @@ Projectile *createProjectile( void ) {
     p->impactAnim.runOnce = true;
     p->impactAnim.finished = false;
     createAnimationFrames( &p->impactAnim, p->impactAnim.frameCount );
-    initAnimationFrames( p->impactAnim.frames, p->impactAnim.frameCount, 1, 5010, -80, 64, 0, 0, false );
-    setupDuration( &p->impactAnim, 50 );
-
-    p->active = false;
+    initAnimationFrames( p->impactAnim.frames, p->impactAnim.frameCount, 1, 5043, -80, 64, 0, 0, false );
+    setupDuration( &p->impactAnim, 30 );
 
     return p;
 
@@ -112,10 +113,12 @@ void destroyProjectile( Projectile *p ) {
     free( p );
 }
 
-void setupProjectile( Projectile *p, ProjectileType type, float x, float y, float velX, float velY ) {
+void setupProjectile( Projectile *p, ProjectileType type, int damageOnHurt, float x, float y, float velX, float velY ) {
 
     p->type = type;
     p->active = true;
+    p->damageOnHurt = damageOnHurt;
+    p->runImpactAnim = false;
 
     p->pos.x = x;
     p->pos.y = y;
@@ -159,54 +162,86 @@ void drawProjectile( Projectile *p ) {
             }
         }
 
+        bool goingRight = p->vel.x >= 0;
+
         if ( af != NULL ) {
-            DrawTexturePro( 
-                rm.ryuTexture,
-                (Rectangle) { 
-                    af->source.x, 
-                    af->source.y, 
-                    p->vel.x >= 0 ? af->source.width : -af->source.width, 
+            DrawTexturePro(
+                rm.ryuTexture,      // for Ken, same as Ryu (TODO: needs to improve...)
+                (Rectangle) {
+                    af->source.x,
+                    af->source.y,
+                    goingRight ? af->source.width : -af->source.width,
                     af->source.height
                 },
-                (Rectangle) { 
-                    p->pos.x + af->source.width / 2 - af->offset.x, 
-                    p->pos.y - af->source.height / 2, 
-                    af->source.width, 
+                (Rectangle) {
+                    p->pos.x + af->source.width / 2 + ( goingRight ? -af->offset.x : af->offset.x ),
+                    p->pos.y - af->source.height / 2,
+                    af->source.width,
                     af->source.height },
                 (Vector2) { 0 },
-                0.0f, 
+                0.0f,
                 WHITE
             );
         }
 
         if ( afD != NULL ) {
-            DrawTexturePro( 
-                rm.ryuTexture,
-                (Rectangle) { 
-                    afD->source.x, 
-                    afD->source.y, 
-                    p->vel.x >= 0 ? afD->source.width : -afD->source.width, 
+            DrawTexturePro(
+                rm.ryuTexture,      // for Ken, same as Ryu (TODO: needs to improve...)
+                (Rectangle) {
+                    afD->source.x,
+                    afD->source.y,
+                    goingRight ? afD->source.width : -afD->source.width,
                     afD->source.height
                 },
-                (Rectangle) { 
-                    p->pos.x + afD->source.width / 2 - afD->offset.x, 
-                    p->pos.y - afD->source.height / 2, 
-                    afD->source.width, 
+                (Rectangle) {
+                    p->pos.x + afD->source.width / 2 + ( goingRight ? -afD->offset.x : afD->offset.x ),
+                    p->pos.y - afD->source.height / 2,
+                    afD->source.width,
                     afD->source.height },
                 (Vector2) { 0 },
-                0.0f, 
+                0.0f,
                 WHITE
             );
         }
 
-        DrawRectangle( p->pos.x + p->hurtbox.x - p->hurtbox.width / 2, p->pos.y + p->hurtbox.y - p->hurtbox.height / 2, p->hurtbox.width, p->hurtbox.height, Fade( RED, 0.4 ) );
-        DrawRectangleLines( p->pos.x + p->hurtbox.x - p->hurtbox.width / 2, p->pos.y + p->hurtbox.y - p->hurtbox.height / 2, p->hurtbox.width, p->hurtbox.height, RED );
+        /*DrawRectangle( p->pos.x + p->hurtbox.x - p->hurtbox.width / 2, p->pos.y + p->hurtbox.y - p->hurtbox.height / 2, p->hurtbox.width, p->hurtbox.height, Fade( RED, 0.4 ) );
+        DrawRectangleLines( p->pos.x + p->hurtbox.x - p->hurtbox.width / 2, p->pos.y + p->hurtbox.y - p->hurtbox.height / 2, p->hurtbox.width, p->hurtbox.height, RED );*/
+
+    }
+
+    if ( p->runImpactAnim ) {
+
+        if ( p->runImpactAnim ) {
+            af = getAnimationCurrentFrame( &p->impactAnim );
+        }
+
+        bool goingRight = p->vel.x >= 0;
+
+        if ( af != NULL ) {
+            DrawTexturePro(
+                rm.ryuTexture,      // for Ken, same as Ryu (TODO: needs to improve...)
+                (Rectangle) {
+                    af->source.x,
+                    af->source.y,
+                    goingRight ? af->source.width : -af->source.width,
+                    af->source.height
+                },
+                (Rectangle) {
+                    p->pos.x + af->source.width / 2 + ( goingRight ? -af->offset.x : af->offset.x ),
+                    p->pos.y - af->source.height / 2,
+                    af->source.width,
+                    af->source.height },
+                (Vector2) { 0 },
+                0.0f,
+                WHITE
+            );
+        }
 
     }
 
 }
 
-void updateProjectile( Projectile *p, float delta ) {
+void updateProjectile( Projectile *p, Camera2D camera, float delta ) {
 
     if ( p->active ) {
 
@@ -232,6 +267,20 @@ void updateProjectile( Projectile *p, float delta ) {
             }
         }
 
+        // out of bounds (right and left)
+        float offBoundsLimit = ( ( GetScreenWidth() / 2 ) / camera.zoom ) + ( p->hurtbox.width / camera.zoom );
+        if ( p->pos.x > camera.target.x + offBoundsLimit || p->pos.x < camera.target.x - offBoundsLimit ) {
+            p->active = false;
+            p->runImpactAnim = false;
+        }
+
+    }
+
+    if ( p->runImpactAnim ) {
+        updateAnimation( &p->impactAnim, DURATION_MODE_MILLISECONDS, delta );
+        if ( p->impactAnim.finished ) {
+            p->runImpactAnim = false;
+        }
     }
 
 }

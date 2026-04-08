@@ -194,6 +194,8 @@ typedef struct Projectile {
     Vector2 pos;
     Vector2 vel;
     Rectangle hurtbox;
+    int damageOnHurt;
+    bool runImpactAnim;
     Animation startupAnim;
     Animation continuousAnimLP;
     Animation continuousAnimDetailLP;

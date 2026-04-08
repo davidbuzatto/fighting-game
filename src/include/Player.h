@@ -13,7 +13,7 @@ void drawPlayerInputBuffer( Player *player );
 void drawPlayerOnionLayers( Player *player, int xOffset );
 void drawPlayerAnimationFrame( Player *player, AnimationFrame *af, Vector2 offset, Color tint );
 void processInputPlayer( Player *player, Player *opponent, float delta, int currentFrame );
-void updatePlayer( Player *player, Player *opponent, float gravity, float delta );
+void updatePlayer( Player *player, Player *opponent, Camera2D camera, float gravity, float delta );
 void flipPlayerSide( Player *player );
 float distancePlayer( Player *player1, Player *player2 );
 
@@ -22,6 +22,7 @@ Animation *getPlayerCurrentAnimation( Player *player );
 void resetPlayerAnimations( Player *player );
 
 void resolvePlayerOponnentContact( Player *p, Player *o );
+void resolvePlayerOponnentProjectileContact( Player *p, Player *o );
 void drawOnHitPlayerAnimation( Player *p );
 void drawOnBlockPlayerAnimation( Player *p );
 

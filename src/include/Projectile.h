@@ -4,7 +4,7 @@
 
 Projectile *createProjectile( void );
 void destroyProjectile( Projectile *p );
-void setupProjectile( Projectile *p, ProjectileType type, float x, float y, float velX, float velY );
+void setupProjectile( Projectile *p, ProjectileType type, int damageOnHurt, float x, float y, float velX, float velY );
 void drawProjectile( Projectile *p );
-void updateProjectile( Projectile *p, float delta );
+void updateProjectile( Projectile *p, Camera2D camera, float delta );
 
