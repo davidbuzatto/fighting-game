@@ -31,7 +31,7 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->pos.y = y;
     p->dim.x = 80;
     p->dim.y = 100;
-    p->texture = &rm.ryuTexture;
+    p->spriteMap = &rm.ryuTexture;
     p->vel = (Vector2) { 0 };
     p->forwardSpeed = 150;
     p->backwardSpeed = 120;
@@ -761,7 +761,7 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
 void initializePlayerKen( float x, float y, Player *p, PlayerStartSide startSide, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo ) {
 
     initializePlayerRyu( x, y, p, startSide, animationDurationMode, showBoxes, showDebugInfo );
-    p->texture = &rm.kenTexture;
+    p->spriteMap = &rm.kenTexture;
     strcpy( p->name, "Ken" );
 
     p->sounds.attackLowSound = rm.kenAttackLowSound;
@@ -880,7 +880,7 @@ void drawPlayerAnimationFrame( Player *player, AnimationFrame *af, Vector2 offse
 
     if ( af != NULL ) {
         DrawTexturePro( 
-            *player->texture,
+            *player->spriteMap,
             (Rectangle) {
                 af->source.x,
                 af->source.y,

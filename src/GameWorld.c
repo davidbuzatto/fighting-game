@@ -93,6 +93,9 @@ static int currentBackTexture = 0;
 static int currentBoatTexture = 0;
 static float boatTextureDrawOffsetY = 5;
 
+// hud
+static const Color PORTRAIT_BG_COLOR = { 112, 136, 198, 255 };
+
 /**
  * @brief Creates a dinamically allocated GameWorld struct instance.
  */
@@ -302,12 +305,12 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
 
     EndMode2D();
 
+    drawHud( gw );
+
     if ( showPlayerInputBuffer ) {
         drawPlayerInputBuffer( gw->player1 );
         drawPlayerInputBuffer( gw->player2 );
     }
-
-    drawHud( gw );
 
 }
 
@@ -1008,7 +1011,7 @@ static void drawHud( GameWorld *gw ) {
         WHITE
     );
 
-    drawTextUsingFont( TextFormat( "%s", gw->player1->name ), 75, 98, 3 );
+    drawTextUsingFont( TextFormat( "%s", gw->player1->name ), 75, 98, 3, -8 );
 
     // player 2
     DrawRectangleRec(
@@ -1038,8 +1041,8 @@ static void drawHud( GameWorld *gw ) {
     );
 
     const char *p2Name = TextFormat( "%s", gw->player2->name );
-    Vector2 measureP2Name = measureTextUsingFont( p2Name, 3 );
-    drawTextUsingFont( p2Name, 823 - measureP2Name.x, 98, 3 );
+    Vector2 measureP2Name = measureTextUsingFont( p2Name, 3, -8 );
+    drawTextUsingFont( p2Name, 830 - measureP2Name.x, 98, 3, -8 );
 
     // ko
     DrawRectangleRounded(
@@ -1068,8 +1071,33 @@ static void drawHud( GameWorld *gw ) {
     DrawText( "K.O", 421, 61, 36, RED );
     
     const char *remainingTimeStr = TextFormat( "%02d", remainingTime );
-    Vector2 measureRemainingTime = measureTextUsingFont( remainingTimeStr, 4 );
-    drawTextUsingFont( remainingTimeStr, GetScreenWidth() / 2 - measureRemainingTime.x / 2 + 5, 103, 4 );
+    Vector2 measureRemainingTime = measureTextUsingFont( remainingTimeStr, 4, -5 );
+    drawTextUsingFont( remainingTimeStr, GetScreenWidth() / 2 - measureRemainingTime.x / 2 + 5, 103, 4, -5 );
+
+    // portraits
+    DrawRectangle( 0, 95, 70, 100, LIGHTGRAY );
+    DrawRectangle( 2, 97, 66, 96, PORTRAIT_BG_COLOR );
+
+    DrawRectangle( GetScreenWidth() - 70, 95, 70, 100, LIGHTGRAY );
+    DrawRectangle( GetScreenWidth() - 68, 97, 66, 96, PORTRAIT_BG_COLOR );
+
+    DrawTexturePro(
+        *gw->player1->spriteMap,
+        (Rectangle) { 131, 15, -96, 112 },
+        (Rectangle) { 2, 97, 66, 96 },
+        (Vector2) { 0 },
+        0.0f,
+        WHITE
+    );
+
+    DrawTexturePro(
+        *gw->player2->spriteMap,
+        (Rectangle) { 131, 15, 96, 112 },
+        (Rectangle) { GetScreenWidth() - 68, 97, 66, 96 },
+        (Vector2) { 0 },
+        0.0f,
+        WHITE
+    );
 
 }
 

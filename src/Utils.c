@@ -328,7 +328,7 @@ static Vector2 fontStartALower = { 29, 137 };
 static Vector2 fontStartPLower = { 17, 149 };
 static Vector2 fontDim = { 12, 10 };
 
-void drawTextUsingFont( const char *text, int x, int y, float scale ) {
+void drawTextUsingFont( const char *text, int x, int y, float scale, int spacing ) {
 
     int size = strlen( text );
     int offset = 0;
@@ -360,7 +360,7 @@ void drawTextUsingFont( const char *text, int x, int y, float scale ) {
         DrawTexturePro( 
             rm.fontsTexture,
             (Rectangle) { (int) ( start.x + (int) ( fontDim.x * offset ) ), start.y, fontDim.x, fontDim.y },
-            (Rectangle) { x + ( fontDim.x * scale ) * i, y, fontDim.x * scale, fontDim.y * scale },
+            (Rectangle) { x + ( fontDim.x * scale + spacing ) * i, y, fontDim.x * scale, fontDim.y * scale },
             (Vector2) { 0 },
             0.0f, 
             WHITE
@@ -370,9 +370,10 @@ void drawTextUsingFont( const char *text, int x, int y, float scale ) {
 
 }
 
-Vector2 measureTextUsingFont( const char *text, float scale ) {
+Vector2 measureTextUsingFont( const char *text, float scale, int spacing ) {
+    int len = strlen( text );
     return (Vector2) {
-        strlen( text ) * fontDim.x * scale,
+        len * fontDim.x * scale + ( len - 1 ) * spacing,
         fontDim.y * scale
     };
 }
