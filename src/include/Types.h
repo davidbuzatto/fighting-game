@@ -351,7 +351,17 @@ typedef struct Player {
 typedef struct GameWorld {
 
     Rectangle floor;
-    Texture2D *stageTexture;
+
+    Texture2D *anchorTexture;
+    Texture2D *floorTexture;
+    Texture2D *back01Texture;
+    Texture2D *back02Texture;
+    Texture2D *back03Texture;
+    Texture2D *boat01Texture;
+    Texture2D *boat02Texture;
+    Texture2D *boat03Texture;
+    Texture2D *boat04Texture;
+    Texture2D *boat05Texture;
 
     float gravity;
 

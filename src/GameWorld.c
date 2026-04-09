@@ -82,6 +82,17 @@ static bool needsToFlipPlayers = false;
 static int remainingTime = 99;
 static float remainingTimeCounter = 0;
 
+// stage
+#define BACK_TEXTURES_COUNT 3
+#define BOAT_TEXTURES_COUNT 5
+static Texture2D *backTextures[BACK_TEXTURES_COUNT];
+static Texture2D *boatTextures[BOAT_TEXTURES_COUNT];
+static float stageTextureChangeTime = 0.2f;
+static float stageTextureChangeCounter = 0.0f;
+static int currentBackTexture = 0;
+static int currentBoatTexture = 0;
+static float boatTextureDrawOffsetY = 5;
+
 /**
  * @brief Creates a dinamically allocated GameWorld struct instance.
  */
@@ -94,7 +105,26 @@ GameWorld* createGameWorld( void ) {
     gw->floor = (Rectangle) {
         0, GetScreenHeight() - floorHeight, GetScreenWidth(), floorHeight
     };
-    gw->stageTexture = &rm.kenStageTexture;
+    gw->anchorTexture = &rm.kenStageAnchorTexture;
+    gw->floorTexture = &rm.kenStageFloorTexture;
+    gw->back01Texture = &rm.kenStageBack01Texture;
+    gw->back02Texture = &rm.kenStageBack02Texture;
+    gw->back03Texture = &rm.kenStageBack03Texture;
+    gw->boat01Texture = &rm.kenStageBoat01Texture;
+    gw->boat02Texture = &rm.kenStageBoat02Texture;
+    gw->boat03Texture = &rm.kenStageBoat03Texture;
+    gw->boat04Texture = &rm.kenStageBoat04Texture;
+    gw->boat05Texture = &rm.kenStageBoat05Texture;
+
+    backTextures[0] = gw->back01Texture;
+    backTextures[1] = gw->back02Texture;
+    backTextures[2] = gw->back03Texture;
+
+    boatTextures[0] = gw->boat01Texture;
+    boatTextures[1] = gw->boat02Texture;
+    boatTextures[2] = gw->boat03Texture;
+    boatTextures[3] = gw->boat04Texture;
+    boatTextures[4] = gw->boat05Texture;
 
     gw->gravity = 1200;
 
@@ -111,8 +141,8 @@ GameWorld* createGameWorld( void ) {
     Player *player1 = createPlayer();
     Player *player2 = createPlayer();
 
-    initializePlayerRyu( gw->stageTexture->width / 2 - 78, 542, player1, PLAYER_START_SIDE_LEFT, DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
-    initializePlayerKen( gw->stageTexture->width / 2 + 50, 542, player2, PLAYER_START_SIDE_RIGHT, DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
+    initializePlayerRyu( gw->back01Texture->width / 2 - 78, 542, player1, PLAYER_START_SIDE_LEFT, DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
+    initializePlayerKen( gw->back01Texture->width / 2 + 50, 542, player2, PLAYER_START_SIDE_RIGHT, DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
     flipPlayerSide( player2 );
 
     player1->kb = (PlayerKeyBindings) {
@@ -244,8 +274,16 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
     BeginMode2D( gw->camera );
 
     if ( !SHOW_MODEL_STAGE_TEXTURE ) {
-        DrawTexture( *gw->stageTexture, 0, GetScreenHeight() - gw->stageTexture->height, WHITE );
+        DrawTexture( *(backTextures[currentBackTexture%BACK_TEXTURES_COUNT]), 0, GetScreenHeight() - backTextures[currentBackTexture%BACK_TEXTURES_COUNT]->height, WHITE );
+        DrawTexture( 
+            *(boatTextures[currentBoatTexture%BOAT_TEXTURES_COUNT]), 
+            0, 
+            GetScreenHeight() - boatTextures[currentBoatTexture%BOAT_TEXTURES_COUNT]->height + boatTextureDrawOffsetY * sinf( DEG2RAD * currentBoatTexture * 10 ) + boatTextureDrawOffsetY, 
+            WHITE
+        );
+        DrawTexture( *gw->floorTexture, 0, GetScreenHeight() - gw->floorTexture->height, WHITE );
     }
+
     drawPlayer( gw->player2 );
     drawPlayer( gw->player1 );
 
@@ -257,6 +295,10 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
 
     drawPlayerProjectile( gw->player1 );
     drawPlayerProjectile( gw->player2 );
+
+    if ( !SHOW_MODEL_STAGE_TEXTURE ) {
+        DrawTexture( *gw->anchorTexture, 0, GetScreenHeight() - gw->anchorTexture->height, WHITE );
+    }
 
     EndMode2D();
 
@@ -276,6 +318,13 @@ static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
     }
     UpdateMusicStream( rm.kenTheme );
 
+    stageTextureChangeCounter += delta;
+    if ( stageTextureChangeCounter >= stageTextureChangeTime ) {
+        stageTextureChangeCounter = 0;
+        currentBackTexture++;
+        currentBoatTexture++;
+    }
+
     if ( remainingTime > 0 ) {
         remainingTimeCounter += delta;
         if ( remainingTimeCounter >= 1.0f ) {
@@ -287,22 +336,6 @@ static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
     if ( IsKeyPressed( KEY_R ) ) {
         gw->player1->health = 100;
         gw->player2->health = 100;
-    }
-
-    if ( IsKeyPressed( KEY_ONE ) ) {
-        gw->stageTexture = &rm.kenStageTexture;
-    }
-    if ( IsKeyPressed( KEY_TWO ) ) {
-        gw->stageTexture = &rm.blankaStageTexture;
-    }
-    if ( IsKeyPressed( KEY_THREE ) ) {
-        gw->stageTexture = &rm.chunliStageTexture;
-    }
-    if ( IsKeyPressed( KEY_FOUR ) ) {
-        gw->stageTexture = &rm.eHondaStageTexture;
-    }
-    if ( IsKeyPressed( KEY_FIVE ) ) {
-        gw->stageTexture = &rm.guileStageTexture;
     }
 
     gw->frameCounter++;
@@ -1233,7 +1266,7 @@ static void updateCameraPlaying( GameWorld *gw ) {
 
     gw->camera.target.x = fabs( ( gw->player1->pos.x + gw->player2->pos.x ) / 2 );
 
-    float worldWidth = gw->stageTexture->width;
+    float worldWidth = gw->back01Texture->width;
     float zoom = gw->camera.zoom;
     float offsetX = gw->camera.offset.x;
     float screenWidth = GetScreenWidth();
@@ -1254,7 +1287,7 @@ static void updateCameraEditing( GameWorld *gw ) {
     gw->camera.target.x = fabs( ( gw->player1->pos.x + gw->player2->pos.x ) / 2 );
     //gw->camera.target.x = GetScreenWidth() / 2 - 100;
 
-    float worldWidth = gw->stageTexture->width;
+    float worldWidth = gw->back01Texture->width;
     float zoom = gw->camera.zoom;
     float offsetX = gw->camera.offset.x;
     float screenWidth = GetScreenWidth();
@@ -1274,8 +1307,8 @@ static void resolveCollisionPlayerStage( Player *player, GameWorld *gw ) {
 
     if ( player->pos.x - player->dim.x / 2 < 0 ) {
         player->pos.x = player->dim.x / 2;
-    } else if ( player->pos.x + player->dim.x / 2 > gw->stageTexture->width ) {
-        player->pos.x = gw->stageTexture->width - player->dim.x / 2;
+    } else if ( player->pos.x + player->dim.x / 2 > gw->back01Texture->width ) {
+        player->pos.x = gw->back01Texture->width - player->dim.x / 2;
     }
 
     if ( player->pos.y + player->dim.y > gw->floor.y ) {

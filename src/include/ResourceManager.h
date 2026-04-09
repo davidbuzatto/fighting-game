@@ -14,11 +14,17 @@ typedef struct ResourceManager {
     Texture2D ryuTexture;
     Texture2D kenTexture;
 
-    Texture2D blankaStageTexture;
-    Texture2D chunliStageTexture;
-    Texture2D eHondaStageTexture;
-    Texture2D guileStageTexture;
-    Texture2D kenStageTexture;
+    Texture2D kenStageAnchorTexture;
+    Texture2D kenStageFloorTexture;
+    Texture2D kenStageBack01Texture;
+    Texture2D kenStageBack02Texture;
+    Texture2D kenStageBack03Texture;
+    Texture2D kenStageBoat01Texture;
+    Texture2D kenStageBoat02Texture;
+    Texture2D kenStageBoat03Texture;
+    Texture2D kenStageBoat04Texture;
+    Texture2D kenStageBoat05Texture;
+
     Texture2D modelStageTexture;
 
     Texture2D effectsTexture;

@@ -52,12 +52,17 @@ void loadResourcesResourceManager( void ) {
         2
     );
 
-    rm.blankaStageTexture = LoadTexture( "resources/images/stages/blanka-stage.png" );
-    rm.chunliStageTexture = LoadTexture( "resources/images/stages/chunli-stage.png" );
-    rm.eHondaStageTexture = LoadTexture( "resources/images/stages/ehonda-stage.png" );
-    rm.guileStageTexture = LoadTexture( "resources/images/stages/guile-stage.png" );
-    rm.kenStageTexture = LoadTexture( "resources/images/stages/ken-stage.png" );
-    rm.modelStageTexture = LoadTexture( "resources/images/stages/model-stage.png" );
+    rm.kenStageAnchorTexture = LoadTexture( "resources/images/stages/ken/anchor.png" );
+    rm.kenStageFloorTexture = LoadTexture( "resources/images/stages/ken/floor.png" );
+    rm.kenStageBack01Texture = LoadTexture( "resources/images/stages/ken/back01.png" );
+    rm.kenStageBack02Texture = LoadTexture( "resources/images/stages/ken/back02.png" );
+    rm.kenStageBack03Texture = LoadTexture( "resources/images/stages/ken/back03.png" );
+    rm.kenStageBoat01Texture = LoadTexture( "resources/images/stages/ken/boat01.png" );
+    rm.kenStageBoat02Texture = LoadTexture( "resources/images/stages/ken/boat02.png" );
+    rm.kenStageBoat03Texture = LoadTexture( "resources/images/stages/ken/boat03.png" );
+    rm.kenStageBoat04Texture = LoadTexture( "resources/images/stages/ken/boat04.png" );
+    rm.kenStageBoat05Texture = LoadTexture( "resources/images/stages/ken/boat05.png" );
+    rm.modelStageTexture = LoadTexture( "resources/images/stages/model-stage-photo.png" );
 
     rm.effectsTexture = loadTextureReplacingColor( 
         "resources/images/misc/effects.png", 
@@ -108,11 +113,16 @@ void unloadResourcesResourceManager( void ) {
     UnloadTexture( rm.ryuTexture );
     UnloadTexture( rm.kenTexture );
 
-    UnloadTexture( rm.blankaStageTexture );
-    UnloadTexture( rm.chunliStageTexture );
-    UnloadTexture( rm.eHondaStageTexture );
-    UnloadTexture( rm.guileStageTexture );
-    UnloadTexture( rm.kenStageTexture );
+    UnloadTexture( rm.kenStageAnchorTexture );
+    UnloadTexture( rm.kenStageFloorTexture );
+    UnloadTexture( rm.kenStageBack01Texture );
+    UnloadTexture( rm.kenStageBack02Texture );
+    UnloadTexture( rm.kenStageBack03Texture );
+    UnloadTexture( rm.kenStageBoat01Texture );
+    UnloadTexture( rm.kenStageBoat02Texture );
+    UnloadTexture( rm.kenStageBoat03Texture );
+    UnloadTexture( rm.kenStageBoat04Texture );
+    UnloadTexture( rm.kenStageBoat05Texture );
     UnloadTexture( rm.modelStageTexture );
 
     UnloadTexture( rm.effectsTexture );
