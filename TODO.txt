@@ -1,13 +1,14 @@
 Bug: 
     Enroscando no canto quando usa tatsu (ajustar usando a caixa de colisão ao invés do limite da câmera?);
 
-Colocar as fotos nas laterais;
-Implementar animação no cenário e camadas;
-Implementar dinâmica das partidas;
+Sombras;
 Joystick;
-Ajustar TODOS os frames com framedata? (https://wiki.supercombo.gg/w/Super_Street_Fighter_2_Turbo/Ryu)
-Refatorar (ajustar posição de funções, nomes de variáveis etc);
+Implementar dinâmica das partidas;
+   Animações ganhou e perdeu;
 Implementar quedas?
+Ajustar TODOS os frames com framedata? (https://wiki.supercombo.gg/w/Super_Street_Fighter_2_Turbo/Ryu)
+
+Refatorar;
 
 Hit/hurt boxes: https://doctorguile.github.io/ssf2st/
 Assets:
