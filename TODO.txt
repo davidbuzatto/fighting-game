@@ -1,11 +1,25 @@
 Bug: 
     Enroscando no canto quando usa tatsu (ajustar usando a caixa de colisão ao invés do limite da câmera?);
 
+Animações novas:
+    Timeover;
+    Queda;
+    Queda (perdeu);
+    Lavantar;
+    Ganhou 1;
+    Ganhou 2;
+
+Implementar quedas
+
 Joystick;
-Melhorar sons;
 Implementar dinâmica das partidas;
    Animações ganhou e perdeu;
-Implementar quedas?
+
+Timeover
+    Quem ganhou, animação ganhou.
+    Quem perdeu, animação timeover.
+    Empate no tempo (draw), ambos animação timeover.
+
 Ajustar TODOS os frames com framedata? (https://wiki.supercombo.gg/w/Super_Street_Fighter_2_Turbo/Ryu)
 
 Refatorar;
