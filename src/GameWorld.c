@@ -289,8 +289,8 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
         DrawTexture( *gw->floorTexture, 0, GetScreenHeight() - gw->floorTexture->height, WHITE );
     }
 
-    drawPlayerShadow( gw->player2, gw->floor.y );
-    drawPlayerShadow( gw->player1, gw->floor.y );
+    drawPlayerShadow( gw->player2, gw->floor.y - 2, 60.0f, 0.15f );
+    drawPlayerShadow( gw->player1, gw->floor.y - 2, 60.0f, 0.15f );
 
     drawPlayer( gw->player2 );
     drawPlayer( gw->player1 );

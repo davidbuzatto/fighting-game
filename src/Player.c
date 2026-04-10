@@ -5,6 +5,7 @@
 #include <math.h>
 
 #include "raylib/raylib.h"
+#include "raylib/rlgl.h"
 
 #include "Animation.h"
 #include "Macros.h"
@@ -803,17 +804,20 @@ void drawPlayer( Player *player ) {
 
 }
 
-void drawPlayerShadow( Player *player, float floorY ) {
+void drawPlayerShadow( Player *player, float floorY, float shear, float scaleY ) {
 
     float dy = floorY - ( player->pos.y + player->dim.y );
 
-    DrawEllipse( 
+    AnimationFrame *af = getPlayerCurrentAnimationFrame( player );
+    drawPlayerAnimationFrameForShadow( player, af, (Vector2) { 0 }, Fade( BLACK, 0.5f - dy / 400 ), floorY - dy / 10, shear, scaleY );
+
+    /*DrawEllipse( 
         player->pos.x, 
         floorY - 5, 
         player->dim.x - 15 + dy / 10, 
         10 + dy / 20, 
         Fade( BLACK, 0.5f - dy / 200 )
-    );
+    );*/
 
 }
 
@@ -918,6 +922,62 @@ void drawPlayerAnimationFrame( Player *player, AnimationFrame *af, Vector2 offse
     if ( player->showBoxes ) {
         drawPlayerAnimationFrameBoxes( player, af, offset );
     }
+
+}
+
+void drawPlayerAnimationFrameForShadow( Player *player, AnimationFrame *af, Vector2 offset, Color tint, float floorY, float shear, float scaleY ) {
+
+    if ( af == NULL ) return;
+
+    float srcWidth  = fabs( af->source.width );
+    float srcHeight = af->source.height;
+    float texW      = (float) player->spriteMap->width;
+    float texH      = (float) player->spriteMap->height;
+
+    // destination size: height flattened by scaleY
+    float destW = srcWidth;
+    float destH = srcHeight * scaleY;
+
+    // X position: same logic as the normal draw
+    float destX = offset.x + player->pos.x - srcWidth / 2.0f + ( player->lookingRight ? af->offset.x : -af->offset.x );
+
+    // Y position: shadow base anchored to the floor (floorY)
+    float destY = floorY - destH;
+
+    // UV coordinates of the source rect in the spritesheet
+    float u0 = af->source.x / texW;
+    float u1 = ( af->source.x + srcWidth ) / texW;
+    float v0 = af->source.y / texH;
+    float v1 = ( af->source.y + srcHeight ) / texH;
+
+    // flip UVs horizontally when the sprite should be mirrored
+    // (same logic as drawPlayerAnimationFrame: lookingRight uses negative source.width)
+    if ( ( player->lookingRight ? af->source.width : -af->source.width ) < 0 ) {
+        float tmp = u0; u0 = u1; u1 = tmp;
+    }
+
+    rlSetTexture( player->spriteMap->id );
+    rlBegin( RL_QUADS );
+        rlNormal3f( 0.0f, 0.0f, 1.0f );
+        rlColor4ub( tint.r, tint.g, tint.b, tint.a );
+
+        // top-left  (shifted right by shear)
+        rlTexCoord2f( u0, v0 );
+        rlVertex2f( destX + shear, destY );
+
+        // bottom-left  (anchored to the floor)
+        rlTexCoord2f( u0, v1 );
+        rlVertex2f( destX, destY + destH );
+
+        // bottom-right  (anchored to the floor)
+        rlTexCoord2f( u1, v1 );
+        rlVertex2f( destX + destW, destY + destH );
+
+        // top-right  (shifted right by shear)
+        rlTexCoord2f( u1, v0 );
+        rlVertex2f( destX + destW + shear, destY );
+    rlEnd();
+    rlSetTexture( 0 );
 
 }
 

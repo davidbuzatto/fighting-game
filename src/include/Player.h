@@ -9,10 +9,11 @@ void initializePlayerKen( float x, float y, Player *p, PlayerStartSide startSide
 
 void destroyPlayer( Player *player );
 void drawPlayer( Player *player );
-void drawPlayerShadow( Player *player, float floorY );
+void drawPlayerShadow( Player *player, float floorY, float shear, float scaleY );
 void drawPlayerInputBuffer( Player *player );
 void drawPlayerOnionLayers( Player *player, int xOffset );
 void drawPlayerAnimationFrame( Player *player, AnimationFrame *af, Vector2 offset, Color tint );
+void drawPlayerAnimationFrameForShadow( Player *player, AnimationFrame *af, Vector2 offset, Color tint, float floorY, float shear, float scaleY );
 void processInputPlayer( Player *player, Player *opponent, float delta, int currentFrame );
 void updatePlayer( Player *player, Player *opponent, Camera2D camera, float gravity, float delta );
 void flipPlayerSide( Player *player );
