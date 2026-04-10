@@ -3,6 +3,7 @@ Bug:
 
 Sombras;
 Joystick;
+Melhorar sons;
 Implementar dinâmica das partidas;
    Animações ganhou e perdeu;
 Implementar quedas?

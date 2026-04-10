@@ -29,8 +29,8 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
 
     p->pos.x = x;
     p->pos.y = y;
-    p->dim.x = 80;
-    p->dim.y = 100;
+    p->dim.x = 50;
+    p->dim.y = 90;
     p->spriteMap = &rm.ryuTexture;
     p->vel = (Vector2) { 0 };
     p->forwardSpeed = 150;
@@ -787,6 +787,10 @@ void destroyPlayer( Player *player ) {
 
 void drawPlayer( Player *player ) {
 
+    /*if ( !isAirborneState( player->state ) ) {
+        DrawEllipse( player->pos.x, player->pos.y + player->dim.y - 5, player->dim.x - 15, 10, Fade( BLACK, 0.5f ) );
+    }*/
+
     AnimationFrame *af = getPlayerCurrentAnimationFrame( player );
     drawPlayerAnimationFrame( player, af, (Vector2) { 0 }, WHITE );
 
@@ -985,7 +989,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
                         PROJECTILE_TYPE_LOW, 
                         15,
                         player->pos.x + ( player->lookingRight ? 80 : -80 ), 
-                        player->pos.y + 40, 
+                        player->pos.y + 30, 
                         player->lookingRight ? 100 : -100,
                         0
                     );
@@ -995,7 +999,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
                         PROJECTILE_TYPE_MID, 
                         20,
                         player->pos.x + ( player->lookingRight ? 80 : -80 ), 
-                        player->pos.y + 40, 
+                        player->pos.y + 30, 
                         player->lookingRight ? 150 : -150,
                         0
                     );
@@ -1005,7 +1009,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
                         PROJECTILE_TYPE_HIGH, 
                         25,
                         player->pos.x + ( player->lookingRight ? 80 : -80 ), 
-                        player->pos.y + 40, 
+                        player->pos.y + 30, 
                         player->lookingRight ? 200 : - 200,
                         0
                     );

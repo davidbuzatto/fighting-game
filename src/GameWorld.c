@@ -31,6 +31,7 @@
 #define SHOW_MODEL_STAGE_TEXTURE false
 #define DURATION_MODE DURATION_MODE_MILLISECONDS
 #define INITIAL_GAME_MODE GAME_MODE_PLAYING
+#define PLAY_MUSIC false
 
 #define PLAYER_1_ANIMATIONS_FILE "resources/animations/ryu.json"
 #define PLAYER_2_ANIMATIONS_FILE "resources/animations/ken.json"
@@ -92,6 +93,7 @@ static float stageTextureChangeCounter = 0.0f;
 static int currentBackTexture = 0;
 static int currentBoatTexture = 0;
 static float boatTextureDrawOffsetY = 5;
+static bool playMusic = PLAY_MUSIC;
 
 // hud
 static const Color PORTRAIT_BG_COLOR = { 112, 136, 198, 255 };
@@ -144,8 +146,8 @@ GameWorld* createGameWorld( void ) {
     Player *player1 = createPlayer();
     Player *player2 = createPlayer();
 
-    initializePlayerRyu( gw->back01Texture->width / 2 - 78, 542, player1, PLAYER_START_SIDE_LEFT, DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
-    initializePlayerKen( gw->back01Texture->width / 2 + 50, 542, player2, PLAYER_START_SIDE_RIGHT, DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
+    initializePlayerRyu( gw->back01Texture->width / 2 - 78, 552, player1, PLAYER_START_SIDE_LEFT, DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
+    initializePlayerKen( gw->back01Texture->width / 2 + 50, 552, player2, PLAYER_START_SIDE_RIGHT, DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
     flipPlayerSide( player2 );
 
     player1->kb = (PlayerKeyBindings) {
@@ -316,10 +318,12 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
 
 static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
 
-    if ( !IsMusicStreamPlaying( rm.kenTheme ) )  {
-        PlayMusicStream( rm.kenTheme );
+    if ( playMusic ) {
+        if ( !IsMusicStreamPlaying( rm.kenTheme ) )  {
+            PlayMusicStream( rm.kenTheme );
+        }
+        UpdateMusicStream( rm.kenTheme );
     }
-    UpdateMusicStream( rm.kenTheme );
 
     stageTextureChangeCounter += delta;
     if ( stageTextureChangeCounter >= stageTextureChangeTime ) {
