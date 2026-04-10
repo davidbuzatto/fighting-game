@@ -31,6 +31,7 @@ compile_project() {
         -std=c99 \
         -Wno-missing-braces \
         -I src/include/ \
+        -I src/include/parson \
         -lraylib \
         -lGL \
         -lm \
