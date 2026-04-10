@@ -24,6 +24,8 @@ Ajustar TODOS os frames com framedata? (https://wiki.supercombo.gg/w/Super_Stree
 
 Refatorar;
 
+Deploy com wasm;
+
 Hit/hurt boxes: https://doctorguile.github.io/ssf2st/
 Assets:
     https://www.spriters-resource.com/snes/supersf2/
