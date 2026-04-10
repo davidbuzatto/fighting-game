@@ -91,7 +91,7 @@ void loadResourcesResourceManager( void ) {
     rm.ryuAttackLowSound = LoadSound( "resources/sfx/attack-low.wav" );
     rm.ryuAttackMidSound = LoadSound( "resources/sfx/attack-mid.wav" );
     rm.ryuAttackHighSound = LoadSound( "resources/sfx/attack-high.wav" );
-    rm.ryuHitSound = LoadSound( "resources/sfx/hit.wav" );
+    rm.ryuHitSound = LoadSound( "resources/sfx/hit-04.wav" );
     rm.ryuHadoukenSound = LoadSound( "resources/sfx/ryu-hadouken.wav" );
     rm.ryuShoryukenSound = LoadSound( "resources/sfx/ryu-shoryuken.wav" );
     rm.ryuTatsumakiSound = LoadSound( "resources/sfx/ryu-tatsumaki.wav" );

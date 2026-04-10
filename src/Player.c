@@ -14,6 +14,8 @@
 #include "Types.h"
 #include "Utils.h"
 
+static const bool TRACE_SPECIAL_MOVE = false;
+
 static void drawPlayerAnimationFrameBoxes( Player *player, AnimationFrame *af, Vector2 offset );
 static void processInputAndFeedInputBuffer( Player *p, int currentFrame );
 static void addInputToPlayerInputBuffer( Player *p, InputType input, int currentFrame );
@@ -1231,7 +1233,6 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
     if ( cmd != NULL ) {
 
         // TODO: needs to be generalized (in the future)
-        // trace for debug
 
         PlayerState specialState = PLAYER_STATE_LAST;
 
@@ -1323,9 +1324,11 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
             default: break;
         }
 
-        trace( "[%s] %s + %s detected! (player: %s, frame: %d)",
-               player->lookingRight ? "RIGHT" : "LEFT",
-               cmdName, btnName, player->name, currentFrame );
+        if ( TRACE_SPECIAL_MOVE ) {
+            trace( "[%s] %s + %s detected! (player: %s, frame: %d)",
+                player->lookingRight ? "RIGHT" : "LEFT",
+                cmdName, btnName, player->name, currentFrame );
+        }
 
         if ( specialState != PLAYER_STATE_LAST ) {
             if ( ( specialState == PLAYER_STATE_SPECIAL_LP_HADOUKEN ||
