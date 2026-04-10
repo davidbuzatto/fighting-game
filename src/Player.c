@@ -651,6 +651,60 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
         }
     }
 
+    p->fallingAnim.frameCount = 4;
+    p->fallingAnim.currentFrame = 0;
+    p->fallingAnim.frameTimeCounter = 0.0f;
+    p->fallingAnim.stopAtLastFrame = true;
+    p->fallingAnim.runOnce = false;
+    p->fallingAnim.finished = false;
+    createAnimationFrames( &p->fallingAnim, p->fallingAnim.frameCount );
+    initAnimationFrames( p->fallingAnim.frames, p->fallingAnim.frameCount, 1, 4217, -128, 96, 32, 0, false );
+
+    p->gettingUpAnim.frameCount = 4;
+    p->gettingUpAnim.currentFrame = 0;
+    p->gettingUpAnim.frameTimeCounter = 0.0f;
+    p->gettingUpAnim.stopAtLastFrame = true;
+    p->gettingUpAnim.runOnce = false;
+    p->gettingUpAnim.finished = false;
+    createAnimationFrames( &p->gettingUpAnim, p->gettingUpAnim.frameCount );
+    initAnimationFrames( p->gettingUpAnim.frames, p->gettingUpAnim.frameCount, 1, 4395, -112, 128, 24, 0, false );
+
+    p->victory1Anim.frameCount = 3;
+    p->victory1Anim.currentFrame = 0;
+    p->victory1Anim.frameTimeCounter = 0.0f;
+    p->victory1Anim.stopAtLastFrame = true;
+    p->victory1Anim.runOnce = false;
+    p->victory1Anim.finished = false;
+    createAnimationFrames( &p->victory1Anim, p->victory1Anim.frameCount );
+    initAnimationFrames( p->victory1Anim.frames, p->victory1Anim.frameCount, 1, 4524, -64, 128, 0, 0, false );
+
+    p->victory2Anim.frameCount = 2;
+    p->victory2Anim.currentFrame = 0;
+    p->victory2Anim.frameTimeCounter = 0.0f;
+    p->victory2Anim.stopAtLastFrame = true;
+    p->victory2Anim.runOnce = false;
+    p->victory2Anim.finished = false;
+    createAnimationFrames( &p->victory2Anim, p->victory2Anim.frameCount );
+    initAnimationFrames( p->victory2Anim.frames, p->victory2Anim.frameCount, 1, 4653, -64, 112, 0, 0, false );
+
+    p->fallingLoseAnim.frameCount = 5;
+    p->fallingLoseAnim.currentFrame = 0;
+    p->fallingLoseAnim.frameTimeCounter = 0.0f;
+    p->fallingLoseAnim.stopAtLastFrame = true;
+    p->fallingLoseAnim.runOnce = false;
+    p->fallingLoseAnim.finished = false;
+    createAnimationFrames( &p->fallingLoseAnim, p->fallingLoseAnim.frameCount );
+    initAnimationFrames( p->fallingLoseAnim.frames, p->fallingLoseAnim.frameCount, 1, 4314, -128, 80, 32, 0, false );
+
+    p->timeOverAnim.frameCount = 1;
+    p->timeOverAnim.currentFrame = 0;
+    p->timeOverAnim.frameTimeCounter = 0.0f;
+    p->timeOverAnim.stopAtLastFrame = true;
+    p->timeOverAnim.runOnce = false;
+    p->timeOverAnim.finished = false;
+    createAnimationFrames( &p->timeOverAnim, p->timeOverAnim.frameCount );
+    initAnimationFrames( p->timeOverAnim.frames, p->timeOverAnim.frameCount, 1, 239, -64, 112, 0, 0, false );
+
     p->lastAnim.frameCount = 0;
     p->lastAnim.currentFrame = 0;
     p->lastAnim.frameTimeCounter = 0.0f;
@@ -718,6 +772,12 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->animations[PLAYER_STATE_SPECIAL_LK_TATSUMAKI] = &p->lkTatsumakiAnim; animationCount++;
     p->animations[PLAYER_STATE_SPECIAL_MK_TATSUMAKI] = &p->mkTatsumakiAnim; animationCount++;
     p->animations[PLAYER_STATE_SPECIAL_HK_TATSUMAKI] = &p->hkTatsumakiAnim; animationCount++;
+    p->animations[PLAYER_STATE_FALLING] = &p->fallingAnim;                  animationCount++;
+    p->animations[PLAYER_STATE_GETTING_UP] = &p->gettingUpAnim;             animationCount++;
+    p->animations[PLAYER_STATE_VICTORY_1] = &p->victory1Anim;               animationCount++;
+    p->animations[PLAYER_STATE_VICTORY_2] = &p->victory2Anim;               animationCount++;
+    p->animations[PLAYER_STATE_FALLING_LOSE] = &p->fallingLoseAnim;         animationCount++;
+    p->animations[PLAYER_STATE_TIMEOVER] = &p->timeOverAnim;                animationCount++;
     p->animations[PLAYER_STATE_LAST] = &p->lastAnim;                        animationCount++;
     p->animationCount = animationCount;
 

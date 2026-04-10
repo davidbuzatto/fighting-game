@@ -1,14 +1,6 @@
 Bug: 
     Enroscando no canto quando usa tatsu (ajustar usando a caixa de colisão ao invés do limite da câmera?);
 
-Animações novas:
-    Timeover;
-    Queda;
-    Queda (perdeu);
-    Lavantar;
-    Ganhou 1;
-    Ganhou 2;
-
 Implementar quedas
 
 Joystick;
