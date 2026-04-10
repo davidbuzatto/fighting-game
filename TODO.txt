@@ -1,7 +1,6 @@
 Bug: 
     Enroscando no canto quando usa tatsu (ajustar usando a caixa de colisão ao invés do limite da câmera?);
 
-Sombras;
 Joystick;
 Melhorar sons;
 Implementar dinâmica das partidas;

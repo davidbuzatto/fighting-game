@@ -787,10 +787,6 @@ void destroyPlayer( Player *player ) {
 
 void drawPlayer( Player *player ) {
 
-    /*if ( !isAirborneState( player->state ) ) {
-        DrawEllipse( player->pos.x, player->pos.y + player->dim.y - 5, player->dim.x - 15, 10, Fade( BLACK, 0.5f ) );
-    }*/
-
     AnimationFrame *af = getPlayerCurrentAnimationFrame( player );
     drawPlayerAnimationFrame( player, af, (Vector2) { 0 }, WHITE );
 
@@ -802,6 +798,20 @@ void drawPlayer( Player *player ) {
         DrawText( TextFormat( "y: %.2f", player->pos.y ), player->pos.x + 5, player->pos.y - 10, 10, BLACK );
         
     }
+
+}
+
+void drawPlayerShadow( Player *player, float floorY ) {
+
+    float dy = floorY - ( player->pos.y + player->dim.y );
+
+    DrawEllipse( 
+        player->pos.x, 
+        floorY - 5, 
+        player->dim.x - 15 + dy / 10, 
+        10 + dy / 20, 
+        Fade( BLACK, 0.5f - dy / 200 )
+    );
 
 }
 
@@ -1265,6 +1275,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
                     specialState = PLAYER_STATE_SPECIAL_LP_HADOUKEN;
                 } else if ( isShoryuken ) {
                     specialState = PLAYER_STATE_SPECIAL_LP_SHORYUKEN;
+                    velX = 10.0f;
                     velY = -300.0f;
                 }
                 break;
@@ -1274,6 +1285,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
                     specialState = PLAYER_STATE_SPECIAL_MP_HADOUKEN;
                 } else if ( isShoryuken ) {
                     specialState = PLAYER_STATE_SPECIAL_MP_SHORYUKEN;
+                    velX = 15.0f;
                     velY = -400.0f;
                 }
                 break;
@@ -1283,6 +1295,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
                     specialState = PLAYER_STATE_SPECIAL_HP_HADOUKEN;
                 } else if ( isShoryuken ) {
                     specialState = PLAYER_STATE_SPECIAL_HP_SHORYUKEN;
+                    velX = 20.0f;
                     velY = -500.0f;
                 }
                 break;

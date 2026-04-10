@@ -9,6 +9,7 @@ void initializePlayerKen( float x, float y, Player *p, PlayerStartSide startSide
 
 void destroyPlayer( Player *player );
 void drawPlayer( Player *player );
+void drawPlayerShadow( Player *player, float floorY );
 void drawPlayerInputBuffer( Player *player );
 void drawPlayerOnionLayers( Player *player, int xOffset );
 void drawPlayerAnimationFrame( Player *player, AnimationFrame *af, Vector2 offset, Color tint );
