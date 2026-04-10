@@ -99,7 +99,7 @@ void loadResourcesResourceManager( void ) {
     rm.kenAttackLowSound = LoadSound( "resources/sfx/attack-low.wav" );
     rm.kenAttackMidSound = LoadSound( "resources/sfx/attack-mid.wav" );
     rm.kenAttackHighSound = LoadSound( "resources/sfx/attack-high.wav" );
-    rm.kenHitSound = LoadSound( "resources/sfx/hit.wav" );
+    rm.kenHitSound = LoadSound( "resources/sfx/hit-04.wav" );
     rm.kenHadoukenSound = LoadSound( "resources/sfx/ken-hadouken.wav" );
     rm.kenShoryukenSound = LoadSound( "resources/sfx/ken-shoryuken.wav" );
     rm.kenTatsumakiSound = LoadSound( "resources/sfx/ken-tatsumaki.wav" );
