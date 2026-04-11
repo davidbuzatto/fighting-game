@@ -1,6 +1,3 @@
-Bug: 
-    Enroscando no canto quando usa tatsu (ajustar usando a caixa de colisão ao invés do limite da câmera?);
-
 Implementar dinâmica das partidas;
     Animações ganhou e perdeu;
     Timeover

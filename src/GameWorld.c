@@ -185,6 +185,8 @@ GameWorld* createGameWorld( void ) {
     loadPlayerAnimationFrameBoxes( gw->player1, PLAYER_1_ANIMATIONS_FILE );
     loadPlayerAnimationFrameBoxes( gw->player2, PLAYER_2_ANIMATIONS_FILE );
 
+    updateCameraPlaying( gw );
+
     return gw;
 
 }
@@ -1353,10 +1355,34 @@ static void updateCameraEditing( GameWorld *gw ) {
 
 static void resolveCollisionPlayerStage( Player *player, GameWorld *gw ) {
 
-    if ( player->pos.x - player->dim.x / 2 < 0 ) {
-        player->pos.x = player->dim.x / 2;
-    } else if ( player->pos.x + player->dim.x / 2 > gw->back01Texture->width ) {
-        player->pos.x = gw->back01Texture->width - player->dim.x / 2;
+    float half = player->dim.x / 2.0f;
+    float zoom = gw->camera.zoom;
+    float offsetX = gw->camera.offset.x;
+    float screenW = GetScreenWidth();
+    float targetX = gw->camera.target.x;
+
+    // stage hard limits
+    float stageMinX = half;
+    float stageMaxX = gw->back01Texture->width - half;
+
+    // camera visible limits (world coordinates)
+    float camMinX = targetX - offsetX / zoom + half;
+    float camMaxX = targetX + ( screenW - offsetX ) / zoom - half;
+
+    // effective limit: tightest of stage boundary and camera edge
+    float minX = fmaxf( stageMinX, camMinX );
+    float maxX = fminf( stageMaxX, camMaxX );
+
+    if ( player->pos.x < minX ) {
+        player->pos.x = minX;
+        if ( player->vel.x < 0 ) {
+            player->vel.x = 0.0f;
+        }
+    } else if ( player->pos.x > maxX ) {
+        player->pos.x = maxX;
+        if ( player->vel.x > 0 ) {
+            player->vel.x = 0.0f;
+        }
     }
 
     if ( player->pos.y + player->dim.y > gw->floor.y ) {
