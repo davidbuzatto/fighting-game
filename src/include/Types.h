@@ -226,9 +226,11 @@ typedef struct PlayerSounds {
 
 typedef struct Player {
 
-    Texture2D *spriteMap;
+    Texture2D *baseSpriteMap;
     Texture2D *specialMovesSpriteMap;
     Image *pallete;
+
+    Texture2D currentSpriteMap;
 
     Vector2 pos;
     Vector2 dim;

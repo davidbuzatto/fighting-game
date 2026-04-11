@@ -28,15 +28,13 @@ Player *createPlayer() {
     return p;
 }
 
-void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide, int gamepadId, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo ) {
+static void initializePlayerCommon( float x, float y, Player *p, PlayerStartSide startSide, int gamepadId, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo ) {
 
     p->pos.x = x;
     p->pos.y = y;
     p->dim.x = 50;
     p->dim.y = 90;
-    p->spriteMap = &rm.ryuSpriteMapTexture;
-    p->specialMovesSpriteMap = &rm.ryuSpecialMovesSpriteMapTexture;
-    p->pallete = &rm.ryuPalleteImage;
+
     p->vel = (Vector2) { 0 };
     p->forwardSpeed = 150;
     p->backwardSpeed = 120;
@@ -45,20 +43,11 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->state = PLAYER_STATE_IDLE;
     p->lastState = PLAYER_STATE_IDLE;
     p->health = 100;
-    strcpy( p->name, "Ryu" );
     p->lookingRight = true;
     p->startSide = startSide;
     p->showBoxes = showBoxes;
     p->showDebugInfo = showDebugInfo;
     p->gamepadId = gamepadId;
-
-    p->sounds.attackLowSound = rm.ryuAttackLowSound;
-    p->sounds.attackMidSound = rm.ryuAttackMidSound;
-    p->sounds.attackHighSound = rm.ryuAttackHighSound;
-    p->sounds.hitSound = rm.ryuHitSound;
-    p->sounds.hadoukenSound = rm.ryuHadoukenSound;
-    p->sounds.shoryukenSound = rm.ryuShoryukenSound;
-    p->sounds.tatsumakiSound = rm.ryuTatsumakiSound;
 
     p->inputBufferHead = -1;
     p->inputBufferTail = -1;
@@ -820,16 +809,36 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->onBlockPos = (Vector2) { 0 };
     p->onBlockPosActive = false;
 
+}
+
+void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide, int gamepadId, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo ) {
+
+    initializePlayerCommon( x, y, p, startSide, gamepadId, animationDurationMode, showBoxes, showDebugInfo );
+    p->baseSpriteMap = &rm.ryuSpriteMapTexture;
+    p->specialMovesSpriteMap = &rm.ryuSpecialMovesSpriteMapTexture;
+    p->pallete = &rm.ryuPalleteImage;
+    p->currentSpriteMap = createTextureFromTextureReplacingColor( *(p->baseSpriteMap), NULL, NULL, 0 );
+    strcpy( p->name, "Ryu" );
+
+    p->sounds.attackLowSound = rm.ryuAttackLowSound;
+    p->sounds.attackMidSound = rm.ryuAttackMidSound;
+    p->sounds.attackHighSound = rm.ryuAttackHighSound;
+    p->sounds.hitSound = rm.ryuHitSound;
+    p->sounds.hadoukenSound = rm.ryuHadoukenSound;
+    p->sounds.shoryukenSound = rm.ryuShoryukenSound;
+    p->sounds.tatsumakiSound = rm.ryuTatsumakiSound;
+
     p->projectile = createProjectile( p->specialMovesSpriteMap );
 
 }
 
 void initializePlayerKen( float x, float y, Player *p, PlayerStartSide startSide, int gamepadId, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo ) {
 
-    initializePlayerRyu( x, y, p, startSide, gamepadId, animationDurationMode, showBoxes, showDebugInfo );
-    p->spriteMap = &rm.kenSpriteMapTexture;
+    initializePlayerCommon( x, y, p, startSide, gamepadId, animationDurationMode, showBoxes, showDebugInfo );
+    p->baseSpriteMap = &rm.kenSpriteMapTexture;
     p->specialMovesSpriteMap = &rm.kenSpecialMovesSpriteMapTexture;
     p->pallete = &rm.kenPalleteImage;
+    p->currentSpriteMap = createTextureFromTextureReplacingColor( *(p->baseSpriteMap), NULL, NULL, 0 );
     strcpy( p->name, "Ken" );
 
     p->sounds.attackLowSound = rm.kenAttackLowSound;
@@ -839,6 +848,8 @@ void initializePlayerKen( float x, float y, Player *p, PlayerStartSide startSide
     p->sounds.hadoukenSound = rm.kenHadoukenSound;
     p->sounds.shoryukenSound = rm.kenShoryukenSound;
     p->sounds.tatsumakiSound = rm.kenTatsumakiSound;
+
+    p->projectile = createProjectile( p->specialMovesSpriteMap );
 
 }
 
@@ -850,6 +861,7 @@ void destroyPlayer( Player *player ) {
         destroyAnimationFrames( player->supportAnimations[i] );
     }
     free( player->projectile );
+    UnloadTexture( player->currentSpriteMap );
     free( player );
 }
 
@@ -965,7 +977,7 @@ void drawPlayerAnimationFrame( Player *player, AnimationFrame *af, Vector2 offse
 
     if ( af != NULL ) {
         DrawTexturePro( 
-            *player->spriteMap,
+            player->currentSpriteMap,
             (Rectangle) {
                 af->source.x,
                 af->source.y,
@@ -996,8 +1008,8 @@ void drawPlayerAnimationFrameForShadow( Player *player, AnimationFrame *af, Vect
 
     float srcWidth  = fabs( af->source.width );
     float srcHeight = af->source.height;
-    float texW      = (float) player->spriteMap->width;
-    float texH      = (float) player->spriteMap->height;
+    float texW      = (float) player->currentSpriteMap.width;
+    float texH      = (float) player->currentSpriteMap.height;
 
     // destination size: height flattened by scaleY
     float destW = srcWidth;
@@ -1021,7 +1033,7 @@ void drawPlayerAnimationFrameForShadow( Player *player, AnimationFrame *af, Vect
         float tmp = u0; u0 = u1; u1 = tmp;
     }
 
-    rlSetTexture( player->spriteMap->id );
+    rlSetTexture( player->currentSpriteMap.id );
     rlBegin( RL_QUADS );
         rlNormal3f( 0.0f, 0.0f, 1.0f );
         rlColor4ub( tint.r, tint.g, tint.b, tint.a );
