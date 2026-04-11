@@ -27,9 +27,9 @@
 #define SHOW_BOXES false
 #define SHOW_DEBUG_INFO false
 #define SHOW_PLAYER_ONION_MODE_EDITING true
-#define SHOW_PLAYER_INPUT_BUFFER true
+#define SHOW_PLAYER_INPUT_BUFFER false
 #define SHOW_MODEL_STAGE_TEXTURE false
-#define DURATION_MODE DURATION_MODE_MILLISECONDS
+#define ANIMATION_DURATION_MODE DURATION_MODE_MILLISECONDS
 #define INITIAL_GAME_MODE GAME_MODE_PLAYING
 #define PLAY_MUSIC false
 #define PALLETE_COLOR_LIMIT 10
@@ -147,8 +147,8 @@ GameWorld* createGameWorld( void ) {
     Player *player1 = createPlayer();
     Player *player2 = createPlayer();
 
-    initializePlayerRyu( gw->back01Texture->width / 2 - 78, 552, player1, PLAYER_START_SIDE_LEFT, 0, DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
-    initializePlayerKen( gw->back01Texture->width / 2 + 50, 552, player2, PLAYER_START_SIDE_RIGHT, 1, DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
+    initializePlayerRyu( gw->back01Texture->width / 2 - 78, 552, player1, PLAYER_START_SIDE_LEFT, 0, ANIMATION_DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
+    initializePlayerKen( gw->back01Texture->width / 2 + 50, 552, player2, PLAYER_START_SIDE_RIGHT, 1, ANIMATION_DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
     flipPlayerSide( player2 );
 
     player1->kb = (PlayerKeyBindings) {
@@ -298,14 +298,14 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
     drawPlayer( gw->player2 );
     drawPlayer( gw->player1 );
 
+    drawPlayerProjectile( gw->player1 );
+    drawPlayerProjectile( gw->player2 );
+
     drawOnHitPlayerAnimation( gw->player1 );
     drawOnHitPlayerAnimation( gw->player2 );
 
     drawOnBlockPlayerAnimation( gw->player1 );
     drawOnBlockPlayerAnimation( gw->player2 );
-
-    drawPlayerProjectile( gw->player1 );
-    drawPlayerProjectile( gw->player2 );
 
     if ( !SHOW_MODEL_STAGE_TEXTURE ) {
         DrawTexture( *gw->anchorTexture, 0, GetScreenHeight() - gw->anchorTexture->height, WHITE );
@@ -651,7 +651,7 @@ static void updateGameWorldEditing( GameWorld *gw, float delta ) {
     }
 
     if ( runPlayerCurrentAnimation ) {
-        updateAnimation( anim, DURATION_MODE, delta );
+        updateAnimation( anim, gw->player1->animationDurationMode, delta );
         if ( ( anim->runOnce || anim->stopAtLastFrame ) && anim->finished ) {
             resetAnimation( anim );
         }
@@ -665,7 +665,7 @@ static void updateGameWorldEditing( GameWorld *gw, float delta ) {
     }
 
     if ( runPlayerCurrentAnimationOnce ) {
-        updateAnimation( anim, DURATION_MODE, delta );
+        updateAnimation( anim, gw->player1->animationDurationMode, delta );
         if ( anim->finished ) {
             runPlayerCurrentAnimationOnce = false;
         }

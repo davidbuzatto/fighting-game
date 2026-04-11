@@ -198,6 +198,7 @@ typedef struct PlayerKeyBindings {
 typedef struct Projectile {
     Texture2D *spriteMap;
     ProjectileType type;
+    DurationMode animationDurationMode;
     bool active;
     Vector2 pos;
     Vector2 vel;

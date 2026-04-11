@@ -14,11 +14,12 @@ static void setupDuration( Animation *a, int duration ) {
     }
 }
 
-Projectile *createProjectile( Texture2D *spriteMap ) {
+Projectile *createProjectile( Texture2D *spriteMap, DurationMode animationDurationMode ) {
 
     Projectile *p = (Projectile*) malloc( sizeof( Projectile ) );
 
     p->spriteMap = spriteMap;
+    p->animationDurationMode = animationDurationMode;
     p->active = false;
     p->pos = (Vector2) { 0 };
     p->vel = (Vector2) { 0 };
@@ -250,20 +251,20 @@ void updateProjectile( Projectile *p, Camera2D camera, float delta ) {
         p->pos.y += p->vel.y * delta;
 
         if ( !p->startupAnim.finished ) {
-            updateAnimation( &p->startupAnim, DURATION_MODE_MILLISECONDS, delta );
+            updateAnimation( &p->startupAnim, p->animationDurationMode, delta );
         } else {
             switch ( p->type ) {
                 case PROJECTILE_TYPE_LOW:
-                    updateAnimation( &p->continuousAnimLP, DURATION_MODE_MILLISECONDS, delta );
-                    updateAnimation( &p->continuousAnimDetailLP, DURATION_MODE_MILLISECONDS, delta );
+                    updateAnimation( &p->continuousAnimLP, p->animationDurationMode, delta );
+                    updateAnimation( &p->continuousAnimDetailLP, p->animationDurationMode, delta );
                     break;
                 case PROJECTILE_TYPE_MID:
-                    updateAnimation( &p->continuousAnimMP, DURATION_MODE_MILLISECONDS, delta );
-                    updateAnimation( &p->continuousAnimDetailMP, DURATION_MODE_MILLISECONDS, delta );
+                    updateAnimation( &p->continuousAnimMP, p->animationDurationMode, delta );
+                    updateAnimation( &p->continuousAnimDetailMP, p->animationDurationMode, delta );
                     break;
                 case PROJECTILE_TYPE_HIGH:
-                    updateAnimation( &p->continuousAnimHP, DURATION_MODE_MILLISECONDS, delta );
-                    updateAnimation( &p->continuousAnimDetailHP, DURATION_MODE_MILLISECONDS, delta );
+                    updateAnimation( &p->continuousAnimHP, p->animationDurationMode, delta );
+                    updateAnimation( &p->continuousAnimDetailHP, p->animationDurationMode, delta );
                     break;
             }
         }
@@ -278,7 +279,7 @@ void updateProjectile( Projectile *p, Camera2D camera, float delta ) {
     }
 
     if ( p->runImpactAnim ) {
-        updateAnimation( &p->impactAnim, DURATION_MODE_MILLISECONDS, delta );
+        updateAnimation( &p->impactAnim, p->animationDurationMode, delta );
         if ( p->impactAnim.finished ) {
             p->runImpactAnim = false;
         }

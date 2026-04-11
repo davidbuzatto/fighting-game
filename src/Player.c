@@ -831,7 +831,7 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->sounds.shoryukenSound = rm.ryuShoryukenSound;
     p->sounds.tatsumakiSound = rm.ryuTatsumakiSound;
 
-    p->projectile = createProjectile( p->specialMovesSpriteMap );
+    p->projectile = createProjectile( p->specialMovesSpriteMap, animationDurationMode );
 
 }
 
@@ -852,7 +852,7 @@ void initializePlayerKen( float x, float y, Player *p, PlayerStartSide startSide
     p->sounds.shoryukenSound = rm.kenShoryukenSound;
     p->sounds.tatsumakiSound = rm.kenTatsumakiSound;
 
-    p->projectile = createProjectile( p->specialMovesSpriteMap );
+    p->projectile = createProjectile( p->specialMovesSpriteMap, animationDurationMode );
 
 }
 
@@ -1704,7 +1704,7 @@ void updatePlayer( Player *player, Player *opponent, Camera2D camera, float grav
     }
 
     if ( player->onHitPosActive ) {
-        updateAnimation( &player->onHitAnimation, DURATION_MODE_MILLISECONDS, delta );
+        updateAnimation( &player->onHitAnimation, player->animationDurationMode, delta );
         if ( player->onHitAnimation.finished ) {
             player->onHitPosActive = false;
             resetAnimation( &player->onHitAnimation );
@@ -1712,7 +1712,7 @@ void updatePlayer( Player *player, Player *opponent, Camera2D camera, float grav
     }
     
     if ( player->onBlockPosActive ) {
-        updateAnimation( &player->onBlockAnimation, DURATION_MODE_MILLISECONDS, delta );
+        updateAnimation( &player->onBlockAnimation, player->animationDurationMode, delta );
         if ( player->onBlockAnimation.finished ) {
             player->onBlockPosActive = false;
             resetAnimation( &player->onBlockAnimation );
