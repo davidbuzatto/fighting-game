@@ -1,8 +1,9 @@
 Bug: 
     Enroscando no canto quando usa tatsu (ajustar usando a caixa de colisão ao invés do limite da câmera?);
+    Hadouken dando hit a mais (estado inicial e estado contínuo);
 
 Paletas;
-    Bug: corrigir mudanã de cor do porta retrato (repintar?);
+    Bug: corrigir mudança de cor do porta-retrato (repintar?);
 
 Implementar dinâmica das partidas;
     Animações ganhou e perdeu;
