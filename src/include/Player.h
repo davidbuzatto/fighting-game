@@ -4,8 +4,8 @@
 #include "Types.h"
 
 Player *createPlayer();
-void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo );
-void initializePlayerKen( float x, float y, Player *p, PlayerStartSide startSide, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo );
+void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide, int gamepadId, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo );
+void initializePlayerKen( float x, float y, Player *p, PlayerStartSide startSide, int gamepadId, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo );
 
 void destroyPlayer( Player *player );
 void drawPlayer( Player *player );

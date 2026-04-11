@@ -11,3 +11,6 @@ void drawTextUsingFont( const char *text, int x, int y, float scale, int spacing
 Vector2 measureTextUsingFont( const char *text, float scale, int spacing );
 
 Rectangle getRectangleIntersection( Rectangle r1, Rectangle r2 );
+
+bool isGamepadButtonPressed( int gamepadId, int gamepadButton );
+bool isGamepadButtonDown( int gamepadId, int gamepadButton );

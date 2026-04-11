@@ -30,7 +30,7 @@
 #define SHOW_PLAYER_INPUT_BUFFER true
 #define SHOW_MODEL_STAGE_TEXTURE false
 #define DURATION_MODE DURATION_MODE_MILLISECONDS
-#define INITIAL_GAME_MODE GAME_MODE_EDITING
+#define INITIAL_GAME_MODE GAME_MODE_PLAYING
 #define PLAY_MUSIC false
 
 #define PLAYER_1_ANIMATIONS_FILE "resources/animations/ryu.json"
@@ -146,34 +146,34 @@ GameWorld* createGameWorld( void ) {
     Player *player1 = createPlayer();
     Player *player2 = createPlayer();
 
-    initializePlayerRyu( gw->back01Texture->width / 2 - 78, 552, player1, PLAYER_START_SIDE_LEFT, DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
-    initializePlayerKen( gw->back01Texture->width / 2 + 50, 552, player2, PLAYER_START_SIDE_RIGHT, DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
+    initializePlayerRyu( gw->back01Texture->width / 2 - 78, 552, player1, PLAYER_START_SIDE_LEFT, 0, DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
+    initializePlayerKen( gw->back01Texture->width / 2 + 50, 552, player2, PLAYER_START_SIDE_RIGHT, 1, DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
     flipPlayerSide( player2 );
 
     player1->kb = (PlayerKeyBindings) {
-        .left  = { KEY_LEFT,  INPUT_TYPE_LEFT },
-        .right = { KEY_RIGHT, INPUT_TYPE_RIGHT },
-        .up    = { KEY_UP,    INPUT_TYPE_UP },
-        .down  = { KEY_DOWN,  INPUT_TYPE_DOWN },
-        .lp    = { KEY_KP_4,  INPUT_TYPE_LP },
-        .mp    = { KEY_KP_5,  INPUT_TYPE_MP },
-        .hp    = { KEY_KP_6,  INPUT_TYPE_HP },
-        .lk    = { KEY_KP_1,  INPUT_TYPE_LK },
-        .mk    = { KEY_KP_2,  INPUT_TYPE_MK },
-        .hk    = { KEY_KP_3,  INPUT_TYPE_HK },
+        .left  = { KEY_LEFT,  GAMEPAD_BUTTON_LEFT_FACE_LEFT,   INPUT_TYPE_LEFT },
+        .right = { KEY_RIGHT, GAMEPAD_BUTTON_LEFT_FACE_RIGHT,  INPUT_TYPE_RIGHT },
+        .up    = { KEY_UP,    GAMEPAD_BUTTON_LEFT_FACE_UP,     INPUT_TYPE_UP },
+        .down  = { KEY_DOWN,  GAMEPAD_BUTTON_LEFT_FACE_DOWN,   INPUT_TYPE_DOWN },
+        .lp    = { KEY_KP_4,  GAMEPAD_BUTTON_RIGHT_FACE_LEFT,  INPUT_TYPE_LP },
+        .mp    = { KEY_KP_5,  GAMEPAD_BUTTON_RIGHT_FACE_UP,    INPUT_TYPE_MP },
+        .hp    = { KEY_KP_6,  GAMEPAD_BUTTON_LEFT_TRIGGER_1,   INPUT_TYPE_HP },
+        .lk    = { KEY_KP_1,  GAMEPAD_BUTTON_RIGHT_FACE_DOWN,  INPUT_TYPE_LK },
+        .mk    = { KEY_KP_2,  GAMEPAD_BUTTON_RIGHT_FACE_RIGHT, INPUT_TYPE_MK },
+        .hk    = { KEY_KP_3,  GAMEPAD_BUTTON_RIGHT_TRIGGER_1,  INPUT_TYPE_HK },
     };
 
     player2->kb = (PlayerKeyBindings) {
-        .left  = { KEY_A, INPUT_TYPE_LEFT },
-        .right = { KEY_D, INPUT_TYPE_RIGHT },
-        .up    = { KEY_W, INPUT_TYPE_UP },
-        .down  = { KEY_S, INPUT_TYPE_DOWN },
-        .lp    = { KEY_T, INPUT_TYPE_LP },
-        .mp    = { KEY_Y, INPUT_TYPE_MP },
-        .hp    = { KEY_U, INPUT_TYPE_HP },
-        .lk    = { KEY_G, INPUT_TYPE_LK },
-        .mk    = { KEY_H, INPUT_TYPE_MK },
-        .hk    = { KEY_J, INPUT_TYPE_HK },
+        .left  = { KEY_A, GAMEPAD_BUTTON_LEFT_FACE_LEFT,   INPUT_TYPE_LEFT },
+        .right = { KEY_D, GAMEPAD_BUTTON_LEFT_FACE_RIGHT,  INPUT_TYPE_RIGHT },
+        .up    = { KEY_W, GAMEPAD_BUTTON_LEFT_FACE_UP,     INPUT_TYPE_UP },
+        .down  = { KEY_S, GAMEPAD_BUTTON_LEFT_FACE_DOWN,   INPUT_TYPE_DOWN },
+        .lp    = { KEY_T, GAMEPAD_BUTTON_RIGHT_FACE_LEFT,  INPUT_TYPE_LP },
+        .mp    = { KEY_Y, GAMEPAD_BUTTON_RIGHT_FACE_UP,    INPUT_TYPE_MP },
+        .hp    = { KEY_U, GAMEPAD_BUTTON_LEFT_TRIGGER_1,   INPUT_TYPE_HP },
+        .lk    = { KEY_G, GAMEPAD_BUTTON_RIGHT_FACE_DOWN,  INPUT_TYPE_LK },
+        .mk    = { KEY_H, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT, INPUT_TYPE_MK },
+        .hk    = { KEY_J, GAMEPAD_BUTTON_RIGHT_TRIGGER_1,  INPUT_TYPE_HK },
     };
 
     gw->player1 = player1;

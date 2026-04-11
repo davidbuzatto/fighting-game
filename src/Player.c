@@ -28,7 +28,7 @@ Player *createPlayer() {
     return p;
 }
 
-void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo ) {
+void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide, int gamepadId, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo ) {
 
     p->pos.x = x;
     p->pos.y = y;
@@ -48,6 +48,7 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->startSide = startSide;
     p->showBoxes = showBoxes;
     p->showDebugInfo = showDebugInfo;
+    p->gamepadId = gamepadId;
 
     p->sounds.attackLowSound = rm.ryuAttackLowSound;
     p->sounds.attackMidSound = rm.ryuAttackMidSound;
@@ -821,9 +822,9 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
 
 }
 
-void initializePlayerKen( float x, float y, Player *p, PlayerStartSide startSide, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo ) {
+void initializePlayerKen( float x, float y, Player *p, PlayerStartSide startSide, int gamepadId, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo ) {
 
-    initializePlayerRyu( x, y, p, startSide, animationDurationMode, showBoxes, showDebugInfo );
+    initializePlayerRyu( x, y, p, startSide, gamepadId, animationDurationMode, showBoxes, showDebugInfo );
     p->spriteMap = &rm.kenTexture;
     strcpy( p->name, "Ken" );
 
@@ -1594,13 +1595,13 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
     }
 
     // jump
-    if ( IsKeyDown( player->kb.up.key ) && player->state != PLAYER_STATE_CROUCHING ) {
-        if ( IsKeyDown( player->kb.right.key ) ) {
+    if ( ( IsKeyDown( player->kb.up.key ) || isGamepadButtonDown( player->gamepadId, player->kb.up.gamepadButton ) ) && player->state != PLAYER_STATE_CROUCHING ) {
+        if ( IsKeyDown( player->kb.right.key ) || isGamepadButtonDown( player->gamepadId, player->kb.right.gamepadButton ) ) {
             player->vel.y = -player->jumpSpeed;
             player->vel.x = player->forwardSpeed * 1.6f;
             resetAnimation( &player->forwardJumpAnim );
             player->state = PLAYER_STATE_JUMPING_FORWARD;
-        } else if ( IsKeyDown( player->kb.left.key ) ) {
+        } else if ( IsKeyDown( player->kb.left.key ) || isGamepadButtonDown( player->gamepadId, player->kb.left.gamepadButton ) ) {
             player->vel.y = -player->jumpSpeed;
             player->vel.x = -player->backwardSpeed * 2.0f;
             resetAnimation( &player->backwardJumpAnim );
@@ -1616,16 +1617,16 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
     }
 
     // floor movement
-    if ( IsKeyDown( player->kb.down.key ) ) {
+    if ( IsKeyDown( player->kb.down.key ) || isGamepadButtonDown( player->gamepadId, player->kb.down.gamepadButton ) ) {
         if ( player->state != PLAYER_STATE_CROUCHING ) {
             resetAnimation( &player->crouchingAnim );
         }
         player->vel.x = 0.0f;
         player->state = PLAYER_STATE_CROUCHING;
-    } else if ( IsKeyDown( player->kb.right.key ) ) {
+    } else if ( IsKeyDown( player->kb.right.key ) || isGamepadButtonDown( player->gamepadId, player->kb.right.gamepadButton ) ) {
         player->vel.x = player->forwardSpeed;
         player->state = PLAYER_STATE_WALKING_FORWARD;
-    } else if ( IsKeyDown( player->kb.left.key ) ) {
+    } else if ( IsKeyDown( player->kb.left.key ) || isGamepadButtonDown( player->gamepadId, player->kb.left.gamepadButton ) ) {
         player->vel.x = -player->backwardSpeed;
         player->state = PLAYER_STATE_WALKING_BACKWARD;
     } else {
@@ -1826,10 +1827,10 @@ void resolvePlayerOponnentContact( Player *p, Player *o ) {
                 bool holdingBack = false;
                 if ( p->pos.x < o->pos.x ) {
                     // attacker is to the left: "back" for defender is RIGHT
-                    holdingBack = IsKeyDown( o->kb.right.key );
+                    holdingBack = IsKeyDown( o->kb.right.key ) || isGamepadButtonDown( o->gamepadId, o->kb.right.gamepadButton );
                 } else {
                     // attacker is to the right: "back" for defender is LEFT
-                    holdingBack = IsKeyDown( o->kb.left.key );
+                    holdingBack = IsKeyDown( o->kb.left.key ) || isGamepadButtonDown( o->gamepadId, o->kb.left.gamepadButton );
                 }
 
                 bool canBlock = o->state == PLAYER_STATE_IDLE ||
@@ -1962,9 +1963,9 @@ void resolvePlayerOponnentProjectileContact( Player *p, Player *o ) {
 
             bool holdingBack = false;
             if ( p->pos.x < o->pos.x ) {
-                holdingBack = IsKeyDown( o->kb.right.key );
+                holdingBack = IsKeyDown( o->kb.right.key ) || isGamepadButtonDown( o->gamepadId, o->kb.right.gamepadButton );
             } else {
-                holdingBack = IsKeyDown( o->kb.left.key );
+                holdingBack = IsKeyDown( o->kb.left.key ) || isGamepadButtonDown( o->gamepadId, o->kb.left.gamepadButton );
             }
 
             bool canBlock = o->state == PLAYER_STATE_IDLE ||
@@ -2146,10 +2147,10 @@ static CommandInput *checkCommandInputs( Player *p, int currentFrame, InputType 
 static void processInputAndFeedInputBuffer( Player *p, int currentFrame ) {
 
     // compute current directional state from held keys
-    bool rightDown = IsKeyDown( p->kb.right.key );
-    bool leftDown  = IsKeyDown( p->kb.left.key );
-    bool downDown  = IsKeyDown( p->kb.down.key );
-    bool upDown    = IsKeyDown( p->kb.up.key );
+    bool rightDown = IsKeyDown( p->kb.right.key ) || isGamepadButtonDown( p->gamepadId, p->kb.right.gamepadButton );
+    bool leftDown  = IsKeyDown( p->kb.left.key )  || isGamepadButtonDown( p->gamepadId, p->kb.left.gamepadButton );
+    bool downDown  = IsKeyDown( p->kb.down.key )  || isGamepadButtonDown( p->gamepadId, p->kb.down.gamepadButton );
+    bool upDown    = IsKeyDown( p->kb.up.key )    || isGamepadButtonDown( p->gamepadId, p->kb.up.gamepadButton );
 
     InputType currentDir = INPUT_TYPE_NEUTRAL;
 
@@ -2178,17 +2179,17 @@ static void processInputAndFeedInputBuffer( Player *p, int currentFrame ) {
     }
 
     // buttons: independent from directionals (both can register in the same frame)
-    if ( IsKeyPressed( p->kb.lp.key ) ) {
+    if ( IsKeyPressed( p->kb.lp.key ) || isGamepadButtonPressed( p->gamepadId, p->kb.lp.gamepadButton ) ) {
         addInputToPlayerInputBuffer( p, p->kb.lp.type, currentFrame );
-    } else if ( IsKeyPressed( p->kb.mp.key ) ) {
+    } else if ( IsKeyPressed( p->kb.mp.key ) || isGamepadButtonPressed( p->gamepadId, p->kb.mp.gamepadButton ) ) {
         addInputToPlayerInputBuffer( p, p->kb.mp.type, currentFrame );
-    } else if ( IsKeyPressed( p->kb.hp.key ) ) {
+    } else if ( IsKeyPressed( p->kb.hp.key ) || isGamepadButtonPressed( p->gamepadId, p->kb.hp.gamepadButton ) ) {
         addInputToPlayerInputBuffer( p, p->kb.hp.type, currentFrame );
-    } else if ( IsKeyPressed( p->kb.lk.key ) ) {
+    } else if ( IsKeyPressed( p->kb.lk.key ) || isGamepadButtonPressed( p->gamepadId, p->kb.lk.gamepadButton ) ) {
         addInputToPlayerInputBuffer( p, p->kb.lk.type, currentFrame );
-    } else if ( IsKeyPressed( p->kb.mk.key ) ) {
+    } else if ( IsKeyPressed( p->kb.mk.key ) || isGamepadButtonPressed( p->gamepadId, p->kb.mk.gamepadButton ) ) {
         addInputToPlayerInputBuffer( p, p->kb.mk.type, currentFrame );
-    } else if ( IsKeyPressed( p->kb.hk.key ) ) {
+    } else if ( IsKeyPressed( p->kb.hk.key ) || isGamepadButtonPressed( p->gamepadId, p->kb.hk.gamepadButton ) ) {
         addInputToPlayerInputBuffer( p, p->kb.hk.type, currentFrame );
     }
 

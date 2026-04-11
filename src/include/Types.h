@@ -178,6 +178,7 @@ typedef struct InputBufferEntry {
 
 typedef struct InputEntry {
     int key;
+    int gamepadButton;
     InputType type;
 } InputEntry;
 
@@ -354,6 +355,7 @@ typedef struct Player {
     int inputBufferTail;
     int inputBufferSize;
     InputType lastDirectionalState;   // directional state from previous frame
+    int gamepadId;
 
     CommandInput commands[MAX_COMMANDS];
     int commandCount;

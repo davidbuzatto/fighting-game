@@ -403,3 +403,17 @@ Rectangle getRectangleIntersection( Rectangle r1, Rectangle r2 ) {
     };
 
 }
+
+bool isGamepadButtonPressed( int gamepadId, int gamepadButton ) {
+    if ( IsGamepadAvailable( gamepadId ) ) {
+        return IsGamepadButtonPressed( gamepadId, gamepadButton );
+    }
+    return false;
+}
+
+bool isGamepadButtonDown( int gamepadId, int gamepadButton ) {
+    if ( IsGamepadAvailable( gamepadId ) ) {
+        return IsGamepadButtonDown( gamepadId, gamepadButton );
+    }
+    return false;
+}
