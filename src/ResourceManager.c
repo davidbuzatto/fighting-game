@@ -9,25 +9,15 @@
 #include <stdlib.h>
 
 #include "ResourceManager.h"
+#include "Utils.h"
 #include "raylib/raylib.h"
 
 ResourceManager rm = { 0 };
 
-static Texture2D loadTextureReplacingColor( const char *path, Color *sourceColors, Color *targetColors, int colorCount ) {
-    Image img = LoadImage( path );
-    ImageFormat( &img, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 );
-    for ( int i = 0; i < colorCount; i++ ) {
-        ImageColorReplace( &img, sourceColors[i], targetColors[i] );
-    }
-    Texture2D texture = LoadTextureFromImage( img );
-    UnloadImage( img );
-    return texture;
-}
-
 void loadResourcesResourceManager( void ) {
 
-    rm.ryuTexture = loadTextureReplacingColor( 
-        "resources/images/chars/ryu.png", 
+    rm.ryuSpriteMapTexture = loadTextureReplacingColor( 
+        "resources/images/chars/ryuSpriteMap.png", 
         (Color[]) { 
             (Color) { 85, 170, 255, 255 },
             (Color) { 0, 85, 127, 255 }
@@ -39,8 +29,23 @@ void loadResourcesResourceManager( void ) {
         2
     );
 
-    rm.kenTexture = loadTextureReplacingColor( 
-        "resources/images/chars/ken.png", 
+    rm.ryuSpecialMovesSpriteMapTexture = loadTextureReplacingColor( 
+        "resources/images/chars/ryuSpecialMoves.png", 
+        (Color[]) { 
+            (Color) { 85, 170, 255, 255 },
+            (Color) { 0, 85, 127, 255 }
+        },
+        (Color[]) { 
+            BLANK,
+            BLANK
+        },
+        2
+    );
+
+    rm.ryuPalleteImage = LoadImage( "resources/images/chars/ryuPallete.png" );
+
+    rm.kenSpriteMapTexture = loadTextureReplacingColor( 
+        "resources/images/chars/kenSpriteMap.png", 
         (Color[]) { 
             (Color) { 85, 170, 255, 255 },
             (Color) { 0, 85, 127, 255 }
@@ -51,6 +56,21 @@ void loadResourcesResourceManager( void ) {
         },
         2
     );
+
+    rm.kenSpecialMovesSpriteMapTexture = loadTextureReplacingColor( 
+        "resources/images/chars/kenSpecialMoves.png", 
+        (Color[]) { 
+            (Color) { 85, 170, 255, 255 },
+            (Color) { 0, 85, 127, 255 }
+        },
+        (Color[]) { 
+            BLANK,
+            BLANK
+        },
+        2
+    );
+
+    rm.kenPalleteImage = LoadImage( "resources/images/chars/kenPallete.png" );
 
     rm.kenStageAnchorTexture = LoadTexture( "resources/images/stages/ken/anchor.png" );
     rm.kenStageFloorTexture = LoadTexture( "resources/images/stages/ken/floor.png" );
@@ -110,8 +130,13 @@ void loadResourcesResourceManager( void ) {
 
 void unloadResourcesResourceManager( void ) {
 
-    UnloadTexture( rm.ryuTexture );
-    UnloadTexture( rm.kenTexture );
+    UnloadTexture( rm.ryuSpriteMapTexture );
+    UnloadTexture( rm.ryuSpecialMovesSpriteMapTexture );
+    UnloadImage( rm.ryuPalleteImage );
+
+    UnloadTexture( rm.kenSpriteMapTexture );
+    UnloadTexture( rm.kenSpecialMovesSpriteMapTexture );
+    UnloadImage( rm.kenPalleteImage );
 
     UnloadTexture( rm.kenStageAnchorTexture );
     UnloadTexture( rm.kenStageFloorTexture );

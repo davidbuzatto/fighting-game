@@ -34,7 +34,9 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->pos.y = y;
     p->dim.x = 50;
     p->dim.y = 90;
-    p->spriteMap = &rm.ryuTexture;
+    p->spriteMap = &rm.ryuSpriteMapTexture;
+    p->specialMovesSpriteMap = &rm.ryuSpecialMovesSpriteMapTexture;
+    p->pallete = &rm.ryuPalleteImage;
     p->vel = (Vector2) { 0 };
     p->forwardSpeed = 150;
     p->backwardSpeed = 120;
@@ -818,14 +820,16 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->onBlockPos = (Vector2) { 0 };
     p->onBlockPosActive = false;
 
-    p->projectile = createProjectile();
+    p->projectile = createProjectile( p->specialMovesSpriteMap );
 
 }
 
 void initializePlayerKen( float x, float y, Player *p, PlayerStartSide startSide, int gamepadId, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo ) {
 
     initializePlayerRyu( x, y, p, startSide, gamepadId, animationDurationMode, showBoxes, showDebugInfo );
-    p->spriteMap = &rm.kenTexture;
+    p->spriteMap = &rm.kenSpriteMapTexture;
+    p->specialMovesSpriteMap = &rm.kenSpecialMovesSpriteMapTexture;
+    p->pallete = &rm.kenPalleteImage;
     strcpy( p->name, "Ken" );
 
     p->sounds.attackLowSound = rm.kenAttackLowSound;

@@ -14,10 +14,11 @@ static void setupDuration( Animation *a, int duration ) {
     }
 }
 
-Projectile *createProjectile( void ) {
+Projectile *createProjectile( Texture2D *spriteMap ) {
 
     Projectile *p = (Projectile*) malloc( sizeof( Projectile ) );
 
+    p->spriteMap = spriteMap;
     p->active = false;
     p->pos = (Vector2) { 0 };
     p->vel = (Vector2) { 0 };
@@ -32,7 +33,7 @@ Projectile *createProjectile( void ) {
     p->startupAnim.runOnce = true;
     p->startupAnim.finished = false;
     createAnimationFrames( &p->startupAnim, p->startupAnim.frameCount );
-    initAnimationFrames( p->startupAnim.frames, p->startupAnim.frameCount, 1, 4780, -64, 64, 0, 0, false );
+    initAnimationFrames( p->startupAnim.frames, p->startupAnim.frameCount, 1, 1, -64, 64, 0, 0, false );
     setupDuration( &p->startupAnim, 50 );
 
     p->continuousAnimLP.frameCount = 6;
@@ -42,7 +43,7 @@ Projectile *createProjectile( void ) {
     p->continuousAnimLP.runOnce = false;
     p->continuousAnimLP.finished = false;
     createAnimationFrames( &p->continuousAnimLP, p->continuousAnimLP.frameCount );
-    initAnimationFrames( p->continuousAnimLP.frames, p->continuousAnimLP.frameCount, 1, 4845, -64, 32, 14, 0, false );
+    initAnimationFrames( p->continuousAnimLP.frames, p->continuousAnimLP.frameCount, 1, 66, -64, 32, 14, 0, false );
     setupDuration( &p->continuousAnimLP, 50 );
 
     p->continuousAnimDetailLP.frameCount = 6;
@@ -52,7 +53,7 @@ Projectile *createProjectile( void ) {
     p->continuousAnimDetailLP.runOnce = false;
     p->continuousAnimDetailLP.finished = false;
     createAnimationFrames( &p->continuousAnimDetailLP, p->continuousAnimDetailLP.frameCount );
-    initAnimationFrames( p->continuousAnimDetailLP.frames, p->continuousAnimDetailLP.frameCount, 1, 4878, -64, 32, 14, 0, false );
+    initAnimationFrames( p->continuousAnimDetailLP.frames, p->continuousAnimDetailLP.frameCount, 1, 99, -64, 32, 14, 0, false );
     setupDuration( &p->continuousAnimDetailLP, 50 );
 
     p->continuousAnimMP.frameCount = 6;
@@ -62,7 +63,7 @@ Projectile *createProjectile( void ) {
     p->continuousAnimMP.runOnce = false;
     p->continuousAnimMP.finished = false;
     createAnimationFrames( &p->continuousAnimMP, p->continuousAnimMP.frameCount );
-    initAnimationFrames( p->continuousAnimMP.frames, p->continuousAnimMP.frameCount, 1, 4911, -80, 32, 24, 0, false );
+    initAnimationFrames( p->continuousAnimMP.frames, p->continuousAnimMP.frameCount, 1, 132, -80, 32, 24, 0, false );
     setupDuration( &p->continuousAnimMP, 50 );
 
     p->continuousAnimDetailMP.frameCount = 6;
@@ -72,7 +73,7 @@ Projectile *createProjectile( void ) {
     p->continuousAnimDetailMP.runOnce = false;
     p->continuousAnimDetailMP.finished = false;
     createAnimationFrames( &p->continuousAnimDetailMP, p->continuousAnimDetailMP.frameCount );
-    initAnimationFrames( p->continuousAnimDetailMP.frames, p->continuousAnimDetailMP.frameCount, 1, 4944, -80, 32, 24, 0, false );
+    initAnimationFrames( p->continuousAnimDetailMP.frames, p->continuousAnimDetailMP.frameCount, 1, 165, -80, 32, 24, 0, false );
     setupDuration( &p->continuousAnimDetailMP, 50 );
 
     p->continuousAnimHP.frameCount = 6;
@@ -82,7 +83,7 @@ Projectile *createProjectile( void ) {
     p->continuousAnimHP.runOnce = false;
     p->continuousAnimHP.finished = false;
     createAnimationFrames( &p->continuousAnimHP, p->continuousAnimHP.frameCount );
-    initAnimationFrames( p->continuousAnimHP.frames, p->continuousAnimHP.frameCount, 1, 4977, -80, 32, 24, 0, false );
+    initAnimationFrames( p->continuousAnimHP.frames, p->continuousAnimHP.frameCount, 1, 198, -80, 32, 24, 0, false );
     setupDuration( &p->continuousAnimHP, 50 );
 
     p->continuousAnimDetailHP.frameCount = 6;
@@ -92,7 +93,7 @@ Projectile *createProjectile( void ) {
     p->continuousAnimDetailHP.runOnce = false;
     p->continuousAnimDetailHP.finished = false;
     createAnimationFrames( &p->continuousAnimDetailHP, p->continuousAnimDetailHP.frameCount );
-    initAnimationFrames( p->continuousAnimDetailHP.frames, p->continuousAnimDetailHP.frameCount, 1, 5010, -80, 32, 24, 0, false );
+    initAnimationFrames( p->continuousAnimDetailHP.frames, p->continuousAnimDetailHP.frameCount, 1, 231, -80, 32, 24, 0, false );
     setupDuration( &p->continuousAnimDetailHP, 50 );
 
     p->impactAnim.frameCount = 5;
@@ -102,7 +103,7 @@ Projectile *createProjectile( void ) {
     p->impactAnim.runOnce = true;
     p->impactAnim.finished = false;
     createAnimationFrames( &p->impactAnim, p->impactAnim.frameCount );
-    initAnimationFrames( p->impactAnim.frames, p->impactAnim.frameCount, 1, 5043, -80, 64, 0, 0, false );
+    initAnimationFrames( p->impactAnim.frames, p->impactAnim.frameCount, 1, 264, -80, 64, 0, 0, false );
     setupDuration( &p->impactAnim, 30 );
 
     return p;
@@ -166,7 +167,7 @@ void drawProjectile( Projectile *p ) {
 
         if ( af != NULL ) {
             DrawTexturePro(
-                rm.ryuTexture,      // for Ken, same as Ryu (TODO: needs to improve...)
+                *(p->spriteMap),
                 (Rectangle) {
                     af->source.x,
                     af->source.y,
@@ -186,7 +187,7 @@ void drawProjectile( Projectile *p ) {
 
         if ( afD != NULL ) {
             DrawTexturePro(
-                rm.ryuTexture,      // for Ken, same as Ryu (TODO: needs to improve...)
+                *(p->spriteMap),
                 (Rectangle) {
                     afD->source.x,
                     afD->source.y,
@@ -219,7 +220,7 @@ void drawProjectile( Projectile *p ) {
 
         if ( af != NULL ) {
             DrawTexturePro(
-                rm.ryuTexture,      // for Ken, same as Ryu (TODO: needs to improve...)
+                *(p->spriteMap),
                 (Rectangle) {
                     af->source.x,
                     af->source.y,

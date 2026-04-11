@@ -196,6 +196,7 @@ typedef struct PlayerKeyBindings {
 } PlayerKeyBindings;
 
 typedef struct Projectile {
+    Texture2D *spriteMap;
     ProjectileType type;
     bool active;
     Vector2 pos;
@@ -226,6 +227,9 @@ typedef struct PlayerSounds {
 typedef struct Player {
 
     Texture2D *spriteMap;
+    Texture2D *specialMovesSpriteMap;
+    Image *pallete;
+
     Vector2 pos;
     Vector2 dim;
 

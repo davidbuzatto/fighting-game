@@ -11,8 +11,13 @@
 
 typedef struct ResourceManager {
 
-    Texture2D ryuTexture;
-    Texture2D kenTexture;
+    Texture2D ryuSpriteMapTexture;
+    Texture2D ryuSpecialMovesSpriteMapTexture;
+    Image ryuPalleteImage;
+
+    Texture2D kenSpriteMapTexture;
+    Texture2D kenSpecialMovesSpriteMapTexture;
+    Image kenPalleteImage;
 
     Texture2D kenStageAnchorTexture;
     Texture2D kenStageFloorTexture;

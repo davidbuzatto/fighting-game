@@ -417,3 +417,25 @@ bool isGamepadButtonDown( int gamepadId, int gamepadButton ) {
     }
     return false;
 }
+
+Texture2D loadTextureReplacingColor( const char *path, Color *sourceColors, Color *targetColors, int colorCount ) {
+    Image img = LoadImage( path );
+    ImageFormat( &img, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 );
+    for ( int i = 0; i < colorCount; i++ ) {
+        ImageColorReplace( &img, sourceColors[i], targetColors[i] );
+    }
+    Texture2D texture = LoadTextureFromImage( img );
+    UnloadImage( img );
+    return texture;
+}
+
+Texture2D createTextureFromTextureReplacingColor( Texture2D texture, Color *sourceColors, Color *targetColors, int colorCount ) {
+    Image img = LoadImageFromTexture( texture );
+    ImageFormat( &img, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 );
+    for ( int i = 0; i < colorCount; i++ ) {
+        ImageColorReplace( &img, sourceColors[i], targetColors[i] );
+    }
+    Texture2D newTexture = LoadTextureFromImage( img );
+    UnloadImage( img );
+    return newTexture;
+}

@@ -14,3 +14,6 @@ Rectangle getRectangleIntersection( Rectangle r1, Rectangle r2 );
 
 bool isGamepadButtonPressed( int gamepadId, int gamepadButton );
 bool isGamepadButtonDown( int gamepadId, int gamepadButton );
+
+Texture2D loadTextureReplacingColor( const char *path, Color *sourceColors, Color *targetColors, int colorCount );
+Texture2D createTextureFromTextureReplacingColor( Texture2D texture, Color *sourceColors, Color *targetColors, int colorCount );
