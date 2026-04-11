@@ -32,6 +32,7 @@
 #define DURATION_MODE DURATION_MODE_MILLISECONDS
 #define INITIAL_GAME_MODE GAME_MODE_PLAYING
 #define PLAY_MUSIC false
+#define PALLETE_COLOR_LIMIT 10
 
 #define PLAYER_1_ANIMATIONS_FILE "resources/animations/ryu.json"
 #define PLAYER_2_ANIMATIONS_FILE "resources/animations/ken.json"
@@ -327,9 +328,9 @@ static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
     if ( keyPressed >= KEY_ZERO && keyPressed <= KEY_NINE ) {
         int pallete = keyPressed - KEY_ZERO;
         if ( IsKeyDown( KEY_LEFT_CONTROL ) ) {
-            changePlayerPallete( gw->player2, pallete );
+            changePlayerPallete( gw->player2, pallete, PALLETE_COLOR_LIMIT );
         } else {
-            changePlayerPallete( gw->player1, pallete );
+            changePlayerPallete( gw->player1, pallete, PALLETE_COLOR_LIMIT );
         }
     }
 

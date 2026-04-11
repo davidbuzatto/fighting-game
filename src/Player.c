@@ -23,6 +23,9 @@ static void addInputToPlayerInputBuffer( Player *p, InputType input, int current
 static InputType peekAttackButton( Player *p, int currentFrame );
 static CommandInput *checkCommandInputs( Player *p, int currentFrame, InputType *outButton );
 
+static const int startLineToChangeColors = 0;
+static const int endLineToChangeColors = 10000;
+
 Player *createPlayer() {
     Player *p = (Player*) malloc( sizeof( Player ) );
     return p;
@@ -817,7 +820,7 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->baseSpriteMap = &rm.ryuSpriteMapTexture;
     p->specialMovesSpriteMap = &rm.ryuSpecialMovesSpriteMapTexture;
     p->pallete = &rm.ryuPalleteImage;
-    p->currentSpriteMap = createTextureFromTextureReplacingColor( *(p->baseSpriteMap), NULL, NULL, 0 );
+    p->currentSpriteMap = createTextureFromTextureReplacingColor( *(p->baseSpriteMap), NULL, NULL, 0, startLineToChangeColors, endLineToChangeColors );
     strcpy( p->name, "Ryu" );
 
     p->sounds.attackLowSound = rm.ryuAttackLowSound;
@@ -838,7 +841,7 @@ void initializePlayerKen( float x, float y, Player *p, PlayerStartSide startSide
     p->baseSpriteMap = &rm.kenSpriteMapTexture;
     p->specialMovesSpriteMap = &rm.kenSpecialMovesSpriteMapTexture;
     p->pallete = &rm.kenPalleteImage;
-    p->currentSpriteMap = createTextureFromTextureReplacingColor( *(p->baseSpriteMap), NULL, NULL, 0 );
+    p->currentSpriteMap = createTextureFromTextureReplacingColor( *(p->baseSpriteMap), NULL, NULL, 0, startLineToChangeColors, endLineToChangeColors );
     strcpy( p->name, "Ken" );
 
     p->sounds.attackLowSound = rm.kenAttackLowSound;
@@ -2233,7 +2236,7 @@ void drawPlayerProjectile( Player *p ) {
     drawProjectile( p->projectile );
 }
 
-void changePlayerPallete( Player *p, int palleteNumber ) {
+void changePlayerPallete( Player *p, int palleteNumber, int palleteColorLimit ) {
 
     int spacing = 16;
     int startX = 2;
@@ -2243,11 +2246,21 @@ void changePlayerPallete( Player *p, int palleteNumber ) {
         return;
     }
 
-    Color sourceColors[8];
-    Color targetColors[8];
+    Color sourceColors[20];
+    Color targetColors[20];
     int colorCount = 0;
 
-    for ( int i = 0; i < 8; i++ ) {
+    if ( palleteColorLimit > 20 ) {
+        palleteColorLimit = 20;
+    }
+
+    int imageColorLimit = p->pallete->width / spacing;
+
+    if ( palleteColorLimit > imageColorLimit ) {
+        palleteColorLimit = imageColorLimit;
+    }
+
+    for ( int i = 0; i < palleteColorLimit; i++ ) {
         sourceColors[i] = GetImageColor( *(p->pallete), startX + spacing * i, startY );
         targetColors[i] = GetImageColor( *(p->pallete), startX + spacing * i, startY + spacing * palleteNumber );
         colorCount++;
@@ -2257,7 +2270,9 @@ void changePlayerPallete( Player *p, int palleteNumber ) {
         *(p->baseSpriteMap),
         sourceColors,
         targetColors,
-        colorCount
+        colorCount,
+        startLineToChangeColors,
+        endLineToChangeColors
     );
 
     UnloadTexture( p->currentSpriteMap );

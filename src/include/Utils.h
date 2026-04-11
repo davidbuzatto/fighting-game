@@ -16,4 +16,5 @@ bool isGamepadButtonPressed( int gamepadId, int gamepadButton );
 bool isGamepadButtonDown( int gamepadId, int gamepadButton );
 
 Texture2D loadTextureReplacingColor( const char *path, Color *sourceColors, Color *targetColors, int colorCount );
-Texture2D createTextureFromTextureReplacingColor( Texture2D texture, Color *sourceColors, Color *targetColors, int colorCount );
+Texture2D createTextureFromTextureReplacingColor( Texture2D texture, Color *sourceColors, Color *targetColors, int colorCount, int startLine, int endLine );
+void customImageColorReplace( Image *image, Color color, Color replace, int startLine, int endLine );

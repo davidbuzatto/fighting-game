@@ -10,6 +10,7 @@
 #include "Macros.h"
 #include "ResourceManager.h"
 #include "Types.h"
+#include "Utils.h"
 
 const char *utilsPlayerStateToText( PlayerState state ) {
 
@@ -429,13 +430,74 @@ Texture2D loadTextureReplacingColor( const char *path, Color *sourceColors, Colo
     return texture;
 }
 
-Texture2D createTextureFromTextureReplacingColor( Texture2D texture, Color *sourceColors, Color *targetColors, int colorCount ) {
+Texture2D createTextureFromTextureReplacingColor( Texture2D texture, Color *sourceColors, Color *targetColors, int colorCount, int startLine, int endLine ) {
     Image img = LoadImageFromTexture( texture );
     ImageFormat( &img, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 );
     for ( int i = 0; i < colorCount; i++ ) {
-        ImageColorReplace( &img, sourceColors[i], targetColors[i] );
+        customImageColorReplace( &img, sourceColors[i], targetColors[i], startLine, endLine );
     }
     Texture2D newTexture = LoadTextureFromImage( img );
     UnloadImage( img );
     return newTexture;
+}
+
+// modified version of ImageColorReplace from raylib
+// https://github.com/raysan5/raylib/blob/master/src/rtextures.c
+void customImageColorReplace(Image *image, Color color, Color replace, int startLine, int endLine ) {
+
+    // Security check to avoid program crash
+    if ( ( image->data == NULL ) || ( image->width == 0 ) || ( image->height == 0 ) ) {
+        return;
+    }
+
+    Color *pixels = LoadImageColors(*image);
+
+    if ( startLine < 0 ) startLine = 0;
+    if ( startLine >= image->height ) startLine = image->height - 1;
+
+    if ( endLine < 0 ) endLine = 0;
+    if ( endLine >= image->height ) endLine = image->height - 1;
+
+    if ( startLine > endLine ) {
+        int t = startLine;
+        startLine = endLine;
+        endLine = t;
+    }
+
+    for ( int i = 0; i < image->width * image->height; i++ ) {
+
+        int currentLine = i / image->width;
+
+        if ( currentLine >= startLine && currentLine <= endLine ) {
+            if ( ( pixels[i].r == color.r ) &&
+                ( pixels[i].g == color.g ) &&
+                ( pixels[i].b == color.b ) &&
+                ( pixels[i].a == color.a ) ) {
+                pixels[i].r = replace.r;
+                pixels[i].g = replace.g;
+                pixels[i].b = replace.b;
+                pixels[i].a = replace.a;
+            }
+        }
+
+    }
+
+    int format = image->format;
+    RL_FREE( image->data );
+
+    image->data = pixels;
+    image->format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
+
+    // Only convert back to original format if it supported alpha
+    if ( ( format == PIXELFORMAT_UNCOMPRESSED_R8G8B8 ) ||
+         ( format == PIXELFORMAT_UNCOMPRESSED_R5G6B5 ) ||
+         ( format == PIXELFORMAT_UNCOMPRESSED_GRAYSCALE ) ||
+         ( format == PIXELFORMAT_UNCOMPRESSED_R32G32B32 ) ||
+         ( format == PIXELFORMAT_UNCOMPRESSED_R16G16B16 ) ||
+         ( format == PIXELFORMAT_COMPRESSED_DXT1_RGB ) ||
+         ( format == PIXELFORMAT_COMPRESSED_ETC1_RGB ) ||
+         ( format == PIXELFORMAT_COMPRESSED_ETC2_RGB ) ||
+         ( format == PIXELFORMAT_COMPRESSED_PVRT_RGB) ) {
+        ImageFormat( image, format );
+    };
 }
