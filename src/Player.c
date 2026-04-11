@@ -1158,7 +1158,7 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
 
             updateAnimation( activeAnim, player->animationDurationMode, delta );
 
-            if ( !player->projectile->active && activeAnim->currentFrame == 5 ) {
+            if ( !player->projectile->active && !player->projectile->runImpactAnim && activeAnim->currentFrame == 5 ) {
                 if ( player->state == PLAYER_STATE_SPECIAL_LP_HADOUKEN  ) {
                     setupProjectile( 
                         player->projectile, 
@@ -1951,6 +1951,7 @@ void resolvePlayerOponnentProjectileContact( Player *p, Player *o ) {
             pProj->active = false;
             oProj->runImpactAnim = true;
             oProj->active = false;
+            PlaySound( p->sounds.hitSound );
             return;
         }
 
