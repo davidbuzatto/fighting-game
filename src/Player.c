@@ -658,7 +658,7 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->fallingAnim.runOnce = false;
     p->fallingAnim.finished = false;
     createAnimationFrames( &p->fallingAnim, p->fallingAnim.frameCount );
-    initAnimationFrames( p->fallingAnim.frames, p->fallingAnim.frameCount, 1, 4217, -128, 96, 32, 0, false );
+    initAnimationFrames( p->fallingAnim.frames, p->fallingAnim.frameCount, 1, 4217, -128, 96, 0, 0, false );
 
     p->gettingUpAnim.frameCount = 4;
     p->gettingUpAnim.currentFrame = 0;
@@ -667,7 +667,7 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
     p->gettingUpAnim.runOnce = false;
     p->gettingUpAnim.finished = false;
     createAnimationFrames( &p->gettingUpAnim, p->gettingUpAnim.frameCount );
-    initAnimationFrames( p->gettingUpAnim.frames, p->gettingUpAnim.frameCount, 1, 4395, -112, 128, 24, 0, false );
+    initAnimationFrames( p->gettingUpAnim.frames, p->gettingUpAnim.frameCount, 1, 4395, -112, 128, 0, 0, false );
 
     p->victory1Anim.frameCount = 3;
     p->victory1Anim.currentFrame = 0;
@@ -1104,6 +1104,30 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
     processInputAndFeedInputBuffer( player, currentFrame );
 
     Animation *activeAnim = NULL;
+
+    // falling: blocks all input
+    if ( player->state == PLAYER_STATE_FALLING || player->state == PLAYER_STATE_GETTING_UP ) {
+
+        activeAnim = getPlayerCurrentAnimation( player );
+
+        if ( activeAnim != NULL ) {
+            updateAnimation( activeAnim, player->animationDurationMode, delta );
+        }
+
+        if ( activeAnim->finished ) {
+            if ( player->state == PLAYER_STATE_FALLING ) {
+                player->state = PLAYER_STATE_GETTING_UP;
+                player->vel.x = 0.0f;
+                player->vel.y = 0.0f;
+            } else {
+                player->state = PLAYER_STATE_IDLE;
+            }
+            resetAnimation( activeAnim );
+        }
+
+        return;
+
+    }
 
     // special move in progress: blocks all input
     if ( isSpecialMoveState( player->state ) ) {
@@ -1849,6 +1873,11 @@ void resolvePlayerOponnentContact( Player *p, Player *o ) {
                     Rectangle inter = getRectangleIntersection( hurtbox, hitbox );
                     p->onHitPos = (Vector2) { inter.x + inter.width / 2, inter.y + inter.height / 2 };
                     p->onHitPosActive = true;
+
+                    if ( isBringDownMoveState( p->state ) ) {
+                        o->state = PLAYER_STATE_FALLING;
+                        o->vel.y = -100.0f;
+                    }
 
                 }
 
