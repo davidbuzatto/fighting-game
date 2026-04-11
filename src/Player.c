@@ -2232,3 +2232,35 @@ static void addInputToPlayerInputBuffer( Player *p, InputType input, int current
 void drawPlayerProjectile( Player *p ) {
     drawProjectile( p->projectile );
 }
+
+void changePlayerPallete( Player *p, int palleteNumber ) {
+
+    int spacing = 16;
+    int startX = 2;
+    int startY = 2;
+
+    if ( startY + spacing * palleteNumber > p->pallete->height ) {
+        return;
+    }
+
+    Color sourceColors[8];
+    Color targetColors[8];
+    int colorCount = 0;
+
+    for ( int i = 0; i < 8; i++ ) {
+        sourceColors[i] = GetImageColor( *(p->pallete), startX + spacing * i, startY );
+        targetColors[i] = GetImageColor( *(p->pallete), startX + spacing * i, startY + spacing * palleteNumber );
+        colorCount++;
+    }
+
+    Texture2D newSpriteMap = createTextureFromTextureReplacingColor( 
+        *(p->baseSpriteMap),
+        sourceColors,
+        targetColors,
+        colorCount
+    );
+
+    UnloadTexture( p->currentSpriteMap );
+    p->currentSpriteMap = newSpriteMap;
+
+}

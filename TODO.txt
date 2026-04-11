@@ -1,8 +1,8 @@
 Bug: 
     Enroscando no canto quando usa tatsu (ajustar usando a caixa de colisão ao invés do limite da câmera?);
 
-Joystick;
 Paletas;
+    Bug: corrigir mudanã de cor do porta retrato (repintar?);
 
 Implementar dinâmica das partidas;
     Animações ganhou e perdeu;

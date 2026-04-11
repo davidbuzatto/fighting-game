@@ -10,7 +10,7 @@
 #include <math.h>
 
 #include "raylib/raylib.h"
-//#include "raylib/raymath.h"
+#include "raylib/raymath.h"
 //#define RAYGUI_IMPLEMENTATION    // to use raygui, comment these three lines.
 //#include "raylib/raygui.h"       // other compilation units must only include
 //#undef RAYGUI_IMPLEMENTATION     // raygui.h
@@ -321,42 +321,16 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
 
 }
 
-static void changePallete( Player *p, int palleteNumber ) {
-
-    Texture2D newSpriteMap = createTextureFromTextureReplacingColor( 
-        *(p->baseSpriteMap),
-        (Color[]) { 
-            (Color) { 187, 0, 0, 255 },
-            (Color) { 255, 255, 255, 255 },
-            (Color) { 238, 238, 204, 255 },
-            (Color) { 221, 204, 170, 255 },
-            (Color) { 187, 170, 136, 255 },
-            (Color) { 170, 136, 119, 255 },
-            (Color) { 119, 102, 85, 255 },
-            (Color) { 255, 0, 0, 255 },
-        },
-        (Color[]) { 
-            (Color) { 155, 170, 0, 255 },
-            (Color) { 85, 85, 102, 255 },
-            (Color) { 68, 68, 85, 255 },
-            (Color) { 51, 51, 68, 255 },
-            (Color) { 34, 34, 51, 255 },
-            (Color) { 17, 17, 34, 255 },
-            (Color) { 0, 0, 17, 255 },
-            (Color) { 255, 221, 0, 255 },
-        },
-        8
-    );
-
-    UnloadTexture( p->currentSpriteMap );
-    p->currentSpriteMap = newSpriteMap;
-
-}
-
 static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
 
-    if ( IsKeyPressed( KEY_ONE ) ) {
-        changePallete( gw->player1, 1 );
+    int keyPressed = GetKeyPressed();
+    if ( keyPressed >= KEY_ZERO && keyPressed <= KEY_NINE ) {
+        int pallete = keyPressed - KEY_ZERO;
+        if ( IsKeyDown( KEY_LEFT_CONTROL ) ) {
+            changePlayerPallete( gw->player2, pallete );
+        } else {
+            changePlayerPallete( gw->player1, pallete );
+        }
     }
 
     if ( playMusic ) {

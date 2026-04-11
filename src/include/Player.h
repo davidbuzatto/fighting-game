@@ -29,3 +29,5 @@ void drawOnHitPlayerAnimation( Player *p );
 void drawOnBlockPlayerAnimation( Player *p );
 
 void drawPlayerProjectile( Player *p );
+
+void changePlayerPallete( Player *p, int palleteNumber );
