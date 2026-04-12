@@ -1,0 +1,1 @@
+cloc ./src/*.c ./src/include/*.h > .\loc.txt
