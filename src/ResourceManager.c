@@ -135,6 +135,12 @@ void loadResourcesResourceManager( void ) {
     rm.kenShoryukenSound = LoadSound( "resources/sfx/ken-shoryuken.wav" );
     rm.kenTatsumakiSound = LoadSound( "resources/sfx/ken-tatsumaki.wav" );
 
+    rm.p1ChangeSelectedSound = LoadSound( "resources/sfx/change-selected.wav" );
+    rm.p2ChangeSelectedSound = LoadSound( "resources/sfx/change-selected.wav" );
+    rm.p1SelectionSound = LoadSound( "resources/sfx/selection.wav" );
+    rm.p2SelectionSound = LoadSound( "resources/sfx/selection.wav" );
+
+    rm.playerSelectTheme = LoadMusicStream( "resources/themes/player-select.mp3" );
     rm.kenTheme = LoadMusicStream( "resources/themes/ken.mp3" );
 
 }
@@ -182,6 +188,12 @@ void unloadResourcesResourceManager( void ) {
     UnloadSound( rm.kenShoryukenSound );
     UnloadSound( rm.kenTatsumakiSound );
 
+    UnloadSound( rm.p1ChangeSelectedSound );
+    UnloadSound( rm.p2ChangeSelectedSound );
+    UnloadSound( rm.p1SelectionSound );
+    UnloadSound( rm.p2SelectionSound );
+
+    UnloadMusicStream( rm.playerSelectTheme );
     UnloadMusicStream( rm.kenTheme );
 
 }

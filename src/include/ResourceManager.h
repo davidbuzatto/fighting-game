@@ -54,6 +54,12 @@ typedef struct ResourceManager {
     Sound kenShoryukenSound;
     Sound kenTatsumakiSound;
 
+    Sound p1ChangeSelectedSound;
+    Sound p2ChangeSelectedSound;
+    Sound p1SelectionSound;
+    Sound p2SelectionSound;
+
+    Music playerSelectTheme;
     Music kenTheme;
 
 } ResourceManager;

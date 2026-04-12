@@ -1,7 +1,4 @@
-Sons tela de escolha de personagem;
-    Fundo, troca de seleção e confirmação.
-    Dependendo do input, trocar a paleta!
-Ajustar inputs (joystick) e generalizar para refletir tudo.
+Investigar erro de segmentação quando fecha o jogo.
 
 Implementar dinâmica das partidas;
     Timeover

@@ -27,6 +27,7 @@ typedef struct GameWindow {
     bool alwaysRun;
     bool loadResources;
     bool initAudio;
+    bool disableLogs;
 
     GameWorld *gw;
 
@@ -50,7 +51,8 @@ GameWindow* createGameWindow(
         bool invisibleBackground, 
         bool alwaysRun, 
         bool loadResources, 
-        bool initAudio );
+        bool initAudio,
+        bool disableLogs );
 
 /**
  * @brief Initializes the Window, starts the game loop and, when it

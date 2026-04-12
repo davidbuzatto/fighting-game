@@ -30,14 +30,14 @@
 #define SHOW_PLAYER_INPUT_BUFFER false
 #define SHOW_MODEL_STAGE_TEXTURE false
 #define ANIMATION_DURATION_MODE DURATION_MODE_MILLISECONDS
-#define INITIAL_GAME_MODE GAME_MODE_PLAYING
-#define PLAY_MUSIC false
+#define INITIAL_GAME_MODE GAME_MODE_SELECT_PLAYERS
+#define PLAY_MUSIC true
 #define PALLETE_COLOR_LIMIT 10
 
 #define RYU_ANIMATIONS_FILE "resources/animations/ryu.json"
 #define KEN_ANIMATIONS_FILE "resources/animations/ken.json"
 
-static void startMatch( GameWorld *gw, PlayerType player1, PlayerType player2 );
+static void startMatch( GameWorld *gw, PlayerType playerType1, int player1Pallete, PlayerType playerType2, int player2Pallete );
 static void drawGameWorldSelectingPlayers( GameWorld *gw );
 static void drawGameWorldPlaying( GameWorld *gw );
 static void drawGameWorldEditing( GameWorld *gw );
@@ -139,10 +139,10 @@ static bool playMusic = PLAY_MUSIC;
 static const Color PORTRAIT_BG_COLOR = { 112, 136, 198, 255 };
 
 // player select
-static int p1SelectLine = 0;
-static int p1SelectColumn = 0;
-static int p2SelectLine = 1;
-static int p2SelectColumn = 0;
+static int p1SelectedLine = 0;
+static int p1SelectedColumn = 0;
+static int p2SelectedLine = 1;
+static int p2SelectedColumn = 0;
 
 static float pSelectBlinkTime = 0.02f;
 static float pSelectBlinkCounter = 0.0f;
@@ -154,6 +154,8 @@ static float startTransitionToPlay = false;
 
 static bool p1Selected = false;
 static bool p2Selected = false;
+static int p1SelectedPallete = -1;
+static int p2SelectedPallete = -1;
 
 static Vector2 portraitsMap[2][8] = { 
     { { 0, 0 }, { 0, 1 }, { 0, 2 }, { 0, 3 }, { 2, 0 }, { 2, 1 }, { 2, 2 }, { 2, 3 } },
@@ -219,7 +221,7 @@ GameWorld* createGameWorld( void ) {
     gw->mode = INITIAL_GAME_MODE;
 
     if ( gw->mode == GAME_MODE_PLAYING || gw->mode == GAME_MODE_EDITING ) {
-        startMatch( gw, PLAYER_TYPE_RYU, PLAYER_TYPE_KEN );
+        startMatch( gw, PLAYER_TYPE_RYU, 9, PLAYER_TYPE_KEN, 0 );
         updateCameraPlaying( gw );
     }
 
@@ -315,7 +317,7 @@ void drawGameWorld( GameWorld *gw ) {
 
 }
 
-static void startMatch( GameWorld *gw, PlayerType playerType1, PlayerType playerType2 ) {
+static void startMatch( GameWorld *gw, PlayerType playerType1, int player1Pallete, PlayerType playerType2, int player2Pallete ) {
 
     if ( clearLastMatch ) {
         destroyPlayer( gw->player1 );
@@ -349,6 +351,9 @@ static void startMatch( GameWorld *gw, PlayerType playerType1, PlayerType player
 
     player1->kb = p1KeyBindings;
     player2->kb = p2KeyBindings;
+
+    changePlayerPallete( player1, player1Pallete, PALLETE_COLOR_LIMIT );
+    changePlayerPallete( player2, player2Pallete, PALLETE_COLOR_LIMIT );
 
     updateCameraPlaying( gw );
 
@@ -390,11 +395,11 @@ static void drawGameWorldSelectingPlayers( GameWorld *gw ) {
         WHITE
     );
 
-    Vector2 vP1 = portraitsMap[p1SelectLine][p1SelectColumn];
-    Vector2 vP2 = portraitsMap[p2SelectLine][p2SelectColumn];
+    Vector2 vP1 = portraitsMap[p1SelectedLine][p1SelectedColumn];
+    Vector2 vP2 = portraitsMap[p2SelectedLine][p2SelectedColumn];
 
-    bool p1Selectable = playerSelectSelectable[p1SelectLine][p1SelectColumn];
-    bool p2Selectable = playerSelectSelectable[p2SelectLine][p2SelectColumn];
+    bool p1Selectable = playerSelectSelectable[p1SelectedLine][p1SelectedColumn];
+    bool p2Selectable = playerSelectSelectable[p2SelectedLine][p2SelectedColumn];
 
     // p1 portrait
     DrawRectangle( startX, startY + 30, 96 * scale, 112 * scale, Fade( BLACK, 0.5f ) );
@@ -457,8 +462,8 @@ static void drawGameWorldSelectingPlayers( GameWorld *gw ) {
         rm.playerSelectTexture,
         (Rectangle) { p1Selected ? 149 : pSelectBlink ? 223 : 149, 100, pSelectW, pSelectH },
         (Rectangle) { 
-            pSelectStartX + p1SelectColumn * pSelectWi * scale, 
-            pSelectStartY + p1SelectLine * pSelectHi * scale, 
+            pSelectStartX + p1SelectedColumn * pSelectWi * scale, 
+            pSelectStartY + p1SelectedLine * pSelectHi * scale, 
             pSelectW * scale, 
             pSelectH * scale
         },
@@ -472,8 +477,8 @@ static void drawGameWorldSelectingPlayers( GameWorld *gw ) {
         rm.playerSelectTexture,
         (Rectangle) { p2Selected ? 186 : pSelectBlink ? 260 : 186, 100, pSelectW, pSelectH },
         (Rectangle) { 
-            pSelectStartX + p2SelectColumn * pSelectWi * scale, 
-            pSelectStartY + p2SelectLine * pSelectHi * scale, 
+            pSelectStartX + p2SelectedColumn * pSelectWi * scale, 
+            pSelectStartY + p2SelectedLine * pSelectHi * scale, 
             pSelectW * scale, 
             pSelectH * scale
         },
@@ -542,7 +547,31 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
 
 }
 
+static int getPlayerPalleteSelectingPlayers( int gamepadId, PlayerKeyBindings *kb ) {
+
+    if ( IsKeyPressed( kb->lp.key )     || isGamepadButtonPressed( gamepadId, kb->lp.gamepadButton ) )     return 0;
+    if ( IsKeyPressed( kb->mp.key )     || isGamepadButtonPressed( gamepadId, kb->mp.gamepadButton ) )     return 1;
+    if ( IsKeyPressed( kb->hp.key )     || isGamepadButtonPressed( gamepadId, kb->hp.gamepadButton ) )     return 2;
+    if ( IsKeyPressed( kb->lmhp.key )   || isGamepadButtonPressed( gamepadId, kb->lmhp.gamepadButton ) )   return 3;
+    if ( IsKeyPressed( kb->lk.key )     || isGamepadButtonPressed( gamepadId, kb->lk.gamepadButton ) )     return 4;
+    if ( IsKeyPressed( kb->mk.key )     || isGamepadButtonPressed( gamepadId, kb->mk.gamepadButton ) )     return 5;
+    if ( IsKeyPressed( kb->hk.key )     || isGamepadButtonPressed( gamepadId, kb->hk.gamepadButton ) )     return 6;
+    if ( IsKeyPressed( kb->lmhk.key )   || isGamepadButtonPressed( gamepadId, kb->lmhk.gamepadButton ) )   return 7;
+    if ( IsKeyPressed( kb->select.key ) || isGamepadButtonPressed( gamepadId, kb->select.gamepadButton ) ) return 8;
+    if ( IsKeyPressed( kb->start.key )  || isGamepadButtonPressed( gamepadId, kb->start.gamepadButton ) )  return 9;
+
+    return -1;
+
+}
+
 static void updateGameWorldSelectingPlayers( GameWorld *gw, float delta ) {
+
+    if ( playMusic ) {
+        if ( !IsMusicStreamPlaying( rm.playerSelectTheme ) )  {
+            PlayMusicStream( rm.playerSelectTheme );
+        }
+        UpdateMusicStream( rm.playerSelectTheme );
+    }
 
     if ( startTransitionToPlay ) {
 
@@ -552,11 +581,17 @@ static void updateGameWorldSelectingPlayers( GameWorld *gw, float delta ) {
 
             pSelectTransitionCounter = 0.0f;
 
-            PlayerType pType1Selected = playerSelectPlayerType[p1SelectLine][p1SelectColumn];
-            PlayerType pType2Selected = playerSelectPlayerType[p2SelectLine][p2SelectColumn];
-            startMatch( gw, pType1Selected, pType2Selected );
+            PlayerType pType1Selected = playerSelectPlayerType[p1SelectedLine][p1SelectedColumn];
+            PlayerType pType2Selected = playerSelectPlayerType[p2SelectedLine][p2SelectedColumn];
+            startMatch( gw, pType1Selected, p1SelectedPallete, pType2Selected, p2SelectedPallete );
 
             gw->mode = GAME_MODE_PLAYING;
+
+            if ( playMusic ) {
+                if ( IsMusicStreamPlaying( rm.playerSelectTheme ) )  {
+                    StopMusicStream( rm.playerSelectTheme );
+                }
+            }
 
         }
 
@@ -570,44 +605,68 @@ static void updateGameWorldSelectingPlayers( GameWorld *gw, float delta ) {
         pSelectBlink = !pSelectBlink;
     }
 
+    int p1LastSelectedLine = p1SelectedLine;
+    int p1LastSelectedColumn = p1SelectedColumn;
+    int p2LastSelectedLine = p2SelectedLine;
+    int p2LastSelectedColumn = p2SelectedColumn;
+
     if ( !p1Selected ) {
-        if ( IsKeyPressed( KEY_LEFT ) ) {
-            p1SelectColumn--;
-        } else if ( IsKeyPressed( KEY_RIGHT ) ) {
-            p1SelectColumn++;
-        } else if ( IsKeyPressed( KEY_UP ) ) {
-            p1SelectLine--;
-        } else if ( IsKeyPressed( KEY_DOWN ) ) {
-            p1SelectLine++;
+        if ( IsKeyPressed( p1KeyBindings.left.key ) || isGamepadButtonPressed( 0, p1KeyBindings.left.gamepadButton ) ) {
+            p1SelectedColumn--;
+        } else if ( IsKeyPressed( p1KeyBindings.right.key ) || isGamepadButtonPressed( 0, p1KeyBindings.right.gamepadButton ) ) {
+            p1SelectedColumn++;
+        } else if ( IsKeyPressed( p1KeyBindings.up.key ) || isGamepadButtonPressed( 0, p1KeyBindings.up.gamepadButton ) ) {
+            p1SelectedLine--;
+        } else if ( IsKeyPressed( p1KeyBindings.down.key ) || isGamepadButtonPressed( 0, p1KeyBindings.down.gamepadButton ) ) {
+            p1SelectedLine++;
         }
     }
 
     if ( !p2Selected ) {
-        if ( IsKeyPressed( KEY_A ) ) {
-            p2SelectColumn--;
-        } else if ( IsKeyPressed( KEY_D ) ) {
-            p2SelectColumn++;
-        } else if ( IsKeyPressed( KEY_W ) ) {
-            p2SelectLine--;
-        } else if ( IsKeyPressed( KEY_S ) ) {
-            p2SelectLine++;
+        if ( IsKeyPressed( p2KeyBindings.left.key ) || isGamepadButtonPressed( 1, p2KeyBindings.left.gamepadButton ) ) {
+            p2SelectedColumn--;
+        } else if ( IsKeyPressed( p2KeyBindings.right.key ) || isGamepadButtonPressed( 1, p2KeyBindings.left.gamepadButton ) ) {
+            p2SelectedColumn++;
+        } else if ( IsKeyPressed( p2KeyBindings.up.key ) || isGamepadButtonPressed( 1, p2KeyBindings.left.gamepadButton ) ) {
+            p2SelectedLine--;
+        } else if ( IsKeyPressed( p2KeyBindings.down.key ) || isGamepadButtonPressed( 1, p2KeyBindings.left.gamepadButton ) ) {
+            p2SelectedLine++;
         }
     }
 
-    p1SelectLine = (int) Clamp( p1SelectLine, 0, 1 );
-    p1SelectColumn = (int) Clamp( p1SelectColumn, 0, 7 );
-    p2SelectLine = (int) Clamp( p2SelectLine, 0, 1 );
-    p2SelectColumn = (int) Clamp( p2SelectColumn, 0, 7 );
+    p1SelectedLine = (int) Clamp( p1SelectedLine, 0, 1 );
+    p1SelectedColumn = (int) Clamp( p1SelectedColumn, 0, 7 );
+    p2SelectedLine = (int) Clamp( p2SelectedLine, 0, 1 );
+    p2SelectedColumn = (int) Clamp( p2SelectedColumn, 0, 7 );
 
-    bool p1Selectable = playerSelectSelectable[p1SelectLine][p1SelectColumn];
-    bool p2Selectable = playerSelectSelectable[p2SelectLine][p2SelectColumn];
-
-    if ( p1Selectable && IsKeyPressed( KEY_KP_ENTER ) && !p1Selected ) {
-        p1Selected = true;
+    if ( p1SelectedLine != p1LastSelectedLine ) {
+        PlaySound( rm.p1ChangeSelectedSound );
+    } else if ( p1SelectedColumn != p1LastSelectedColumn ) {
+        PlaySound( rm.p1ChangeSelectedSound );
     }
 
-    if ( p2Selectable && IsKeyPressed( KEY_ENTER ) && !p2Selected ) {
+    if ( p2SelectedLine != p2LastSelectedLine ) {
+        PlaySound( rm.p2ChangeSelectedSound );
+    } else if ( p2SelectedColumn != p2LastSelectedColumn ) {
+        PlaySound( rm.p2ChangeSelectedSound );
+    }
+
+    bool p1Selectable = playerSelectSelectable[p1SelectedLine][p1SelectedColumn];
+    bool p2Selectable = playerSelectSelectable[p2SelectedLine][p2SelectedColumn];
+
+    int p1Pallete = getPlayerPalleteSelectingPlayers( 0, &p1KeyBindings );
+    int p2Pallete = getPlayerPalleteSelectingPlayers( 1, &p2KeyBindings );
+
+    if ( p1Selectable && p1Pallete != -1 && !p1Selected ) {
+        p1Selected = true;
+        p1SelectedPallete = p1Pallete;
+        PlaySound( rm.p1SelectionSound );
+    }
+
+    if ( p2Selectable && p2Pallete != -1 && !p2Selected ) {
         p2Selected = true;
+        p2SelectedPallete = p2Pallete;
+        PlaySound( rm.p2SelectionSound );
     }
 
     if ( p1Selected && p2Selected ) {
@@ -618,17 +677,33 @@ static void updateGameWorldSelectingPlayers( GameWorld *gw, float delta ) {
 
 static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
 
+    if ( playMusic ) {
+        if ( !IsMusicStreamPlaying( rm.kenTheme ) )  {
+            PlayMusicStream( rm.kenTheme );
+        }
+        UpdateMusicStream( rm.kenTheme );
+    }
+
     if ( IsKeyPressed( KEY_F11 ) ) {
-        p1SelectLine = 0;
-        p1SelectColumn = 0;
-        p2SelectLine = 1;
-        p2SelectColumn = 0;
+
+        if ( playMusic ) {
+            if ( IsMusicStreamPlaying( rm.kenTheme ) )  {
+                StopMusicStream( rm.kenTheme );
+            }   
+        }
+
+        p1SelectedLine = 0;
+        p1SelectedColumn = 0;
+        p2SelectedLine = 1;
+        p2SelectedColumn = 0;
         pSelectBlinkCounter = 0.0f;
         pSelectBlink = false;
         pSelectTransitionCounter = 0.0f;
         startTransitionToPlay = false;
         p1Selected = false;
         p2Selected = false;
+        p1SelectedPallete = -1;
+        p2SelectedPallete = -1;
         gw->mode = GAME_MODE_SELECT_PLAYERS;
         return;
     }
@@ -641,13 +716,6 @@ static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
         } else {
             changePlayerPallete( gw->player1, pallete, PALLETE_COLOR_LIMIT );
         }
-    }
-
-    if ( playMusic ) {
-        if ( !IsMusicStreamPlaying( rm.kenTheme ) )  {
-            PlayMusicStream( rm.kenTheme );
-        }
-        UpdateMusicStream( rm.kenTheme );
     }
 
     stageTextureChangeCounter += delta;

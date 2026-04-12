@@ -29,7 +29,8 @@ GameWindow* createGameWindow(
         bool invisibleBackground, 
         bool alwaysRun, 
         bool loadResources, 
-        bool initAudio ) {
+        bool initAudio,
+        bool disableLogs ) {
 
     GameWindow *gameWindow = (GameWindow*) malloc( sizeof( GameWindow ) );
 
@@ -46,6 +47,7 @@ GameWindow* createGameWindow(
     gameWindow->alwaysRun = alwaysRun;
     gameWindow->loadResources = loadResources;
     gameWindow->initAudio = initAudio;
+    gameWindow->disableLogs = disableLogs;
     gameWindow->gw = NULL;
     gameWindow->initialized = false;
 
@@ -89,6 +91,10 @@ void initGameWindow( GameWindow *gameWindow ) {
 
         if ( gameWindow->alwaysRun ) {
             SetConfigFlags( FLAG_WINDOW_ALWAYS_RUN );
+        }
+
+        if ( gameWindow->disableLogs ) {
+            SetTraceLogLevel( LOG_NONE );
         }
 
         InitWindow( gameWindow->width, gameWindow->height, gameWindow->title );
