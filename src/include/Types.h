@@ -10,7 +10,14 @@
 #define PUSHBACK_ON_BLOCK 80.0f         // fixed pushback speed applied to defender on block
 #define PUSHBACK_DECAY 0.90f            // per-frame velocity decay during hit/block stun
 
+typedef enum PlayerType {
+    PLAYER_TYPE_RYU,
+    PLAYER_TYPE_KEN,
+    PLAYER_TYPE_OTHER,
+} PlayerType;
+
 typedef enum GameMode {
+    GAME_MODE_SELECT_PLAYERS,
     GAME_MODE_PLAYING,
     GAME_MODE_EDITING,
 } GameMode;
@@ -226,6 +233,8 @@ typedef struct PlayerSounds {
 } PlayerSounds;
 
 typedef struct Player {
+
+    PlayerType type;
 
     Texture2D *baseSpriteMap;
     Texture2D *specialMovesSpriteMap;

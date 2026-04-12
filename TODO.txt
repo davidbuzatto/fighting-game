@@ -1,5 +1,9 @@
+Sons tela de escolha de personagem;
+    Fundo, troca de seleção e confirmação.
+    Dependendo do input, trocar a paleta!
+Ajustar inputs (joystick) e generalizar para refletir tudo.
+
 Implementar dinâmica das partidas;
-    Animações ganhou e perdeu;
     Timeover
         Quem ganhou, animação ganhou.
         Quem perdeu, animação timeover.

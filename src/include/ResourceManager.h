@@ -36,6 +36,8 @@ typedef struct ResourceManager {
     Texture2D fontsTexture;
     Texture2D inputIconsTexture;
 
+    Texture2D playerSelectTexture;
+
     Sound ryuAttackLowSound;
     Sound ryuAttackMidSound;
     Sound ryuAttackHighSound;

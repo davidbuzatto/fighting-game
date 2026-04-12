@@ -817,6 +817,7 @@ static void initializePlayerCommon( float x, float y, Player *p, PlayerStartSide
 void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide, int gamepadId, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo ) {
 
     initializePlayerCommon( x, y, p, startSide, gamepadId, animationDurationMode, showBoxes, showDebugInfo );
+    p->type = PLAYER_TYPE_RYU;
     p->baseSpriteMap = &rm.ryuSpriteMapTexture;
     p->specialMovesSpriteMap = &rm.ryuSpecialMovesSpriteMapTexture;
     p->pallete = &rm.ryuPalleteImage;
@@ -838,6 +839,7 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
 void initializePlayerKen( float x, float y, Player *p, PlayerStartSide startSide, int gamepadId, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo ) {
 
     initializePlayerCommon( x, y, p, startSide, gamepadId, animationDurationMode, showBoxes, showDebugInfo );
+    p->type = PLAYER_TYPE_KEN;
     p->baseSpriteMap = &rm.kenSpriteMapTexture;
     p->specialMovesSpriteMap = &rm.kenSpecialMovesSpriteMapTexture;
     p->pallete = &rm.kenPalleteImage;

@@ -108,6 +108,17 @@ void loadResourcesResourceManager( void ) {
         1
     );
 
+    rm.playerSelectTexture = loadTextureReplacingColor( 
+        "resources/images/misc/player-select.png", 
+        (Color[]) { 
+            (Color) { 230, 191, 255, 255 }
+        }, 
+        (Color[]) { 
+            BLANK
+        },
+        1
+    );
+
     rm.ryuAttackLowSound = LoadSound( "resources/sfx/attack-low.wav" );
     rm.ryuAttackMidSound = LoadSound( "resources/sfx/attack-mid.wav" );
     rm.ryuAttackHighSound = LoadSound( "resources/sfx/attack-high.wav" );
@@ -153,6 +164,8 @@ void unloadResourcesResourceManager( void ) {
     UnloadTexture( rm.effectsTexture );
     UnloadTexture( rm.fontsTexture );
     UnloadTexture( rm.inputIconsTexture );
+
+    UnloadTexture( rm.playerSelectTexture );
 
     UnloadSound( rm.ryuAttackLowSound );
     UnloadSound( rm.ryuAttackMidSound );

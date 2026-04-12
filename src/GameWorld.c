@@ -30,15 +30,18 @@
 #define SHOW_PLAYER_INPUT_BUFFER false
 #define SHOW_MODEL_STAGE_TEXTURE false
 #define ANIMATION_DURATION_MODE DURATION_MODE_MILLISECONDS
-#define INITIAL_GAME_MODE GAME_MODE_PLAYING
+#define INITIAL_GAME_MODE GAME_MODE_SELECT_PLAYERS
 #define PLAY_MUSIC false
 #define PALLETE_COLOR_LIMIT 10
 
-#define PLAYER_1_ANIMATIONS_FILE "resources/animations/ryu.json"
-#define PLAYER_2_ANIMATIONS_FILE "resources/animations/ken.json"
+#define RYU_ANIMATIONS_FILE "resources/animations/ryu.json"
+#define KEN_ANIMATIONS_FILE "resources/animations/ken.json"
 
+static void startMatch( GameWorld *gw, PlayerType player1, PlayerType player2 );
+static void drawGameWorldSelectingPlayers( GameWorld *gw );
 static void drawGameWorldPlaying( GameWorld *gw );
 static void drawGameWorldEditing( GameWorld *gw );
+static void updateGameWorldSelectingPlayers( GameWorld *gw, float delta );
 static void updateGameWorldPlaying( GameWorld *gw, float delta );
 static void updateGameWorldEditing( GameWorld *gw, float delta );
 static void editAnimationFrameBox( Rectangle *box );
@@ -83,6 +86,7 @@ static bool needsToFlipPlayers = false;
 // match data
 static int remainingTime = 99;
 static float remainingTimeCounter = 0;
+static bool clearLastMatch = false;
 
 // stage
 #define BACK_TEXTURES_COUNT 3
@@ -99,6 +103,38 @@ static bool playMusic = PLAY_MUSIC;
 // hud
 static const Color PORTRAIT_BG_COLOR = { 112, 136, 198, 255 };
 
+// player select
+static int p1SelectLine = 0;
+static int p1SelectColumn = 0;
+static int p2SelectLine = 1;
+static int p2SelectColumn = 0;
+
+static float pSelectBlinkTime = 0.02f;
+static float pSelectBlinkCounter = 0.0f;
+static bool pSelectBlink = false;
+
+static float pSelectTransitionTime = 1.0f;
+static float pSelectTransitionCounter = 0.0f;
+static float startTransitionToPlay = false;
+
+static bool p1Selected = false;
+static bool p2Selected = false;
+
+static Vector2 portraitsMap[2][8] = { 
+    { { 0, 0 }, { 0, 1 }, { 0, 2 }, { 0, 3 }, { 2, 0 }, { 2, 1 }, { 2, 2 }, { 2, 3 } },
+    { { 1, 0 }, { 1, 1 }, { 1, 2 }, { 1, 3 }, { 3, 0 }, { 3, 1 }, { 3, 2 }, { 3, 3 } },
+};
+
+static bool playerSelectSelectable[2][8] = { 
+    { true, false, false, false, false, false, false, false },
+    { true, false, false, false, false, false, false, false },
+};
+
+static PlayerType playerSelectPlayerType[2][8] = { 
+    { PLAYER_TYPE_RYU, PLAYER_TYPE_OTHER, PLAYER_TYPE_OTHER, PLAYER_TYPE_OTHER, PLAYER_TYPE_OTHER, PLAYER_TYPE_OTHER, PLAYER_TYPE_OTHER, PLAYER_TYPE_OTHER },
+    { PLAYER_TYPE_KEN, PLAYER_TYPE_OTHER, PLAYER_TYPE_OTHER, PLAYER_TYPE_OTHER, PLAYER_TYPE_OTHER, PLAYER_TYPE_OTHER, PLAYER_TYPE_OTHER, PLAYER_TYPE_OTHER },
+};
+
 /**
  * @brief Creates a dinamically allocated GameWorld struct instance.
  */
@@ -111,6 +147,7 @@ GameWorld* createGameWorld( void ) {
     gw->floor = (Rectangle) {
         0, GetScreenHeight() - floorHeight, GetScreenWidth(), floorHeight
     };
+
     gw->anchorTexture = &rm.kenStageAnchorTexture;
     gw->floorTexture = &rm.kenStageFloorTexture;
     gw->back01Texture = &rm.kenStageBack01Texture;
@@ -144,11 +181,135 @@ GameWorld* createGameWorld( void ) {
         .zoom = 2.75f
     };
 
+    gw->mode = INITIAL_GAME_MODE;
+
+    if ( gw->mode == GAME_MODE_PLAYING || gw->mode == GAME_MODE_EDITING ) {
+        startMatch( gw, PLAYER_TYPE_RYU, PLAYER_TYPE_KEN );
+        updateCameraPlaying( gw );
+    }
+
+    return gw;
+
+}
+
+/**
+ * @brief Destroys a GameWindow object and its dependecies.
+ */
+void destroyGameWorld( GameWorld *gw ) {
+    destroyPlayer( gw->player1 );
+    destroyPlayer( gw->player2 );
+    free( gw );
+}
+
+/**
+ * @brief Reads user input and updates the state of the game.
+ */
+void updateGameWorld( GameWorld *gw, float delta ) {
+
+    if ( IsKeyPressed( KEY_F1 ) ) {
+
+        if ( gw->mode == GAME_MODE_PLAYING ) {
+            gw->mode = GAME_MODE_EDITING;
+        } else if ( gw->mode == GAME_MODE_EDITING ) {
+            gw->mode = GAME_MODE_PLAYING;
+            resetPlayerAnimations( gw->player1 );
+        }
+
+        if ( gw->mode == GAME_MODE_EDITING ) {
+            if ( lastEditState == PLAYER_STATE_LAST ) {
+                gw->player1->state = PLAYER_STATE_IDLE;
+            } else {
+                gw->player1->state = lastEditState;
+            }
+            Animation *a = getPlayerCurrentAnimation( gw->player1 );
+            if ( a != NULL )  {
+                a->currentFrame = lastEditFrame;
+            }
+        }
+
+    }
+
+    if ( gw->mode == GAME_MODE_PLAYING || gw->mode == GAME_MODE_PLAYING ) {
+
+        if ( IsKeyPressed( KEY_F2 ) ) {
+            gw->player1->showBoxes = !gw->player1->showBoxes;
+            gw->player2->showBoxes = !gw->player2->showBoxes;
+        }
+
+        if ( IsKeyPressed( KEY_F3 ) ) {
+            gw->player1->showDebugInfo = !gw->player1->showDebugInfo;
+            gw->player2->showDebugInfo = !gw->player2->showDebugInfo;
+        }
+
+        if ( IsKeyPressed( KEY_F4 ) ) {
+            showPlayerOnionEditing = !showPlayerOnionEditing;
+        }
+
+        if ( IsKeyPressed( KEY_F5 ) ) {
+            showPlayerInputBuffer = !showPlayerInputBuffer;
+        }
+
+    }
+
+    if ( gw->mode == GAME_MODE_SELECT_PLAYERS ) {
+        updateGameWorldSelectingPlayers( gw, delta );
+    } else if ( gw->mode == GAME_MODE_PLAYING ) {
+        updateGameWorldPlaying( gw, delta );
+    } else {
+        updateGameWorldEditing( gw, delta );
+    }
+
+}
+
+/**
+ * @brief Draws the state of the game.
+ */
+void drawGameWorld( GameWorld *gw ) {
+
+    BeginDrawing();
+
+    if ( gw->mode == GAME_MODE_SELECT_PLAYERS ) {
+        drawGameWorldSelectingPlayers( gw );
+    } else if ( gw->mode == GAME_MODE_PLAYING ) {
+        drawGameWorldPlaying( gw );
+    } else {
+        drawGameWorldEditing( gw );
+    }
+
+    EndDrawing();
+
+}
+
+static void startMatch( GameWorld *gw, PlayerType playerType1, PlayerType playerType2 ) {
+
+    if ( clearLastMatch ) {
+        destroyPlayer( gw->player1 );
+        destroyPlayer( gw->player2 );
+    }
+    clearLastMatch = true;
+
     Player *player1 = createPlayer();
     Player *player2 = createPlayer();
 
-    initializePlayerRyu( gw->back01Texture->width / 2 - 78, 552, player1, PLAYER_START_SIDE_LEFT, 0, ANIMATION_DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
-    initializePlayerKen( gw->back01Texture->width / 2 + 50, 552, player2, PLAYER_START_SIDE_RIGHT, 1, ANIMATION_DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
+    gw->player1 = player1;
+    gw->player2 = player2;
+
+    if ( playerType1 == PLAYER_TYPE_RYU ) {
+        initializePlayerRyu( gw->back01Texture->width / 2 - 78, 552, player1, PLAYER_START_SIDE_LEFT, 0, ANIMATION_DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
+        loadPlayerAnimationFrameBoxes( gw->player1, RYU_ANIMATIONS_FILE );
+    } else {
+        initializePlayerKen( gw->back01Texture->width / 2 - 78, 552, player1, PLAYER_START_SIDE_LEFT, 0, ANIMATION_DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
+        loadPlayerAnimationFrameBoxes( gw->player1, KEN_ANIMATIONS_FILE );
+    }
+
+    if ( playerType2 == PLAYER_TYPE_RYU ) {
+        initializePlayerRyu( gw->back01Texture->width / 2 + 50, 552, player2, PLAYER_START_SIDE_RIGHT, 1, ANIMATION_DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
+        loadPlayerAnimationFrameBoxes( gw->player2, RYU_ANIMATIONS_FILE );
+    } else {
+        initializePlayerKen( gw->back01Texture->width / 2 + 50, 552, player2, PLAYER_START_SIDE_RIGHT, 1, ANIMATION_DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
+        loadPlayerAnimationFrameBoxes( gw->player2, KEN_ANIMATIONS_FILE );
+    }
+    
     flipPlayerSide( player2 );
 
     player1->kb = (PlayerKeyBindings) {
@@ -177,97 +338,142 @@ GameWorld* createGameWorld( void ) {
         .hk    = { KEY_J, GAMEPAD_BUTTON_RIGHT_TRIGGER_1,  INPUT_TYPE_HK },
     };
 
-    gw->player1 = player1;
-    gw->player2 = player2;
-
-    gw->mode = INITIAL_GAME_MODE;
-
-    loadPlayerAnimationFrameBoxes( gw->player1, PLAYER_1_ANIMATIONS_FILE );
-    loadPlayerAnimationFrameBoxes( gw->player2, PLAYER_2_ANIMATIONS_FILE );
-
     updateCameraPlaying( gw );
 
-    return gw;
-
 }
 
-/**
- * @brief Destroys a GameWindow object and its dependecies.
- */
-void destroyGameWorld( GameWorld *gw ) {
-    destroyPlayer( gw->player1 );
-    destroyPlayer( gw->player2 );
-    free( gw );
-}
+static void drawGameWorldSelectingPlayers( GameWorld *gw ) {
 
-/**
- * @brief Reads user input and updates the state of the game.
- */
-void updateGameWorld( GameWorld *gw, float delta ) {
+    ClearBackground( (Color) { 68, 51, 136, 255 } );
+    int scale = 2;
 
-    if ( IsKeyPressed( KEY_F1 ) ) {
+    int pSelectBackW = 384;
+    int pSelectBackH = 224;
+    int pSelectW = 32;
+    int pSelectH = 39;
+    int pSelectWi = 32;
+    int pSelectHi = 32;
 
-        if ( gw->mode == GAME_MODE_PLAYING ) {
-            gw->mode = GAME_MODE_EDITING;
-        } else {
-            gw->mode = GAME_MODE_PLAYING;
-            resetPlayerAnimations( gw->player1 );
-        }
+    int startX = GetScreenWidth() / 2 - ( pSelectBackW * scale ) / 2;
+    int startY = GetScreenHeight() / 2 - ( pSelectBackH * scale ) / 2;
 
-        if ( gw->mode == GAME_MODE_EDITING ) {
-            if ( lastEditState == PLAYER_STATE_LAST ) {
-                gw->player1->state = PLAYER_STATE_IDLE;
-            } else {
-                gw->player1->state = lastEditState;
-            }
-            Animation *a = getPlayerCurrentAnimation( gw->player1 );
-            if ( a != NULL )  {
-                a->currentFrame = lastEditFrame;
-            }
-        }
+    int pSelectStartX = startX + 64 * scale;
+    int pSelectStartY = startY + 156 * scale;
 
+    DrawTexturePro(
+        rm.playerSelectTexture,
+        (Rectangle) { 30, 823, pSelectBackW, pSelectBackH },
+        (Rectangle) { startX, startY, pSelectBackW * scale, pSelectBackH * scale },
+        (Vector2) { 0 },
+        0.0f,
+        WHITE
+    );
+
+    DrawTexturePro(
+        rm.playerSelectTexture,
+        (Rectangle) { 158, 5, 128, 13 },
+        (Rectangle) { pSelectStartX + 130, pSelectStartY - 25, 128 * scale, 13 * scale },
+        (Vector2) { 0 },
+        0.0f,
+        WHITE
+    );
+
+    Vector2 vP1 = portraitsMap[p1SelectLine][p1SelectColumn];
+    Vector2 vP2 = portraitsMap[p2SelectLine][p2SelectColumn];
+
+    bool p1Selectable = playerSelectSelectable[p1SelectLine][p1SelectColumn];
+    bool p2Selectable = playerSelectSelectable[p2SelectLine][p2SelectColumn];
+
+    // p1 portrait
+    DrawRectangle( startX, startY + 30, 96 * scale, 112 * scale, Fade( BLACK, 0.5f ) );
+    DrawTexturePro(
+        rm.playerSelectTexture,
+        (Rectangle) { 15 + 106 * vP1.y, 149 + 138 * vP1.x, 96, 112 },
+        (Rectangle) { 
+            startX,
+            startY + 30, 
+            96 * scale, 
+            112 * scale
+        },
+        (Vector2) { 0 },
+        0.0f,
+        p1Selectable ? WHITE : Fade( DARKGRAY, 0.7f )
+    );
+    DrawTexturePro(
+        rm.playerSelectTexture,
+        (Rectangle) { 15 + 106 * vP1.y, 266 + 138 * vP1.x, 96, 16 },
+        (Rectangle) { 
+            startX,
+            startY + 30 + 112 * scale + 4 * scale, 
+            96 * scale, 
+            16 * scale
+        },
+        (Vector2) { 0 },
+        0.0f,
+        p1Selectable ? WHITE : Fade( DARKGRAY, 0.7f )
+    );
+
+    DrawRectangle( startX + pSelectBackW * scale - 96 * scale, startY + 30, 96 * scale, 112 * scale, Fade( BLACK, 0.5f ) );
+    DrawTexturePro(
+        rm.playerSelectTexture,
+        (Rectangle) { 15 + 106 * vP2.y, 149 + 138 * vP2.x, -96, 112 },
+        (Rectangle) { 
+            startX + pSelectBackW * scale - 96 * scale, startY + 30, 96 * scale, 112 * scale
+        },
+        (Vector2) { 0 },
+        0.0f,
+        p2Selectable ? WHITE : Fade( DARKGRAY, 0.7f )
+    );
+    DrawTexturePro(
+        rm.playerSelectTexture,
+        (Rectangle) { 15 + 106 * vP2.y, 266 + + 138 * vP2.x, 96, 16 },
+        (Rectangle) { 
+            startX + pSelectBackW * scale - 96 * scale,
+            startY + 30 + 112 * scale + 4 * scale, 
+            96 * scale, 
+            16 * scale
+        },
+        (Vector2) { 0 },
+        0.0f,
+        p2Selectable ? WHITE : Fade( DARKGRAY, 0.7f )
+    );
+
+    DrawRectangleLines( startX, startY, pSelectBackW * scale, pSelectBackH * scale, BLACK );
+
+    // p1 select
+    DrawTexturePro(
+        rm.playerSelectTexture,
+        (Rectangle) { p1Selected ? 149 : pSelectBlink ? 223 : 149, 100, pSelectW, pSelectH },
+        (Rectangle) { 
+            pSelectStartX + p1SelectColumn * pSelectWi * scale, 
+            pSelectStartY + p1SelectLine * pSelectHi * scale, 
+            pSelectW * scale, 
+            pSelectH * scale
+        },
+        (Vector2) { 0 },
+        0.0f,
+        WHITE
+    );
+
+    // p2 select
+    DrawTexturePro(
+        rm.playerSelectTexture,
+        (Rectangle) { p2Selected ? 186 : pSelectBlink ? 260 : 186, 100, pSelectW, pSelectH },
+        (Rectangle) { 
+            pSelectStartX + p2SelectColumn * pSelectWi * scale, 
+            pSelectStartY + p2SelectLine * pSelectHi * scale, 
+            pSelectW * scale, 
+            pSelectH * scale
+        },
+        (Vector2) { 0 },
+        0.0f,
+        WHITE
+    );
+
+    if ( startTransitionToPlay ) {
+        DrawRectangle( 0, 0, GetScreenWidth(), GetScreenHeight(), Fade( BLACK, pSelectTransitionCounter / pSelectTransitionTime ) );
     }
 
-    if ( IsKeyPressed( KEY_F2 ) ) {
-        gw->player1->showBoxes = !gw->player1->showBoxes;
-        gw->player2->showBoxes = !gw->player2->showBoxes;
-    }
-
-    if ( IsKeyPressed( KEY_F3 ) ) {
-        gw->player1->showDebugInfo = !gw->player1->showDebugInfo;
-        gw->player2->showDebugInfo = !gw->player2->showDebugInfo;
-    }
-
-    if ( IsKeyPressed( KEY_F4 ) ) {
-        showPlayerOnionEditing = !showPlayerOnionEditing;
-    }
-
-    if ( IsKeyPressed( KEY_F5 ) ) {
-        showPlayerInputBuffer = !showPlayerInputBuffer;
-    }
-
-    if ( gw->mode == GAME_MODE_PLAYING ) {
-        updateGameWorldPlaying( gw, delta );
-    } else {
-        updateGameWorldEditing( gw, delta );
-    }
-
-}
-
-/**
- * @brief Draws the state of the game.
- */
-void drawGameWorld( GameWorld *gw ) {
-
-    BeginDrawing();
-
-    if ( gw->mode == GAME_MODE_PLAYING ) {
-        drawGameWorldPlaying( gw );
-    } else {
-        drawGameWorldEditing( gw );
-    }
-
-    EndDrawing();
 
 }
 
@@ -324,7 +530,96 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
 
 }
 
+static void updateGameWorldSelectingPlayers( GameWorld *gw, float delta ) {
+
+    if ( startTransitionToPlay ) {
+
+        pSelectTransitionCounter += delta;
+
+        if ( pSelectTransitionCounter >= pSelectTransitionTime ) {
+
+            pSelectTransitionCounter = 0.0f;
+
+            PlayerType pType1Selected = playerSelectPlayerType[p1SelectLine][p1SelectColumn];
+            PlayerType pType2Selected = playerSelectPlayerType[p2SelectLine][p2SelectColumn];
+            startMatch( gw, pType1Selected, pType2Selected );
+
+            gw->mode = GAME_MODE_PLAYING;
+
+        }
+
+        return;
+
+    }
+
+    pSelectBlinkCounter += delta;
+    if ( pSelectBlinkCounter >= pSelectBlinkTime ) {
+        pSelectBlinkCounter = 0.0f;
+        pSelectBlink = !pSelectBlink;
+    }
+
+    if ( !p1Selected ) {
+        if ( IsKeyPressed( KEY_LEFT ) ) {
+            p1SelectColumn--;
+        } else if ( IsKeyPressed( KEY_RIGHT ) ) {
+            p1SelectColumn++;
+        } else if ( IsKeyPressed( KEY_UP ) ) {
+            p1SelectLine--;
+        } else if ( IsKeyPressed( KEY_DOWN ) ) {
+            p1SelectLine++;
+        }
+    }
+
+    if ( !p2Selected ) {
+        if ( IsKeyPressed( KEY_A ) ) {
+            p2SelectColumn--;
+        } else if ( IsKeyPressed( KEY_D ) ) {
+            p2SelectColumn++;
+        } else if ( IsKeyPressed( KEY_W ) ) {
+            p2SelectLine--;
+        } else if ( IsKeyPressed( KEY_S ) ) {
+            p2SelectLine++;
+        }
+    }
+
+    p1SelectLine = (int) Clamp( p1SelectLine, 0, 1 );
+    p1SelectColumn = (int) Clamp( p1SelectColumn, 0, 7 );
+    p2SelectLine = (int) Clamp( p2SelectLine, 0, 1 );
+    p2SelectColumn = (int) Clamp( p2SelectColumn, 0, 7 );
+
+    bool p1Selectable = playerSelectSelectable[p1SelectLine][p1SelectColumn];
+    bool p2Selectable = playerSelectSelectable[p2SelectLine][p2SelectColumn];
+
+    if ( p1Selectable && IsKeyPressed( KEY_KP_ENTER ) && !p1Selected ) {
+        p1Selected = true;
+    }
+
+    if ( p2Selectable && IsKeyPressed( KEY_ENTER ) && !p2Selected ) {
+        p2Selected = true;
+    }
+
+    if ( p1Selected && p2Selected ) {
+        startTransitionToPlay = true;
+    }
+
+}
+
 static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
+
+    if ( IsKeyPressed( KEY_F11 ) ) {
+        p1SelectLine = 0;
+        p1SelectColumn = 0;
+        p2SelectLine = 1;
+        p2SelectColumn = 0;
+        pSelectBlinkCounter = 0.0f;
+        pSelectBlink = false;
+        pSelectTransitionCounter = 0.0f;
+        startTransitionToPlay = false;
+        p1Selected = false;
+        p2Selected = false;
+        gw->mode = GAME_MODE_SELECT_PLAYERS;
+        return;
+    }
 
     int keyPressed = GetKeyPressed();
     if ( keyPressed >= KEY_ZERO && keyPressed <= KEY_NINE ) {
@@ -461,7 +756,11 @@ static void updateGameWorldEditing( GameWorld *gw, float delta ) {
 
     if ( IsKeyDown( KEY_LEFT_CONTROL ) && IsKeyPressed( KEY_S ) ) {
         resetPlayerAnimations( gw->player1 );
-        storePlayerAnimations( gw->player1, true, false, PLAYER_1_ANIMATIONS_FILE );
+        if ( gw->player1->type == PLAYER_TYPE_RYU ) {
+            storePlayerAnimations( gw->player1, true, false, RYU_ANIMATIONS_FILE );
+        } else {
+            storePlayerAnimations( gw->player1, true, false, KEN_ANIMATIONS_FILE );
+        }
         saveTimer = 90;
         return;
     }
