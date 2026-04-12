@@ -219,6 +219,8 @@ GameWorld* createGameWorld( void ) {
     };
 
     gw->mode = INITIAL_GAME_MODE;
+    gw->player1 = NULL;
+    gw->player2 = NULL;
 
     if ( gw->mode == GAME_MODE_PLAYING || gw->mode == GAME_MODE_EDITING ) {
         startMatch( gw, PLAYER_TYPE_RYU, 9, PLAYER_TYPE_KEN, 0 );
@@ -233,8 +235,12 @@ GameWorld* createGameWorld( void ) {
  * @brief Destroys a GameWindow object and its dependecies.
  */
 void destroyGameWorld( GameWorld *gw ) {
-    destroyPlayer( gw->player1 );
-    destroyPlayer( gw->player2 );
+    if ( gw->player1 != NULL ) {
+        destroyPlayer( gw->player1 );
+    }
+    if ( gw->player2 != NULL ) {
+        destroyPlayer( gw->player2 );
+    }
     free( gw );
 }
 

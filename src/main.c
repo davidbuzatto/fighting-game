@@ -27,7 +27,7 @@ int main( void ) {
         false,           // always run
         true,            // load resources
         true,            // init audio
-        true             // disable logs   
+        false             // disable logs   
     );
 
     initGameWindow( gameWindow );
