@@ -49,10 +49,12 @@ typedef enum InputType {
     INPUT_TYPE_LP,
     INPUT_TYPE_MP,
     INPUT_TYPE_HP,
+    INPUT_TYPE_LMHK,
     INPUT_TYPE_LK,
     INPUT_TYPE_MK,
     INPUT_TYPE_HK,
-    INPUT_TYPE_NEUTRAL
+    INPUT_TYPE_LMHP,
+    INPUT_TYPE_NEUTRAL,
 } InputType;
 
 typedef enum PlayerState {
@@ -197,9 +199,13 @@ typedef struct PlayerKeyBindings {
     InputEntry lp;
     InputEntry mp;
     InputEntry hp;
+    InputEntry lmhp;
     InputEntry lk;
     InputEntry mk;
     InputEntry hk;
+    InputEntry lmhk;
+    InputEntry select;
+    InputEntry start;
 } PlayerKeyBindings;
 
 typedef struct Projectile {

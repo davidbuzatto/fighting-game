@@ -30,7 +30,7 @@
 #define SHOW_PLAYER_INPUT_BUFFER false
 #define SHOW_MODEL_STAGE_TEXTURE false
 #define ANIMATION_DURATION_MODE DURATION_MODE_MILLISECONDS
-#define INITIAL_GAME_MODE GAME_MODE_SELECT_PLAYERS
+#define INITIAL_GAME_MODE GAME_MODE_PLAYING
 #define PLAY_MUSIC false
 #define PALLETE_COLOR_LIMIT 10
 
@@ -63,6 +63,41 @@ static void updateCameraEditing( GameWorld *gw );
 static void resolveCollisionPlayerStage( Player *player, GameWorld *gw );
 static void resolvePlayerPlayerCollision( Player *p1, Player *p2 );
 static void flipPlayers( GameWorld *gw );
+
+// gameplay
+PlayerKeyBindings p1KeyBindings = {
+    .left   = { KEY_A,         GAMEPAD_BUTTON_LEFT_FACE_LEFT,   INPUT_TYPE_LEFT  },
+    .right  = { KEY_D,         GAMEPAD_BUTTON_LEFT_FACE_RIGHT,  INPUT_TYPE_RIGHT },
+    .up     = { KEY_W,         GAMEPAD_BUTTON_LEFT_FACE_UP,     INPUT_TYPE_UP    },
+    .down   = { KEY_S,         GAMEPAD_BUTTON_LEFT_FACE_DOWN,   INPUT_TYPE_DOWN  },
+    .lp     = { KEY_G,         GAMEPAD_BUTTON_RIGHT_FACE_LEFT,  INPUT_TYPE_LP    },
+    .mp     = { KEY_H,         GAMEPAD_BUTTON_RIGHT_FACE_UP,    INPUT_TYPE_MP    },
+    .hp     = { KEY_J,         GAMEPAD_BUTTON_LEFT_TRIGGER_1,   INPUT_TYPE_HP    },
+    .lmhp   = { KEY_T,         GAMEPAD_BUTTON_LEFT_TRIGGER_2,   INPUT_TYPE_LMHP  },
+    .lk     = { KEY_B,         GAMEPAD_BUTTON_RIGHT_FACE_DOWN,  INPUT_TYPE_LK    },
+    .mk     = { KEY_N,         GAMEPAD_BUTTON_RIGHT_FACE_RIGHT, INPUT_TYPE_MK    },
+    .hk     = { KEY_M,         GAMEPAD_BUTTON_RIGHT_TRIGGER_1,  INPUT_TYPE_HK    },
+    .lmhk   = { KEY_U,         GAMEPAD_BUTTON_RIGHT_TRIGGER_2,  INPUT_TYPE_LMHK  },
+    .select = { KEY_BACKSPACE, GAMEPAD_BUTTON_MIDDLE_LEFT,      INPUT_TYPE_HK    },
+    .start  = { KEY_ENTER,     GAMEPAD_BUTTON_MIDDLE_RIGHT,     INPUT_TYPE_HK    },
+};
+
+PlayerKeyBindings p2KeyBindings = {
+    .left   = { KEY_LEFT,      GAMEPAD_BUTTON_LEFT_FACE_LEFT,   INPUT_TYPE_LEFT  },
+    .right  = { KEY_RIGHT,     GAMEPAD_BUTTON_LEFT_FACE_RIGHT,  INPUT_TYPE_RIGHT },
+    .up     = { KEY_UP,        GAMEPAD_BUTTON_LEFT_FACE_UP,     INPUT_TYPE_UP    },
+    .down   = { KEY_DOWN,      GAMEPAD_BUTTON_LEFT_FACE_DOWN,   INPUT_TYPE_DOWN  },
+    .lp     = { KEY_KP_4,      GAMEPAD_BUTTON_RIGHT_FACE_LEFT,  INPUT_TYPE_LP    },
+    .mp     = { KEY_KP_5,      GAMEPAD_BUTTON_RIGHT_FACE_UP,    INPUT_TYPE_MP    },
+    .hp     = { KEY_KP_6,      GAMEPAD_BUTTON_LEFT_TRIGGER_1,   INPUT_TYPE_HP    },
+    .lmhp   = { KEY_KP_7,      GAMEPAD_BUTTON_LEFT_TRIGGER_2,   INPUT_TYPE_LMHP  },
+    .lk     = { KEY_KP_1,      GAMEPAD_BUTTON_RIGHT_FACE_DOWN,  INPUT_TYPE_LK    },
+    .mk     = { KEY_KP_2,      GAMEPAD_BUTTON_RIGHT_FACE_RIGHT, INPUT_TYPE_MK    },
+    .hk     = { KEY_KP_3,      GAMEPAD_BUTTON_RIGHT_TRIGGER_1,  INPUT_TYPE_HK    },
+    .lmhk   = { KEY_KP_9,      GAMEPAD_BUTTON_RIGHT_TRIGGER_2,  INPUT_TYPE_LMHK  },
+    .select = { KEY_KP_ADD,    GAMEPAD_BUTTON_MIDDLE_LEFT,      INPUT_TYPE_HK    },
+    .start  = { KEY_KP_ENTER,  GAMEPAD_BUTTON_MIDDLE_RIGHT,     INPUT_TYPE_HK    },
+};
 
 // editor
 static EditorMode editorMode = EDITOR_MODE_COLLISION_BOX;
@@ -312,31 +347,8 @@ static void startMatch( GameWorld *gw, PlayerType playerType1, PlayerType player
     
     flipPlayerSide( player2 );
 
-    player1->kb = (PlayerKeyBindings) {
-        .left  = { KEY_LEFT,  GAMEPAD_BUTTON_LEFT_FACE_LEFT,   INPUT_TYPE_LEFT },
-        .right = { KEY_RIGHT, GAMEPAD_BUTTON_LEFT_FACE_RIGHT,  INPUT_TYPE_RIGHT },
-        .up    = { KEY_UP,    GAMEPAD_BUTTON_LEFT_FACE_UP,     INPUT_TYPE_UP },
-        .down  = { KEY_DOWN,  GAMEPAD_BUTTON_LEFT_FACE_DOWN,   INPUT_TYPE_DOWN },
-        .lp    = { KEY_KP_4,  GAMEPAD_BUTTON_RIGHT_FACE_LEFT,  INPUT_TYPE_LP },
-        .mp    = { KEY_KP_5,  GAMEPAD_BUTTON_RIGHT_FACE_UP,    INPUT_TYPE_MP },
-        .hp    = { KEY_KP_6,  GAMEPAD_BUTTON_LEFT_TRIGGER_1,   INPUT_TYPE_HP },
-        .lk    = { KEY_KP_1,  GAMEPAD_BUTTON_RIGHT_FACE_DOWN,  INPUT_TYPE_LK },
-        .mk    = { KEY_KP_2,  GAMEPAD_BUTTON_RIGHT_FACE_RIGHT, INPUT_TYPE_MK },
-        .hk    = { KEY_KP_3,  GAMEPAD_BUTTON_RIGHT_TRIGGER_1,  INPUT_TYPE_HK },
-    };
-
-    player2->kb = (PlayerKeyBindings) {
-        .left  = { KEY_A, GAMEPAD_BUTTON_LEFT_FACE_LEFT,   INPUT_TYPE_LEFT },
-        .right = { KEY_D, GAMEPAD_BUTTON_LEFT_FACE_RIGHT,  INPUT_TYPE_RIGHT },
-        .up    = { KEY_W, GAMEPAD_BUTTON_LEFT_FACE_UP,     INPUT_TYPE_UP },
-        .down  = { KEY_S, GAMEPAD_BUTTON_LEFT_FACE_DOWN,   INPUT_TYPE_DOWN },
-        .lp    = { KEY_T, GAMEPAD_BUTTON_RIGHT_FACE_LEFT,  INPUT_TYPE_LP },
-        .mp    = { KEY_Y, GAMEPAD_BUTTON_RIGHT_FACE_UP,    INPUT_TYPE_MP },
-        .hp    = { KEY_U, GAMEPAD_BUTTON_LEFT_TRIGGER_1,   INPUT_TYPE_HP },
-        .lk    = { KEY_G, GAMEPAD_BUTTON_RIGHT_FACE_DOWN,  INPUT_TYPE_LK },
-        .mk    = { KEY_H, GAMEPAD_BUTTON_RIGHT_FACE_RIGHT, INPUT_TYPE_MK },
-        .hk    = { KEY_J, GAMEPAD_BUTTON_RIGHT_TRIGGER_1,  INPUT_TYPE_HK },
-    };
+    player1->kb = p1KeyBindings;
+    player2->kb = p2KeyBindings;
 
     updateCameraPlaying( gw );
 

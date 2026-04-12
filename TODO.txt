@@ -20,3 +20,4 @@ Assets:
     https://www.spriters-resource.com/snes/supersf2/
     https://www.spriters-resource.com/arcade/streetfighter2/
     https://wiki.supercombo.gg/w/Super_Street_Fighter_2_Turbo/Ryu
+    https://toufadev.github.io/ssf2st/
