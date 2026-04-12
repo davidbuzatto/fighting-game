@@ -1879,7 +1879,7 @@ void resolvePlayerOponnentContact( Player *p, Player *o ) {
                         o->health -= 1;
                     }
 
-                    Rectangle inter = getRectangleIntersection( hurtbox, hitbox );
+                    Rectangle inter = GetCollisionRec( hurtbox, hitbox );
                     p->onBlockPos = (Vector2) { inter.x + inter.width / 2, inter.y + inter.height / 2 };
                     p->onBlockPosActive = true;
 
@@ -1890,7 +1890,7 @@ void resolvePlayerOponnentContact( Player *p, Player *o ) {
                     o->state = PLAYER_STATE_HIT_UP_STANDING;
                     o->vel.x = pushDir * PUSHBACK_ON_HIT;
 
-                    Rectangle inter = getRectangleIntersection( hurtbox, hitbox );
+                    Rectangle inter = GetCollisionRec( hurtbox, hitbox );
                     p->onHitPos = (Vector2) { inter.x + inter.width / 2, inter.y + inter.height / 2 };
                     p->onHitPosActive = true;
 
@@ -2008,7 +2008,7 @@ void resolvePlayerOponnentProjectileContact( Player *p, Player *o ) {
                 // chip damage for specials
                 o->health -= 1;
 
-                Rectangle inter = getRectangleIntersection( pProjHurt, hitbox );
+                Rectangle inter = GetCollisionRec( pProjHurt, hitbox );
                 p->onBlockPos = (Vector2) { inter.x + inter.width / 2, inter.y + inter.height / 2 };
                 p->onBlockPosActive = true;
 
@@ -2018,7 +2018,7 @@ void resolvePlayerOponnentProjectileContact( Player *p, Player *o ) {
                 o->state = PLAYER_STATE_HIT_UP_STANDING;
                 o->vel.x = pushDir * PUSHBACK_ON_HIT;
 
-                Rectangle inter = getRectangleIntersection( pProjHurt, hitbox );
+                Rectangle inter = GetCollisionRec( pProjHurt, hitbox );
                 p->onHitPos = (Vector2) { inter.x + inter.width / 2, inter.y + inter.height / 2 };
                 p->onHitPosActive = true;
 
