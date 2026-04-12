@@ -51,6 +51,7 @@ ifeq ($(PLATFORM), Linux)
 LDFLAGS := -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 else
 LDFLAGS := -L lib/ -lraylib -lopengl32 -lgdi32 -lwinmm -lm
+#LDFLAGS := -L lib/ -lraylib -lopengl32 -lgdi32 -lwinmm -lm -mwindows
 endif
 
 # The final build step.

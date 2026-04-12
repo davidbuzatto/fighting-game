@@ -51,7 +51,7 @@ if ( $compile -or $cleanAndCompile -or $compileAndRun -or $all ) {
         -lraylib `
         -lopengl32 `
         -lgdi32 `
-        -lwinmm
+        -lwinmm #-mwindows
 }
 
 # run

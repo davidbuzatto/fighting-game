@@ -65,7 +65,7 @@ static void resolvePlayerPlayerCollision( Player *p1, Player *p2 );
 static void flipPlayers( GameWorld *gw );
 
 // gameplay
-PlayerKeyBindings p1KeyBindings = {
+const PlayerKeyBindings p1KeyBindings = {
     .left   = { KEY_A,         GAMEPAD_BUTTON_LEFT_FACE_LEFT,   INPUT_TYPE_LEFT  },
     .right  = { KEY_D,         GAMEPAD_BUTTON_LEFT_FACE_RIGHT,  INPUT_TYPE_RIGHT },
     .up     = { KEY_W,         GAMEPAD_BUTTON_LEFT_FACE_UP,     INPUT_TYPE_UP    },
@@ -82,7 +82,7 @@ PlayerKeyBindings p1KeyBindings = {
     .start  = { KEY_ENTER,     GAMEPAD_BUTTON_MIDDLE_RIGHT,     INPUT_TYPE_HK    },
 };
 
-PlayerKeyBindings p2KeyBindings = {
+const PlayerKeyBindings p2KeyBindings = {
     .left   = { KEY_LEFT,      GAMEPAD_BUTTON_LEFT_FACE_LEFT,   INPUT_TYPE_LEFT  },
     .right  = { KEY_RIGHT,     GAMEPAD_BUTTON_LEFT_FACE_RIGHT,  INPUT_TYPE_RIGHT },
     .up     = { KEY_UP,        GAMEPAD_BUTTON_LEFT_FACE_UP,     INPUT_TYPE_UP    },
@@ -553,7 +553,7 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
 
 }
 
-static int getPlayerPalleteSelectingPlayers( int gamepadId, PlayerKeyBindings *kb ) {
+static int getPlayerPalleteSelectingPlayers( int gamepadId, const PlayerKeyBindings *kb ) {
 
     if ( IsKeyPressed( kb->lp.key )     || isGamepadButtonPressed( gamepadId, kb->lp.gamepadButton ) )     return 0;
     if ( IsKeyPressed( kb->mp.key )     || isGamepadButtonPressed( gamepadId, kb->mp.gamepadButton ) )     return 1;

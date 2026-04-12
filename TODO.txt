@@ -1,16 +1,14 @@
-Investigar erro de segmentação quando fecha o jogo.
-
 Implementar dinâmica das partidas;
     Timeover
         Quem ganhou, animação ganhou.
         Quem perdeu, animação timeover.
         Empate no tempo (draw), ambos animação timeover.
 
+Deploy com wasm;
+
 Ajustar TODOS os frames com framedata? (https://wiki.supercombo.gg/w/Super_Street_Fighter_2_Turbo/Ryu)
 
 Refatorar;
-
-Deploy com wasm;
 
 Hit/hurt boxes: https://doctorguile.github.io/ssf2st/
 Assets:
