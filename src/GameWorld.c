@@ -529,14 +529,14 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
     drawPlayer( gw->player2 );
     drawPlayer( gw->player1 );
 
-    drawPlayerProjectile( gw->player1 );
-    drawPlayerProjectile( gw->player2 );
-
     drawOnHitPlayerAnimation( gw->player1 );
     drawOnHitPlayerAnimation( gw->player2 );
 
     drawOnBlockPlayerAnimation( gw->player1 );
     drawOnBlockPlayerAnimation( gw->player2 );
+
+    drawPlayerProjectile( gw->player1 );
+    drawPlayerProjectile( gw->player2 );
 
     if ( !SHOW_MODEL_STAGE_TEXTURE ) {
         DrawTexture( *gw->anchorTexture, 0, GetScreenHeight() - gw->anchorTexture->height, WHITE );

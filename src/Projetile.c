@@ -182,7 +182,7 @@ void drawProjectile( Projectile *p ) {
                     af->source.height },
                 (Vector2) { 0 },
                 0.0f,
-                WHITE
+                Fade( WHITE, 0.7f )
             );
         }
 
@@ -202,7 +202,7 @@ void drawProjectile( Projectile *p ) {
                     afD->source.height },
                 (Vector2) { 0 },
                 0.0f,
-                WHITE
+                Fade( WHITE, 0.7f )
             );
         }
 
