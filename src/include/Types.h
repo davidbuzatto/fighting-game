@@ -10,6 +10,32 @@
 #define PUSHBACK_ON_BLOCK 80.0f         // fixed pushback speed applied to defender on block
 #define PUSHBACK_DECAY 0.90f            // per-frame velocity decay during hit/block stun
 
+typedef enum MatchState {
+    MATCH_STATE_ROUND_1_STARTING,
+    MATCH_STATE_ROUND_2_STARTING,
+    MATCH_STATE_ROUND_FINAL_STARTING,
+    MATCH_STATE_ROUND_1_FIGHTING,
+    MATCH_STATE_ROUND_2_FIGHTING,
+    MATCH_STATE_ROUND_FINAL_FIGHTING,
+    MATCH_STATE_KO,
+    MATCH_STATE_DOUBLE_KO,
+    MATCH_STATE_FINISHING,
+} MatchState;
+
+typedef struct Match {
+    MatchState state;
+    float timeToStart;
+    float timeToKO;
+    float timeToFinish;
+    float remainingTime;
+    float timeCounter;
+    int roundsFinished;
+    float timeToShowMatchText;
+    float timeToShowMatchTextCounter;
+    bool showMatchText;
+    bool playRoundFight;
+} Match;
+
 typedef enum PlayerType {
     PLAYER_TYPE_RYU,
     PLAYER_TYPE_KEN,
@@ -255,6 +281,8 @@ typedef struct Player {
     float forwardSpeed;
     float backwardSpeed;
     float jumpSpeed;
+
+    int roundsWon;
 
     DurationMode animationDurationMode;
 

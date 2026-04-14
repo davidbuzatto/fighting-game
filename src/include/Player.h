@@ -14,7 +14,7 @@ void drawPlayerInputBuffer( Player *player );
 void drawPlayerOnionLayers( Player *player, int xOffset );
 void drawPlayerAnimationFrame( Player *player, AnimationFrame *af, Vector2 offset, Color tint );
 void drawPlayerAnimationFrameForShadow( Player *player, AnimationFrame *af, Vector2 offset, Color tint, float floorY, float shear, float scaleY );
-void processInputPlayer( Player *player, Player *opponent, float delta, int currentFrame );
+void processInputPlayer( Player *player, Player *opponent, float delta, int currentFrame, bool discardInput );
 void updatePlayer( Player *player, Player *opponent, Camera2D camera, float gravity, float delta );
 void flipPlayerSide( Player *player );
 float distancePlayer( Player *player1, Player *player2 );

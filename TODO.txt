@@ -1,8 +1,9 @@
-Implementar dinâmica das partidas;
-    Timeover
-        Quem ganhou, animação ganhou.
-        Quem perdeu, animação timeover.
-        Empate no tempo (draw), ambos animação timeover.
+Bugs:
+    ao terminar partida com golpe no ar, terminar o golpe para finalizar.
+
+Som derrota;
+Melhorar transições;
+Melhorar sons (mais sincronia);
 
 Deploy com wasm;
 

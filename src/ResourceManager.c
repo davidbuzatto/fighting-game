@@ -140,6 +140,10 @@ void loadResourcesResourceManager( void ) {
     rm.p1SelectionSound = LoadSound( "resources/sfx/selection.wav" );
     rm.p2SelectionSound = LoadSound( "resources/sfx/selection.wav" );
 
+    rm.round1FightSound = LoadSound( "resources/sfx/round1Fight.wav" );
+    rm.round2FightSound = LoadSound( "resources/sfx/round2Fight.wav" );
+    rm.finalRoundFightSound = LoadSound( "resources/sfx/finalRoundFight.wav" );
+
     rm.playerSelectTheme = LoadMusicStream( "resources/themes/player-select.mp3" );
     rm.kenTheme = LoadMusicStream( "resources/themes/ken.mp3" );
 
@@ -187,6 +191,10 @@ void unloadResourcesResourceManager( void ) {
     UnloadSound( rm.kenHadoukenSound );
     UnloadSound( rm.kenShoryukenSound );
     UnloadSound( rm.kenTatsumakiSound );
+
+    UnloadSound( rm.round1FightSound );
+    UnloadSound( rm.round2FightSound );
+    UnloadSound( rm.finalRoundFightSound );
 
     UnloadSound( rm.p1ChangeSelectedSound );
     UnloadSound( rm.p2ChangeSelectedSound );

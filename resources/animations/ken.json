@@ -17319,7 +17319,7 @@
                         "width": -64,
                         "height": 128
                     },
-                    "duration": 50,
+                    "duration": 70,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -17383,7 +17383,7 @@
                         "width": -64,
                         "height": 128
                     },
-                    "duration": 50,
+                    "duration": 70,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -17447,7 +17447,7 @@
                         "width": -64,
                         "height": 128
                     },
-                    "duration": 50,
+                    "duration": 70,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -17521,7 +17521,7 @@
                         "width": -64,
                         "height": 112
                     },
-                    "duration": 50,
+                    "duration": 70,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -17585,7 +17585,7 @@
                         "width": -64,
                         "height": 112
                     },
-                    "duration": 50,
+                    "duration": 70,
                     "offset": {
                         "x": 0,
                         "y": 0
@@ -17659,7 +17659,7 @@
                         "width": -128,
                         "height": 80
                     },
-                    "duration": 50,
+                    "duration": 70,
                     "offset": {
                         "x": 32,
                         "y": 0
@@ -17723,7 +17723,7 @@
                         "width": -128,
                         "height": 80
                     },
-                    "duration": 50,
+                    "duration": 70,
                     "offset": {
                         "x": 32,
                         "y": 0
@@ -17787,7 +17787,7 @@
                         "width": -128,
                         "height": 80
                     },
-                    "duration": 50,
+                    "duration": 100,
                     "offset": {
                         "x": 32,
                         "y": 0
@@ -17851,7 +17851,7 @@
                         "width": -128,
                         "height": 80
                     },
-                    "duration": 50,
+                    "duration": 100,
                     "offset": {
                         "x": 32,
                         "y": 0
@@ -17915,7 +17915,7 @@
                         "width": -128,
                         "height": 80
                     },
-                    "duration": 50,
+                    "duration": 150,
                     "offset": {
                         "x": 32,
                         "y": 0

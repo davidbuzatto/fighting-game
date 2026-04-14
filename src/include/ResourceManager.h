@@ -59,6 +59,10 @@ typedef struct ResourceManager {
     Sound p1SelectionSound;
     Sound p2SelectionSound;
 
+    Sound round1FightSound;
+    Sound round2FightSound;
+    Sound finalRoundFightSound;
+
     Music playerSelectTheme;
     Music kenTheme;
 

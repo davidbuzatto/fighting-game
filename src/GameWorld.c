@@ -33,6 +33,8 @@
 #define INITIAL_GAME_MODE GAME_MODE_SELECT_PLAYERS
 #define PLAY_MUSIC true
 #define PALLETE_COLOR_LIMIT 10
+#define REMAINING_TIME 99
+#define START_HEALTH 100
 
 #define RYU_ANIMATIONS_FILE "resources/animations/ryu.json"
 #define KEN_ANIMATIONS_FILE "resources/animations/ken.json"
@@ -119,8 +121,7 @@ static bool player1RightPlayer2 = false;
 static bool needsToFlipPlayers = false;
 
 // match data
-static int remainingTime = 99;
-static float remainingTimeCounter = 0;
+Match match;
 static bool clearLastMatch = false;
 
 // stage
@@ -352,16 +353,34 @@ static void startMatch( GameWorld *gw, PlayerType playerType1, int player1Pallet
         initializePlayerKen( gw->back01Texture->width / 2 + 50, 552, player2, PLAYER_START_SIDE_RIGHT, 1, ANIMATION_DURATION_MODE, SHOW_BOXES, SHOW_DEBUG_INFO );
         loadPlayerAnimationFrameBoxes( gw->player2, KEN_ANIMATIONS_FILE );
     }
-    
-    flipPlayerSide( player2 );
 
     player1->kb = p1KeyBindings;
     player2->kb = p2KeyBindings;
+
+    player1RightPlayer2 = false;
+    needsToFlipPlayers = false;
 
     changePlayerPallete( player1, player1Pallete, PALLETE_COLOR_LIMIT );
     changePlayerPallete( player2, player2Pallete, PALLETE_COLOR_LIMIT );
 
     updateCameraPlaying( gw );
+
+    match = (Match) {
+        .state = MATCH_STATE_ROUND_1_STARTING,
+        .timeToStart = 2.0f,
+        .timeToKO = 4.0f,
+        .timeToFinish = 6.0f,
+        .remainingTime = REMAINING_TIME,
+        .timeCounter = 0.0f,
+        .roundsFinished = 0,
+        .timeToShowMatchText = 2.0f,
+        .timeToShowMatchTextCounter = 0.0f,
+        .showMatchText = true,
+        .playRoundFight = true,
+    };
+
+    gw->player1->health = START_HEALTH;
+    gw->player2->health = START_HEALTH;
 
 }
 
@@ -551,6 +570,59 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
         drawPlayerInputBuffer( gw->player2 );
     }
 
+    switch ( match.state ) {
+        case MATCH_STATE_ROUND_1_STARTING: {
+                const char *t = "ROUND 1";
+                Vector2 d = measureTextUsingFont( t, 4.0f, -5 );
+                drawTextUsingFont( t, GetScreenWidth()  / 2 - d.x / 2, GetScreenHeight() / 2 - 80, 4.0, -5 );
+            }
+            break;
+        case MATCH_STATE_ROUND_2_STARTING: {
+                const char *t = "ROUND 2";
+                Vector2 d = measureTextUsingFont( t, 4.0f, -5 );
+                drawTextUsingFont( t, GetScreenWidth()  / 2 - d.x / 2, GetScreenHeight() / 2 - 80, 4.0, -5 );
+            }
+            break;
+        case MATCH_STATE_ROUND_FINAL_STARTING: {
+                const char *t = "FINAL ROUND";
+                Vector2 d = measureTextUsingFont( t, 4.0f, -5 );
+                drawTextUsingFont( t, GetScreenWidth()  / 2 - d.x / 2, GetScreenHeight() / 2 - 80, 4.0, -5 );
+            }
+            break;
+
+        case MATCH_STATE_ROUND_1_FIGHTING:
+        case MATCH_STATE_ROUND_2_FIGHTING:
+        case MATCH_STATE_ROUND_FINAL_FIGHTING: {
+                if ( match.showMatchText ) {
+                    const char *t = "FIGHT";
+                    Vector2 d = measureTextUsingFont( t, 4.0f, -5 );
+                    drawTextUsingFont( t, GetScreenWidth()  / 2 - d.x / 2, GetScreenHeight() / 2 - 80, 4.0, -5 );
+                }
+            }
+            break;
+
+        case MATCH_STATE_KO: {
+                const char *t = "KO";
+                Vector2 d = measureTextUsingFont( t, 5.0f, -2 );
+                drawTextUsingFont( t, GetScreenWidth()  / 2 - d.x / 2, GetScreenHeight() / 2 - 80, 5.0, -2 );
+            }
+            break;
+
+        case MATCH_STATE_DOUBLE_KO: {
+                const char *t = "DOUBLE KO";
+                Vector2 d = measureTextUsingFont( t, 5.0f, -2 );
+                drawTextUsingFont( t, GetScreenWidth()  / 2 - d.x / 2, GetScreenHeight() / 2 - 80, 5.0, -2 );
+            }
+            break;
+
+        case MATCH_STATE_FINISHING: {
+                const char *t = TextFormat( "%s WINS", gw->player1->roundsWon == 2 ? gw->player1->name : gw->player2->name );
+                Vector2 d = measureTextUsingFont( t, 5.0f, -2 );
+                drawTextUsingFont( t, GetScreenWidth()  / 2 - d.x / 2, GetScreenHeight() / 2 - 80, 5.0, -2 );
+            }
+            break;
+    }
+
 }
 
 static int getPlayerPalleteSelectingPlayers( int gamepadId, const PlayerKeyBindings *kb ) {
@@ -712,8 +784,10 @@ static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
         p2SelectedPallete = -1;
         gw->mode = GAME_MODE_SELECT_PLAYERS;
         return;
+
     }
 
+    /*
     int keyPressed = GetKeyPressed();
     if ( keyPressed >= KEY_ZERO && keyPressed <= KEY_NINE ) {
         int pallete = keyPressed - KEY_ZERO;
@@ -723,6 +797,7 @@ static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
             changePlayerPallete( gw->player1, pallete, PALLETE_COLOR_LIMIT );
         }
     }
+    */
 
     stageTextureChangeCounter += delta;
     if ( stageTextureChangeCounter >= stageTextureChangeTime ) {
@@ -731,22 +806,17 @@ static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
         currentBoatTexture++;
     }
 
-    if ( remainingTime > 0 ) {
-        remainingTimeCounter += delta;
-        if ( remainingTimeCounter >= 1.0f ) {
-            remainingTime--;
-            remainingTimeCounter = 0.0f;
-        }
-    }
-
+    /*
     if ( IsKeyPressed( KEY_R ) ) {
         gw->player1->health = 100;
         gw->player2->health = 100;
     }
+    */
 
     gw->frameCounter++;
-    processInputPlayer( gw->player1, gw->player2, delta, gw->frameCounter );
-    processInputPlayer( gw->player2, gw->player1, delta, gw->frameCounter );
+    bool discardInput = !( match.state >= MATCH_STATE_ROUND_1_FIGHTING && match.state <= MATCH_STATE_ROUND_FINAL_FIGHTING );
+    processInputPlayer( gw->player1, gw->player2, delta, gw->frameCounter, discardInput );
+    processInputPlayer( gw->player2, gw->player1, delta, gw->frameCounter, discardInput );
 
     // camera
     playerDist = fabs( gw->player1->pos.x - gw->player2->pos.x ) * gw->camera.zoom;
@@ -786,6 +856,262 @@ static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
     flipPlayers( gw );
 
     updateCameraPlaying( gw );
+
+    switch ( match.state ) {
+        case MATCH_STATE_ROUND_1_STARTING:
+            if ( match.playRoundFight ) {
+                PlaySound( rm.round1FightSound );
+                match.playRoundFight = false;
+            }
+            match.timeCounter += delta;
+            if ( match.timeCounter >= match.timeToStart ) {
+                match.timeCounter = 0.0f;
+                match.state = MATCH_STATE_ROUND_1_FIGHTING;
+                match.showMatchText = true;
+            }
+            break;
+        case MATCH_STATE_ROUND_2_STARTING:
+            if ( match.playRoundFight ) {
+                PlaySound( rm.round2FightSound );
+                match.playRoundFight = false;
+            }
+            match.timeCounter += delta;
+            if ( match.timeCounter >= match.timeToStart ) {
+                match.timeCounter = 0.0f;
+                match.state = MATCH_STATE_ROUND_2_FIGHTING;
+                match.showMatchText = true;
+            }
+            break;
+        case MATCH_STATE_ROUND_FINAL_STARTING:
+            if ( match.playRoundFight ) {
+                PlaySound( rm.finalRoundFightSound );
+                match.playRoundFight = false;
+            }
+            match.timeCounter += delta;
+            if ( match.timeCounter >= match.timeToStart ) {
+                match.timeCounter = 0.0f;
+                match.state = MATCH_STATE_ROUND_FINAL_FIGHTING;
+                match.showMatchText = true;
+            }
+            break;
+
+        case MATCH_STATE_ROUND_1_FIGHTING:
+        case MATCH_STATE_ROUND_2_FIGHTING:
+        case MATCH_STATE_ROUND_FINAL_FIGHTING:
+            match.timeToShowMatchTextCounter += delta;
+            if ( match.timeToShowMatchTextCounter >= match.timeToShowMatchText ) {
+                match.timeToShowMatchTextCounter = 0.0f;
+                match.showMatchText = false;
+            }
+            break;
+
+        case MATCH_STATE_KO:
+            match.timeCounter += delta;
+            if ( match.timeCounter >= match.timeToStart ) {
+                match.timeCounter = 0.0f;
+                match.remainingTime = REMAINING_TIME;
+                match.playRoundFight = true;
+                if ( match.roundsFinished == 0 ) {
+                    match.state = MATCH_STATE_ROUND_1_STARTING;
+                } else if ( match.roundsFinished == 1 ) {
+                    match.state = MATCH_STATE_ROUND_2_STARTING;
+                } else if ( match.roundsFinished == 2 ) {
+                    match.state = MATCH_STATE_ROUND_FINAL_STARTING;
+                }
+                gw->player1->state = PLAYER_STATE_IDLE;
+                gw->player1->pos = (Vector2) { gw->back01Texture->width / 2 - 78, 552 };
+                gw->player1->health = START_HEALTH;
+                resetPlayerAnimations( gw->player1 );
+                //gw->player1->lookingRight = true;
+
+                gw->player2->state = PLAYER_STATE_IDLE;
+                gw->player2->pos = (Vector2) { gw->back01Texture->width / 2 + 50, 552 };
+                gw->player2->health = START_HEALTH;
+                resetPlayerAnimations( gw->player2 );
+                //gw->player2->lookingRight = false;
+
+                updateCameraPlaying( gw );
+
+            }
+            break;
+
+        case MATCH_STATE_DOUBLE_KO:
+            match.timeCounter += delta;
+            if ( match.timeCounter >= match.timeToStart ) {
+
+                match.timeCounter = 0.0f;
+                match.remainingTime = REMAINING_TIME;
+                match.playRoundFight = true;
+
+                if ( match.roundsFinished == 0 ) {
+                    match.state = MATCH_STATE_ROUND_1_STARTING;
+                } else if ( match.roundsFinished == 1 ) {
+                    match.state = MATCH_STATE_ROUND_2_STARTING;
+                } else if ( match.roundsFinished >= 2 ) {
+                    match.state = MATCH_STATE_ROUND_FINAL_STARTING;
+                }
+
+                gw->player1->state = PLAYER_STATE_IDLE;
+                gw->player1->pos = (Vector2) { gw->back01Texture->width / 2 - 78, 552 };
+                gw->player1->health = START_HEALTH;
+                resetPlayerAnimations( gw->player1 );
+                //gw->player1->lookingRight = true;
+
+                gw->player2->state = PLAYER_STATE_IDLE;
+                gw->player2->pos = (Vector2) { gw->back01Texture->width / 2 + 50, 552 };
+                gw->player2->health = START_HEALTH;
+                resetPlayerAnimations( gw->player2 );
+                //gw->player2->lookingRight = false;
+
+                updateCameraPlaying( gw );
+
+            }
+            break;
+
+        case MATCH_STATE_FINISHING:
+            match.timeCounter += delta;
+            if ( match.timeCounter >= match.timeToStart ) {
+                
+                if ( playMusic ) {
+                    if ( IsMusicStreamPlaying( rm.kenTheme ) )  {
+                        StopMusicStream( rm.kenTheme );
+                    }   
+                }
+
+                p1SelectedLine = 0;
+                p1SelectedColumn = 0;
+                p2SelectedLine = 1;
+                p2SelectedColumn = 0;
+                pSelectBlinkCounter = 0.0f;
+                pSelectBlink = false;
+                pSelectTransitionCounter = 0.0f;
+                startTransitionToPlay = false;
+                p1Selected = false;
+                p2Selected = false;
+                p1SelectedPallete = -1;
+                p2SelectedPallete = -1;
+                gw->mode = GAME_MODE_SELECT_PLAYERS;
+                
+            }
+            break;
+
+    }
+
+    if ( match.state >= MATCH_STATE_ROUND_1_FIGHTING && match.state <= MATCH_STATE_ROUND_FINAL_FIGHTING ) {
+
+        if ( match.remainingTime > 0 ) {
+            match.remainingTime -= delta;
+            if ( match.remainingTime < 0.0f ) {
+                match.remainingTime = 0.0f;
+            }
+        }
+
+        if ( gw->player1->health <= 0 && gw->player2->health <= 0 ) {
+
+            match.state = MATCH_STATE_DOUBLE_KO;
+            //match.roundsFinished++;
+
+            gw->player1->state = PLAYER_STATE_TIMEOVER;
+            gw->player1->vel.x = 0.0f;
+            gw->player1->vel.y = 0.0f;
+
+            gw->player2->state = PLAYER_STATE_TIMEOVER;
+            gw->player2->vel.x = 0.0f;
+            gw->player2->vel.y = 0.0f;
+
+        } else if ( gw->player1->health <= 0 ) {
+
+            match.state = MATCH_STATE_KO;
+            match.roundsFinished++;
+
+            gw->player2->roundsWon++;
+            gw->player2->state = GetRandomValue( 0, 1 ) == 0 ? PLAYER_STATE_VICTORY_1 : PLAYER_STATE_VICTORY_2;
+            gw->player2->vel.x = 0.0f;
+            gw->player2->vel.y = 0.0f;
+
+            gw->player1->state = PLAYER_STATE_FALLING_LOSE;
+            gw->player1->vel.x = 0.0f;
+            gw->player1->vel.y = 0.0f;
+
+            if ( gw->player2->roundsWon == 2 ) {
+                match.state = MATCH_STATE_FINISHING;
+            }
+
+        } else if ( gw->player2->health <= 0 ) {
+
+            match.state = MATCH_STATE_KO;
+            match.roundsFinished++;
+
+            gw->player1->roundsWon++;
+            gw->player1->state = GetRandomValue( 0, 1 ) == 0 ? PLAYER_STATE_VICTORY_1 : PLAYER_STATE_VICTORY_2;
+            gw->player1->vel.x = 0.0f;
+            gw->player1->vel.y = 0.0f;
+
+            gw->player2->state = PLAYER_STATE_FALLING_LOSE;
+            gw->player2->vel.x = 0.0f;
+            gw->player2->vel.y = 0.0f;
+
+            if ( gw->player1->roundsWon == 2 ) {
+                match.state = MATCH_STATE_FINISHING;
+            }
+
+        }
+
+        if ( match.remainingTime == 0.0f ) {
+
+            if ( gw->player1->health < gw->player2->health ) {
+
+                match.state = MATCH_STATE_KO;
+                match.roundsFinished++;
+
+                gw->player2->roundsWon++;
+                gw->player2->state = GetRandomValue( 0, 1 ) == 0 ? PLAYER_STATE_VICTORY_1 : PLAYER_STATE_VICTORY_2;
+                gw->player2->vel.x = 0.0f;
+                gw->player2->vel.y = 0.0f;
+
+                gw->player1->state = PLAYER_STATE_FALLING_LOSE;
+                gw->player1->vel.x = 0.0f;
+                gw->player1->vel.y = 0.0f;
+
+                if ( gw->player2->roundsWon == 2 ) {
+                    match.state = MATCH_STATE_FINISHING;
+                }
+
+            } else if ( gw->player1->health > gw->player2->health ) {
+
+                match.state = MATCH_STATE_KO;
+                match.roundsFinished++;
+
+                gw->player1->roundsWon++;
+                gw->player1->state = GetRandomValue( 0, 1 ) == 0 ? PLAYER_STATE_VICTORY_1 : PLAYER_STATE_VICTORY_2;
+                gw->player1->vel.x = 0.0f;
+                gw->player1->vel.y = 0.0f;
+
+                gw->player2->state = PLAYER_STATE_FALLING_LOSE;
+                gw->player2->vel.x = 0.0f;
+                gw->player2->vel.y = 0.0f;
+
+                if ( gw->player1->roundsWon == 2 ) {
+                    match.state = MATCH_STATE_FINISHING;
+                }
+
+            } else {
+
+                match.state = MATCH_STATE_DOUBLE_KO;
+
+                gw->player1->state = PLAYER_STATE_TIMEOVER;
+                gw->player1->vel.x = 0.0f;
+                gw->player1->vel.y = 0.0f;
+
+                gw->player2->state = PLAYER_STATE_TIMEOVER;
+                gw->player2->vel.x = 0.0f;
+                gw->player2->vel.y = 0.0f;
+
+            }
+
+        }
+
+    }
 
 }
 
@@ -1477,7 +1803,7 @@ static void drawHud( GameWorld *gw ) {
 
     DrawText( "K.O", 421, 61, 36, RED );
     
-    const char *remainingTimeStr = TextFormat( "%02d", remainingTime );
+    const char *remainingTimeStr = TextFormat( "%02d", (int) match.remainingTime );
     Vector2 measureRemainingTime = measureTextUsingFont( remainingTimeStr, 4, -5 );
     drawTextUsingFont( remainingTimeStr, GetScreenWidth() / 2 - measureRemainingTime.x / 2 + 5, 103, 4, -5 );
 
@@ -1505,6 +1831,29 @@ static void drawHud( GameWorld *gw ) {
         0.0f,
         WHITE
     );
+
+    // rounds
+    for ( int i = 0; i < gw->player1->roundsWon; i++ ) {
+        DrawTexturePro(
+            rm.fontsTexture,
+            (Rectangle) { 346, 19, 16, 20 },
+            (Rectangle) { 32 * i, 55, 32, 40 },
+            (Vector2) { 0 },
+            0.0f,
+            WHITE
+        );
+    }
+
+    for ( int i = 0; i < gw->player2->roundsWon; i++ ) {
+        DrawTexturePro(
+            rm.fontsTexture,
+            (Rectangle) { 346, 19, 16, 20 },
+            (Rectangle) { GetScreenWidth() - 32 * ( i + 1 ), 55, 32, 40 },
+            (Vector2) { 0 },
+            0.0f,
+            WHITE
+        );
+    }
 
 }
 

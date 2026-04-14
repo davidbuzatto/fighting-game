@@ -42,11 +42,16 @@ static void initializePlayerCommon( float x, float y, Player *p, PlayerStartSide
     p->forwardSpeed = 150;
     p->backwardSpeed = 120;
     p->jumpSpeed = 450;
+    p->roundsWon = 0;
     p->animationDurationMode = animationDurationMode;
     p->state = PLAYER_STATE_IDLE;
     p->lastState = PLAYER_STATE_IDLE;
     p->health = 100;
-    p->lookingRight = true;
+    if ( startSide == PLAYER_START_SIDE_LEFT ) {
+        p->lookingRight = true;
+    } else {
+        p->lookingRight = false;
+    }
     p->startSide = startSide;
     p->showBoxes = showBoxes;
     p->showDebugInfo = showDebugInfo;
@@ -1121,11 +1126,23 @@ static void drawPlayerAnimationFrameBoxes( Player *player, AnimationFrame *af, V
 
 }
 
-void processInputPlayer( Player *player, Player *opponent, float delta, int currentFrame ) {
+void processInputPlayer( Player *player, Player *opponent, float delta, int currentFrame, bool discardInput ) {
 
-    processInputAndFeedInputBuffer( player, currentFrame );
+    if ( !discardInput ) {
+        processInputAndFeedInputBuffer( player, currentFrame );
+    }
 
     Animation *activeAnim = NULL;
+
+    // victory and lose
+    if ( player->state >= PLAYER_STATE_VICTORY_1 && player->state <= PLAYER_STATE_TIMEOVER ) {
+        activeAnim = getPlayerCurrentAnimation( player );
+        if ( activeAnim != NULL ) {
+            updateAnimation( activeAnim, player->animationDurationMode, delta );
+        }
+        // animations will be reseted in GameWindow
+        return;
+    }
 
     // falling: blocks all input
     if ( player->state == PLAYER_STATE_FALLING || player->state == PLAYER_STATE_GETTING_UP ) {
@@ -1615,44 +1632,48 @@ void processInputPlayer( Player *player, Player *opponent, float delta, int curr
         }
     }
 
-    // jump
-    if ( ( IsKeyDown( player->kb.up.key ) || isGamepadButtonDown( player->gamepadId, player->kb.up.gamepadButton ) ) && player->state != PLAYER_STATE_CROUCHING ) {
-        if ( IsKeyDown( player->kb.right.key ) || isGamepadButtonDown( player->gamepadId, player->kb.right.gamepadButton ) ) {
-            player->vel.y = -player->jumpSpeed;
-            player->vel.x = player->forwardSpeed * 1.6f;
-            resetAnimation( &player->forwardJumpAnim );
-            player->state = PLAYER_STATE_JUMPING_FORWARD;
-        } else if ( IsKeyDown( player->kb.left.key ) || isGamepadButtonDown( player->gamepadId, player->kb.left.gamepadButton ) ) {
-            player->vel.y = -player->jumpSpeed;
-            player->vel.x = -player->backwardSpeed * 2.0f;
-            resetAnimation( &player->backwardJumpAnim );
-            player->state = PLAYER_STATE_JUMPING_BACKWARD;
-        } else {
-            player->vel.y = -player->jumpSpeed;
-            player->vel.x = 0.0f;
-            resetAnimation( &player->straightJumpAnim );
-            player->state = PLAYER_STATE_JUMPING_STRAIGHT;
-        }
-        player->lastState = player->state;
-        return;
-    }
+    if ( !discardInput ) {
 
-    // floor movement
-    if ( IsKeyDown( player->kb.down.key ) || isGamepadButtonDown( player->gamepadId, player->kb.down.gamepadButton ) ) {
-        if ( player->state != PLAYER_STATE_CROUCHING ) {
-            resetAnimation( &player->crouchingAnim );
+        // jump
+        if ( ( IsKeyDown( player->kb.up.key ) || isGamepadButtonDown( player->gamepadId, player->kb.up.gamepadButton ) ) && player->state != PLAYER_STATE_CROUCHING ) {
+            if ( IsKeyDown( player->kb.right.key ) || isGamepadButtonDown( player->gamepadId, player->kb.right.gamepadButton ) ) {
+                player->vel.y = -player->jumpSpeed;
+                player->vel.x = player->forwardSpeed * 1.6f;
+                resetAnimation( &player->forwardJumpAnim );
+                player->state = PLAYER_STATE_JUMPING_FORWARD;
+            } else if ( IsKeyDown( player->kb.left.key ) || isGamepadButtonDown( player->gamepadId, player->kb.left.gamepadButton ) ) {
+                player->vel.y = -player->jumpSpeed;
+                player->vel.x = -player->backwardSpeed * 2.0f;
+                resetAnimation( &player->backwardJumpAnim );
+                player->state = PLAYER_STATE_JUMPING_BACKWARD;
+            } else {
+                player->vel.y = -player->jumpSpeed;
+                player->vel.x = 0.0f;
+                resetAnimation( &player->straightJumpAnim );
+                player->state = PLAYER_STATE_JUMPING_STRAIGHT;
+            }
+            player->lastState = player->state;
+            return;
         }
-        player->vel.x = 0.0f;
-        player->state = PLAYER_STATE_CROUCHING;
-    } else if ( IsKeyDown( player->kb.right.key ) || isGamepadButtonDown( player->gamepadId, player->kb.right.gamepadButton ) ) {
-        player->vel.x = player->forwardSpeed;
-        player->state = PLAYER_STATE_WALKING_FORWARD;
-    } else if ( IsKeyDown( player->kb.left.key ) || isGamepadButtonDown( player->gamepadId, player->kb.left.gamepadButton ) ) {
-        player->vel.x = -player->backwardSpeed;
-        player->state = PLAYER_STATE_WALKING_BACKWARD;
-    } else {
-        player->vel.x = 0.0f;
-        player->state = PLAYER_STATE_IDLE;
+
+        // floor movement
+        if ( IsKeyDown( player->kb.down.key ) || isGamepadButtonDown( player->gamepadId, player->kb.down.gamepadButton ) ) {
+            if ( player->state != PLAYER_STATE_CROUCHING ) {
+                resetAnimation( &player->crouchingAnim );
+            }
+            player->vel.x = 0.0f;
+            player->state = PLAYER_STATE_CROUCHING;
+        } else if ( IsKeyDown( player->kb.right.key ) || isGamepadButtonDown( player->gamepadId, player->kb.right.gamepadButton ) ) {
+            player->vel.x = player->forwardSpeed;
+            player->state = PLAYER_STATE_WALKING_FORWARD;
+        } else if ( IsKeyDown( player->kb.left.key ) || isGamepadButtonDown( player->gamepadId, player->kb.left.gamepadButton ) ) {
+            player->vel.x = -player->backwardSpeed;
+            player->state = PLAYER_STATE_WALKING_BACKWARD;
+        } else {
+            player->vel.x = 0.0f;
+            player->state = PLAYER_STATE_IDLE;
+        }
+
     }
 
     // updates floor animation
