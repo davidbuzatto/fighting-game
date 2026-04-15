@@ -16,7 +16,9 @@
 //#undef RAYGUI_IMPLEMENTATION     // raygui.h
 
 #include "Animation.h"
+#include "GameCamera.h"
 #include "GameWorld.h"
+#include "Hud.h"
 #include "Macros.h"
 #include "ResourceManager.h"
 #include "Types.h"
@@ -51,7 +53,6 @@ static void editAnimationFrameBox( Rectangle *box );
 static void showAnimationFrameBoxDetail( Player *p, Rectangle *box, Camera2D camera, Color color );
 static void drawInfoPanel( GameWorld *gw );
 static void drawEditorHelp( void );
-static void drawHud( GameWorld *gw );
 static void copyCurrentAnimationFrameBoxPrevious( Player *p );
 static void copyCurrentAnimationFrameBoxNext( Player *p );
 static void copyAllAnimationFrameBoxesPrevious( Player *p );
@@ -60,8 +61,6 @@ static void copyAllAnimationFrameBoxesToPreviousAnimation( Player *p );
 static void copyAllAnimationFrameBoxesToNextAnimation( Player *p );
 static void adjustAllAnimationFrameBoxes( Player *p, int offsetX, int offsetY );
 
-static void updateCameraPlaying( GameWorld *gw );
-static void updateCameraEditing( GameWorld *gw );
 
 static void resolveCollisionPlayerStage( Player *player, GameWorld *gw );
 static void resolvePlayerPlayerCollision( Player *p1, Player *p2 );
@@ -137,8 +136,6 @@ static int currentBoatTexture = 0;
 static float boatTextureDrawOffsetY = 5;
 static bool playMusic = PLAY_MUSIC;
 
-// hud
-static const Color PORTRAIT_BG_COLOR = { 112, 136, 198, 255 };
 
 // player select
 static int p1SelectedLine = 0;
@@ -1712,152 +1709,6 @@ static void drawEditorHelp( void ) {
 
 }
 
-static void drawHud( GameWorld *gw ) {
-
-    int barWidth = 335;
-    int healthWidthP1 = (int) ( barWidth * ( gw->player1->health / 100.0f ) );
-    int healthWidthP2 = (int) ( barWidth * ( gw->player2->health / 100.0f ) );
-
-    // player 1
-    DrawRectangleRec(
-        (Rectangle) { 75, 65, barWidth, 25 },
-        Fade( RED, 0.7f )
-    );
-
-    DrawRectangleRec(
-        (Rectangle) { 75 + barWidth - healthWidthP1, 65, healthWidthP1, 25 },
-        YELLOW
-    );
-
-    DrawRectangleRoundedLinesEx(
-        (Rectangle) { 77, 67, barWidth, 25 },
-        0.5f,
-        10,
-        4,
-        BLACK
-    );
-
-    DrawRectangleRoundedLinesEx(
-        (Rectangle) { 75, 65, barWidth, 25 },
-        0.5f,
-        10,
-        4,
-        WHITE
-    );
-
-    drawTextUsingFont( TextFormat( "%s", gw->player1->name ), 75, 98, 3, -8 );
-
-    // player 2
-    DrawRectangleRec(
-        (Rectangle) { 485, 65, barWidth, 25 },
-        Fade( RED, 0.7f )
-    );
-
-    DrawRectangleRec(
-        (Rectangle) { 485, 65, healthWidthP2, 25 },
-        YELLOW
-    );
-
-    DrawRectangleRoundedLinesEx(
-        (Rectangle) { 487, 67, barWidth, 25 },
-        0.5f,
-        10,
-        4,
-        BLACK
-    );
-
-    DrawRectangleRoundedLinesEx(
-        (Rectangle) { 485, 65, barWidth, 25 },
-        0.5f,
-        10,
-        4,
-        WHITE
-    );
-
-    const char *p2Name = TextFormat( "%s", gw->player2->name );
-    Vector2 measureP2Name = measureTextUsingFont( p2Name, 3, -8 );
-    drawTextUsingFont( p2Name, 830 - measureP2Name.x, 98, 3, -8 );
-
-    // ko
-    DrawRectangleRounded(
-        (Rectangle) { 417, 60, 61, 35 },
-        0.5f,
-        10,
-        BLACK
-    );
-
-    DrawRectangleRoundedLinesEx(
-        (Rectangle) { 419, 62, 61, 35 },
-        0.5f,
-        10,
-        4,
-        BLACK
-    );
-
-    DrawRectangleRoundedLinesEx(
-        (Rectangle) { 417, 60, 61, 35 },
-        0.5f,
-        10,
-        4,
-        WHITE
-    );
-
-    DrawText( "K.O", 421, 61, 36, RED );
-    
-    const char *remainingTimeStr = TextFormat( "%02d", (int) match.remainingTime );
-    Vector2 measureRemainingTime = measureTextUsingFont( remainingTimeStr, 4, -5 );
-    drawTextUsingFont( remainingTimeStr, GetScreenWidth() / 2 - measureRemainingTime.x / 2 + 5, 103, 4, -5 );
-
-    // portraits
-    DrawRectangle( 0, 95, 70, 100, LIGHTGRAY );
-    DrawRectangle( 2, 97, 66, 96, PORTRAIT_BG_COLOR );
-
-    DrawRectangle( GetScreenWidth() - 70, 95, 70, 100, LIGHTGRAY );
-    DrawRectangle( GetScreenWidth() - 68, 97, 66, 96, PORTRAIT_BG_COLOR );
-
-    DrawTexturePro(
-        gw->player1->currentSpriteMap,
-        (Rectangle) { 131, 15, -96, 112 },
-        (Rectangle) { 2, 97, 66, 96 },
-        (Vector2) { 0 },
-        0.0f,
-        WHITE
-    );
-
-    DrawTexturePro(
-        gw->player2->currentSpriteMap,
-        (Rectangle) { 131, 15, 96, 112 },
-        (Rectangle) { GetScreenWidth() - 68, 97, 66, 96 },
-        (Vector2) { 0 },
-        0.0f,
-        WHITE
-    );
-
-    // rounds
-    for ( int i = 0; i < gw->player1->roundsWon; i++ ) {
-        DrawTexturePro(
-            rm.fontsTexture,
-            (Rectangle) { 346, 19, 16, 20 },
-            (Rectangle) { 32 * i, 55, 32, 40 },
-            (Vector2) { 0 },
-            0.0f,
-            WHITE
-        );
-    }
-
-    for ( int i = 0; i < gw->player2->roundsWon; i++ ) {
-        DrawTexturePro(
-            rm.fontsTexture,
-            (Rectangle) { 346, 19, 16, 20 },
-            (Rectangle) { GetScreenWidth() - 32 * ( i + 1 ), 55, 32, 40 },
-            (Vector2) { 0 },
-            0.0f,
-            WHITE
-        );
-    }
-
-}
-
 static void copyCurrentAnimationFrameBoxPrevious( Player *p ) {
 
     Animation *a = getPlayerCurrentAnimation( p );
@@ -2043,47 +1894,6 @@ static void adjustAllAnimationFrameBoxes( Player *p, int offsetX, int offsetY ) 
                 r->y -= offsetY;
             }
         }
-    }
-
-}
-
-static void updateCameraPlaying( GameWorld *gw ) {
-
-    gw->camera.target.x = fabs( ( gw->player1->pos.x + gw->player2->pos.x ) / 2 );
-
-    float worldWidth = gw->back01Texture->width;
-    float zoom = gw->camera.zoom;
-    float offsetX = gw->camera.offset.x;
-    float screenWidth = GetScreenWidth();
-
-    float minTargetX = offsetX / zoom;
-    float maxTargetX = worldWidth - ( screenWidth - offsetX ) / zoom;
-
-    if ( gw->camera.target.x < minTargetX ) {
-        gw->camera.target.x = minTargetX;
-    } else if ( gw->camera.target.x > maxTargetX ) {
-        gw->camera.target.x = maxTargetX;
-    }
-
-}
-
-static void updateCameraEditing( GameWorld *gw ) {
-
-    gw->camera.target.x = fabs( ( gw->player1->pos.x + gw->player2->pos.x ) / 2 );
-    //gw->camera.target.x = GetScreenWidth() / 2 - 100;
-
-    float worldWidth = gw->back01Texture->width;
-    float zoom = gw->camera.zoom;
-    float offsetX = gw->camera.offset.x;
-    float screenWidth = GetScreenWidth();
-
-    float minTargetX = offsetX / zoom;
-    float maxTargetX = worldWidth - ( screenWidth - offsetX ) / zoom;
-
-    if ( gw->camera.target.x < minTargetX ) {
-        gw->camera.target.x = minTargetX;
-    } else if ( gw->camera.target.x > maxTargetX ) {
-        gw->camera.target.x = maxTargetX;
     }
 
 }

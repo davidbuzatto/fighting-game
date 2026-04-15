@@ -27,8 +27,8 @@ Plano de refatoração incremental para quebrar `GameWorld.c` (2201 linhas) e `P
 | Fase | Arquivo novo | Conteúdo | Risco | Status |
 |------|--------------|----------|-------|--------|
 | **P1** | `PlayerPallete.c` + `PlayerPallete.h` | `changePlayerPallete` | Baixo | ✅ |
-| **G3** | `Hud.c` + `Hud.h` | `drawHud` + `PORTRAIT_BG_COLOR` | Baixo | ⬜ |
-| **G5** | `GameCamera.c` + `GameCamera.h` | `updateCameraPlaying`, `updateCameraEditing` + `playerDist` | Baixo | ⬜ |
+| **G3** | `Hud.c` + `Hud.h` | `drawHud` + `PORTRAIT_BG_COLOR` | Baixo | ✅ |
+| **G5** | `GameCamera.c` + `GameCamera.h` | `updateCameraPlaying`, `updateCameraEditing` | Baixo | ⏳ Aguardando teste |
 | **G6** | `GameCollision.c` + `GameCollision.h` | `resolveCollisionPlayerStage`, `resolvePlayerPlayerCollision`, `flipPlayers` + vars de flip | Baixo | ⬜ |
 | **P3** | `PlayerAnimation.c` + `PlayerAnimation.h` | `getPlayerCurrentAnimation`, `getPlayerCurrentAnimationFrame`, `resetPlayerAnimations`, `flipPlayerSide`, `distancePlayer` | Baixo | ⬜ |
 | **P2** | `PlayerRender.c` + `PlayerRender.h` | `drawPlayer`, `drawPlayerAnimationFrame`, `drawPlayerAnimationFrameBoxes`, `drawPlayerShadow`, `drawPlayerAnimationFrameForShadow`, `drawPlayerInputBuffer`, `drawPlayerOnionLayers`, `drawOnHitPlayerAnimation`, `drawOnBlockPlayerAnimation`, `drawPlayerProjectile` | Baixo | ⬜ |
@@ -37,6 +37,7 @@ Plano de refatoração incremental para quebrar `GameWorld.c` (2201 linhas) e `P
 | **G1** | `EditorMode.c` + `EditorMode.h` | Toda a área do editor (dezenas de funções + 10 vars static) | Médio | ⬜ |
 | **P4** | `PlayerInput.c` + `PlayerInput.h` | `processInputAndFeedInputBuffer`, `addInputToPlayerInputBuffer`, `peekAttackButton`, `checkCommandInputs` | Baixo-Médio | ⬜ |
 | **P5** | `PlayerCollision.c` + `PlayerCollision.h` | `resolvePlayerOponnentContact`, `resolvePlayerOponnentProjectileContact` | Médio | ⬜ |
+| ⚠️ | **LEMBRETE** | **Antes de começar o P6, avisar o usuário para trocar o modelo de Sonnet de volta para Opus.** O usuário está usando Sonnet a partir do passo 2 por ser tarefa mecânica; o P6 e P7 envolvem mais julgamento (breakout de função monolítica, FSM complexa). | — | — |
 | **P6** | `PlayerInit.c` + `PlayerInit.h` | `createPlayer`, `destroyPlayer`, `initializePlayerCommon` (quebrado em `setupPlayerAnimations`, `setupPlayerCommands`, `setupPlayerAttackDistances`, `setupPlayerAnimationMap`), `initializePlayerRyu`, `initializePlayerKen` | Médio | ⬜ |
 | **P7** | `PlayerFSM.c` + `PlayerFSM.h` | `processInputPlayer` + `updatePlayer` | **Alto** | ⬜ |
 
