@@ -21,6 +21,7 @@
 #include "ResourceManager.h"
 #include "Types.h"
 #include "Player.h"
+#include "PlayerPallete.h"
 #include "Projectile.h"
 #include "Utils.h"
 
