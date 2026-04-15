@@ -16,12 +16,6 @@ void drawPlayerAnimationFrame( Player *player, AnimationFrame *af, Vector2 offse
 void drawPlayerAnimationFrameForShadow( Player *player, AnimationFrame *af, Vector2 offset, Color tint, float floorY, float shear, float scaleY );
 void processInputPlayer( Player *player, Player *opponent, float delta, int currentFrame, bool discardInput );
 void updatePlayer( Player *player, Player *opponent, Camera2D camera, float gravity, float delta );
-void flipPlayerSide( Player *player );
-float distancePlayer( Player *player1, Player *player2 );
-
-AnimationFrame *getPlayerCurrentAnimationFrame( Player *player );
-Animation *getPlayerCurrentAnimation( Player *player );
-void resetPlayerAnimations( Player *player );
 
 void resolvePlayerOponnentContact( Player *p, Player *o );
 void resolvePlayerOponnentProjectileContact( Player *p, Player *o );

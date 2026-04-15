@@ -28,9 +28,9 @@ Plano de refatoração incremental para quebrar `GameWorld.c` (2201 linhas) e `P
 |------|--------------|----------|-------|--------|
 | **P1** | `PlayerPallete.c` + `PlayerPallete.h` | `changePlayerPallete` | Baixo | ✅ |
 | **G3** | `Hud.c` + `Hud.h` | `drawHud` + `PORTRAIT_BG_COLOR` | Baixo | ✅ |
-| **G5** | `GameCamera.c` + `GameCamera.h` | `updateCameraPlaying`, `updateCameraEditing` | Baixo | ⏳ Aguardando teste |
-| **G6** | `GameCollision.c` + `GameCollision.h` | `resolveCollisionPlayerStage`, `resolvePlayerPlayerCollision`, `flipPlayers` + vars de flip | Baixo | ⬜ |
-| **P3** | `PlayerAnimation.c` + `PlayerAnimation.h` | `getPlayerCurrentAnimation`, `getPlayerCurrentAnimationFrame`, `resetPlayerAnimations`, `flipPlayerSide`, `distancePlayer` | Baixo | ⬜ |
+| **G5** | `GameCamera.c` + `GameCamera.h` | `updateCameraPlaying`, `updateCameraEditing` | Baixo | ✅ |
+| **G6** | `GameCollision.c` + `GameCollision.h` | `resolveCollisionPlayerStage`, `resolvePlayerPlayerCollision`, `flipPlayers` + vars de flip | Baixo | ✅ |
+| **P3** | `PlayerAnimation.c` + `PlayerAnimation.h` | `getPlayerCurrentAnimation`, `getPlayerCurrentAnimationFrame`, `resetPlayerAnimations`, `flipPlayerSide`, `distancePlayer` | Baixo | ⏳ Aguardando teste |
 | **P2** | `PlayerRender.c` + `PlayerRender.h` | `drawPlayer`, `drawPlayerAnimationFrame`, `drawPlayerAnimationFrameBoxes`, `drawPlayerShadow`, `drawPlayerAnimationFrameForShadow`, `drawPlayerInputBuffer`, `drawPlayerOnionLayers`, `drawOnHitPlayerAnimation`, `drawOnBlockPlayerAnimation`, `drawPlayerProjectile` | Baixo | ⬜ |
 | **G2** | `PlayerSelectMode.c` + `PlayerSelectMode.h` | `drawGameWorldSelectingPlayers`, `updateGameWorldSelectingPlayers`, `getPlayerPalleteSelectingPlayers` + 14 vars de seleção + 3 matrizes const | Baixo | ⬜ |
 | **G4** | `Stage.c` + `Stage.h` | Texturas stage/barco, timers de troca, `updateStage`, `drawStageBackground`, `drawStageForeground` | Baixo-Médio | ⬜ |
