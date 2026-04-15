@@ -27,6 +27,7 @@
 #include "Types.h"
 #include "Player.h"
 #include "PlayerAnimation.h"
+#include "PlayerInit.h"
 #include "PlayerPallete.h"
 #include "PlayerRender.h"
 #include "PlayerSelectMode.h"
