@@ -32,9 +32,9 @@ Plano de refatoração incremental para quebrar `GameWorld.c` (2201 linhas) e `P
 | **G6** | `GameCollision.c` + `GameCollision.h` | `resolveCollisionPlayerStage`, `resolvePlayerPlayerCollision`, `flipPlayers` + vars de flip | Baixo | ✅ |
 | **P3** | `PlayerAnimation.c` + `PlayerAnimation.h` | `getPlayerCurrentAnimation`, `getPlayerCurrentAnimationFrame`, `resetPlayerAnimations`, `flipPlayerSide`, `distancePlayer` | Baixo | ✅ |
 | **P2** | `PlayerRender.c` + `PlayerRender.h` | `drawPlayer`, `drawPlayerAnimationFrame`, `drawPlayerAnimationFrameBoxes`, `drawPlayerShadow`, `drawPlayerAnimationFrameForShadow`, `drawPlayerInputBuffer`, `drawPlayerOnionLayers`, `drawOnHitPlayerAnimation`, `drawOnBlockPlayerAnimation`, `drawPlayerProjectile` | Baixo | ✅ |
-| **G2** | `PlayerSelectMode.c` + `PlayerSelectMode.h` | `drawGameWorldSelectingPlayers`, `updateGameWorldSelectingPlayers`, `getPlayerPalleteSelectingPlayers` + 14 vars de seleção + 3 matrizes const | Baixo | ⏳ Aguardando teste |
-| **G4** | `Stage.c` + `Stage.h` | Texturas stage/barco, timers de troca, `updateStage`, `drawStageBackground`, `drawStageForeground` | Baixo-Médio | ⬜ |
-| **G1** | `EditorMode.c` + `EditorMode.h` | Toda a área do editor (dezenas de funções + 10 vars static) | Médio | ⬜ |
+| **G2** | `PlayerSelectMode.c` + `PlayerSelectMode.h` | `drawGameWorldSelectingPlayers`, `updateGameWorldSelectingPlayers`, `getPlayerPalleteSelectingPlayers` + 14 vars de seleção + 3 matrizes const | Baixo | ✅ |
+| **G4** | `Stage.c` + `Stage.h` | Texturas stage/barco, timers de troca, `updateStage`, `drawStageBackground`, `drawStageForeground` | Baixo-Médio | ✅ |
+| **G1** | `EditorMode.c` + `EditorMode.h` | Toda a área do editor (dezenas de funções + 10 vars static) | Médio | ⏳ Aguardando teste |
 | **P4** | `PlayerInput.c` + `PlayerInput.h` | `processInputAndFeedInputBuffer`, `addInputToPlayerInputBuffer`, `peekAttackButton`, `checkCommandInputs` | Baixo-Médio | ⬜ |
 | **P5** | `PlayerCollision.c` + `PlayerCollision.h` | `resolvePlayerOponnentContact`, `resolvePlayerOponnentProjectileContact` | Médio | ⬜ |
 | ⚠️ | **LEMBRETE** | **Antes de começar o P6, avisar o usuário para trocar o modelo de Sonnet de volta para Opus.** O usuário está usando Sonnet a partir do passo 2 por ser tarefa mecânica; o P6 e P7 envolvem mais julgamento (breakout de função monolítica, FSM complexa). | — | — |
@@ -96,18 +96,37 @@ Lista provisória — ampliar à medida que cada passo encontrar os blocos.
 
 ---
 
-### Fase G2 — PlayerSelectMode ⏳
-- **Criado**: `src/PlayerSelectMode.c` contendo `drawGameWorldSelectingPlayers`, `getPlayerPalleteSelectingPlayers` (static interno) e `updateGameWorldSelectingPlayers`.
-- **Criado**: `src/include/PlayerSelectMode.h` com declarações públicas das duas funções + `extern` dos 12 vars de estado compartilhado com `GameWorld.c`.
-- **Vars migradas para `PlayerSelectMode.c`** (não-static, extern'd no .h): `p1SelectedLine`, `p1SelectedColumn`, `p2SelectedLine`, `p2SelectedColumn`, `pSelectBlinkCounter`, `pSelectBlink`, `pSelectTransitionCounter`, `startTransitionToPlay`, `p1Selected`, `p2Selected`, `p1SelectedPallete`, `p2SelectedPallete`.
-- **Vars internas** (static em `PlayerSelectMode.c`): `pSelectBlinkTime`, `pSelectTransitionTime`, `portraitsMap`, `playerSelectSelectable`, `playerSelectPlayerType`.
-- **Removido de `GameWorld.c`**: 14 vars escalares, 3 matrizes, 3 funções, 2 forward decls.
-- **`startMatch`**: removido `static` (agora tem linkage externo — necessário para `PlayerSelectMode.c` chamá-la).
-- **`playMusic`**: removido `static` (necessário para `PlayerSelectMode.c` acessá-la via `extern`).
-- **Include adicionado em `GameWorld.c`**: `#include "PlayerSelectMode.h"`.
-- **Build**: compilado com sucesso (exit code 0).
+### Fase G2 — PlayerSelectMode ✅
+- **Criado**: `src/PlayerSelectMode.c` + `src/include/PlayerSelectMode.h`.
+- **Vars extern'd** (não-static, declaradas no .h): 12 vars de estado de seleção.
+- **Vars internas** (static): `pSelectBlinkTime`, `pSelectTransitionTime`, 3 matrizes const.
+- **`startMatch`** e **`playMusic`**: removido `static` para acesso externo.
+- **Testado e aprovado.**
+
+---
+
+### Fase G4 — Stage ✅
+- **Criado**: `src/Stage.c` + `src/include/Stage.h`.
+- **`SHOW_MODEL_STAGE_TEXTURE`** movido para `Stage.h` (removido de `GameWorld.c`).
+- **Vars internas** (static): 2 `#define` de contagem + 7 vars de estado do stage.
+- **`initStage(gw)`**: inicializa arrays de ponteiros de texturas (substituiu 8 linhas em `createGameWorld`).
+- **`updateStage(delta)`**: troca de texturas (substituiu bloco em `updateGameWorldPlaying`).
+- **`drawStageBackground(gw)`** / **`drawStageForeground(gw)`**: desenho do cenário.
+- **Testado e aprovado.**
+
+---
+
+### Fase G1 — EditorMode ⏳ Aguardando teste
+- **Criado**: `src/EditorMode.c` + `src/include/EditorMode.h`.
+- **`#define`s movidos para `EditorMode.h`**: `SHOW_PLAYER_ONION_MODE_EDITING`, `SHOW_PLAYER_INPUT_BUFFER`, `RYU_ANIMATIONS_FILE`, `KEN_ANIMATIONS_FILE`.
+- **Vars extern'd** (não-static, declaradas no .h): `showPlayerOnionEditing`, `showPlayerInputBuffer`, `lastEditState`, `lastEditFrame` — acessadas de `updateGameWorld` e `drawGameWorldPlaying`.
+- **Vars internas** (static): `editorMode`, `runPlayerCurrentAnimation`, `runPlayerCurrentAnimationOnce`, `onionOffset`, `showHelp`, `saveTimer`.
+- **`drawGameWorldEditing`** e **`updateGameWorldEditing`**: removido `static` (tornam-se públicas).
+- **11 funções helper**: permanecem `static` em `EditorMode.c`.
+- **Removido de `GameWorld.c`**: 10 vars do bloco `// editor`, 13 forward decls, todos os corpos das 11 funções.
+- **Build**: compilado com sucesso (exit code 0). Correção adicionada: `#include <stdlib.h>` para `NULL`.
 - **Teste**: aguardando.
 
 ---
 
-_Última atualização: fim da Fase G2 (PlayerSelectMode), aguardando teste. Próximo: Fase G4 (Stage)._
+_Última atualização: fim da Fase G1 (EditorMode), aguardando teste. Próximo: Fase P4 (PlayerInput)._
