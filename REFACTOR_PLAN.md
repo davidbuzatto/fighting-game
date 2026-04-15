@@ -31,8 +31,8 @@ Plano de refatoração incremental para quebrar `GameWorld.c` (2201 linhas) e `P
 | **G5** | `GameCamera.c` + `GameCamera.h` | `updateCameraPlaying`, `updateCameraEditing` | Baixo | ✅ |
 | **G6** | `GameCollision.c` + `GameCollision.h` | `resolveCollisionPlayerStage`, `resolvePlayerPlayerCollision`, `flipPlayers` + vars de flip | Baixo | ✅ |
 | **P3** | `PlayerAnimation.c` + `PlayerAnimation.h` | `getPlayerCurrentAnimation`, `getPlayerCurrentAnimationFrame`, `resetPlayerAnimations`, `flipPlayerSide`, `distancePlayer` | Baixo | ✅ |
-| **P2** | `PlayerRender.c` + `PlayerRender.h` | `drawPlayer`, `drawPlayerAnimationFrame`, `drawPlayerAnimationFrameBoxes`, `drawPlayerShadow`, `drawPlayerAnimationFrameForShadow`, `drawPlayerInputBuffer`, `drawPlayerOnionLayers`, `drawOnHitPlayerAnimation`, `drawOnBlockPlayerAnimation`, `drawPlayerProjectile` | Baixo | ⏳ Aguardando teste |
-| **G2** | `PlayerSelectMode.c` + `PlayerSelectMode.h` | `drawGameWorldSelectingPlayers`, `updateGameWorldSelectingPlayers`, `getPlayerPalleteSelectingPlayers` + 14 vars de seleção + 3 matrizes const | Baixo | ⬜ |
+| **P2** | `PlayerRender.c` + `PlayerRender.h` | `drawPlayer`, `drawPlayerAnimationFrame`, `drawPlayerAnimationFrameBoxes`, `drawPlayerShadow`, `drawPlayerAnimationFrameForShadow`, `drawPlayerInputBuffer`, `drawPlayerOnionLayers`, `drawOnHitPlayerAnimation`, `drawOnBlockPlayerAnimation`, `drawPlayerProjectile` | Baixo | ✅ |
+| **G2** | `PlayerSelectMode.c` + `PlayerSelectMode.h` | `drawGameWorldSelectingPlayers`, `updateGameWorldSelectingPlayers`, `getPlayerPalleteSelectingPlayers` + 14 vars de seleção + 3 matrizes const | Baixo | ⏳ Aguardando teste |
 | **G4** | `Stage.c` + `Stage.h` | Texturas stage/barco, timers de troca, `updateStage`, `drawStageBackground`, `drawStageForeground` | Baixo-Médio | ⬜ |
 | **G1** | `EditorMode.c` + `EditorMode.h` | Toda a área do editor (dezenas de funções + 10 vars static) | Médio | ⬜ |
 | **P4** | `PlayerInput.c` + `PlayerInput.h` | `processInputAndFeedInputBuffer`, `addInputToPlayerInputBuffer`, `peekAttackButton`, `checkCommandInputs` | Baixo-Médio | ⬜ |
@@ -91,6 +91,23 @@ Lista provisória — ampliar à medida que cada passo encontrar os blocos.
 - **Build**: `build.bat -cleanAndCompile` executado com sucesso.
 - **Teste**: funcional, paletas aplicadas corretamente.
 
+### Fases G3, G5, G6, P3, P2 — ✅ (ver histórico anterior)
+- Fases concluídas e testadas conforme descrição original. Bug visual de boxes identificado como pré-existente ao refactoring (não introduzido pelo refactoring); será corrigido em etapa separada após conclusão de todas as fases.
+
 ---
 
-_Última atualização: fim da Fase P1 (PlayerPallete), testado e aprovado. Próximo: Fase G3 (Hud)._
+### Fase G2 — PlayerSelectMode ⏳
+- **Criado**: `src/PlayerSelectMode.c` contendo `drawGameWorldSelectingPlayers`, `getPlayerPalleteSelectingPlayers` (static interno) e `updateGameWorldSelectingPlayers`.
+- **Criado**: `src/include/PlayerSelectMode.h` com declarações públicas das duas funções + `extern` dos 12 vars de estado compartilhado com `GameWorld.c`.
+- **Vars migradas para `PlayerSelectMode.c`** (não-static, extern'd no .h): `p1SelectedLine`, `p1SelectedColumn`, `p2SelectedLine`, `p2SelectedColumn`, `pSelectBlinkCounter`, `pSelectBlink`, `pSelectTransitionCounter`, `startTransitionToPlay`, `p1Selected`, `p2Selected`, `p1SelectedPallete`, `p2SelectedPallete`.
+- **Vars internas** (static em `PlayerSelectMode.c`): `pSelectBlinkTime`, `pSelectTransitionTime`, `portraitsMap`, `playerSelectSelectable`, `playerSelectPlayerType`.
+- **Removido de `GameWorld.c`**: 14 vars escalares, 3 matrizes, 3 funções, 2 forward decls.
+- **`startMatch`**: removido `static` (agora tem linkage externo — necessário para `PlayerSelectMode.c` chamá-la).
+- **`playMusic`**: removido `static` (necessário para `PlayerSelectMode.c` acessá-la via `extern`).
+- **Include adicionado em `GameWorld.c`**: `#include "PlayerSelectMode.h"`.
+- **Build**: compilado com sucesso (exit code 0).
+- **Teste**: aguardando.
+
+---
+
+_Última atualização: fim da Fase G2 (PlayerSelectMode), aguardando teste. Próximo: Fase G4 (Stage)._
