@@ -29,13 +29,13 @@
 #include "PlayerRender.h"
 #include "PlayerSelectMode.h"
 #include "Projectile.h"
+#include "Stage.h"
 #include "Utils.h"
 
 #define SHOW_BOXES false
 #define SHOW_DEBUG_INFO false
 #define SHOW_PLAYER_ONION_MODE_EDITING true
 #define SHOW_PLAYER_INPUT_BUFFER false
-#define SHOW_MODEL_STAGE_TEXTURE false
 #define ANIMATION_DURATION_MODE DURATION_MODE_MILLISECONDS
 #define INITIAL_GAME_MODE GAME_MODE_SELECT_PLAYERS
 #define PLAY_MUSIC true
@@ -121,16 +121,6 @@ static float playerDist = 0.0f;
 Match match;
 static bool clearLastMatch = false;
 
-// stage
-#define BACK_TEXTURES_COUNT 3
-#define BOAT_TEXTURES_COUNT 5
-static Texture2D *backTextures[BACK_TEXTURES_COUNT];
-static Texture2D *boatTextures[BOAT_TEXTURES_COUNT];
-static float stageTextureChangeTime = 0.2f;
-static float stageTextureChangeCounter = 0.0f;
-static int currentBackTexture = 0;
-static int currentBoatTexture = 0;
-static float boatTextureDrawOffsetY = 5;
 bool playMusic = PLAY_MUSIC;
 
 
@@ -159,15 +149,7 @@ GameWorld* createGameWorld( void ) {
     gw->boat04Texture = &rm.kenStageBoat04Texture;
     gw->boat05Texture = &rm.kenStageBoat05Texture;
 
-    backTextures[0] = gw->back01Texture;
-    backTextures[1] = gw->back02Texture;
-    backTextures[2] = gw->back03Texture;
-
-    boatTextures[0] = gw->boat01Texture;
-    boatTextures[1] = gw->boat02Texture;
-    boatTextures[2] = gw->boat03Texture;
-    boatTextures[3] = gw->boat04Texture;
-    boatTextures[4] = gw->boat05Texture;
+    initStage( gw );
 
     gw->gravity = 1200;
 
@@ -356,16 +338,7 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
 
     BeginMode2D( gw->camera );
 
-    if ( !SHOW_MODEL_STAGE_TEXTURE ) {
-        DrawTexture( *(backTextures[currentBackTexture%BACK_TEXTURES_COUNT]), 0, GetScreenHeight() - backTextures[currentBackTexture%BACK_TEXTURES_COUNT]->height, WHITE );
-        DrawTexture( 
-            *(boatTextures[currentBoatTexture%BOAT_TEXTURES_COUNT]), 
-            0, 
-            GetScreenHeight() - boatTextures[currentBoatTexture%BOAT_TEXTURES_COUNT]->height + boatTextureDrawOffsetY * sinf( DEG2RAD * currentBoatTexture * 10 ) + boatTextureDrawOffsetY, 
-            WHITE
-        );
-        DrawTexture( *gw->floorTexture, 0, GetScreenHeight() - gw->floorTexture->height, WHITE );
-    }
+    drawStageBackground( gw );
 
     drawPlayerShadow( gw->player2, gw->floor.y - 2, 40.0f, 0.25f );
     drawPlayerShadow( gw->player1, gw->floor.y - 2, 40.0f, 0.25f );
@@ -384,9 +357,7 @@ static void drawGameWorldPlaying( GameWorld *gw ) {
     drawPlayerProjectile( gw->player1 );
     drawPlayerProjectile( gw->player2 );
 
-    if ( !SHOW_MODEL_STAGE_TEXTURE ) {
-        DrawTexture( *gw->anchorTexture, 0, GetScreenHeight() - gw->anchorTexture->height, WHITE );
-    }
+    drawStageForeground( gw );
 
     EndMode2D();
 
@@ -498,12 +469,7 @@ static void updateGameWorldPlaying( GameWorld *gw, float delta ) {
     }
     */
 
-    stageTextureChangeCounter += delta;
-    if ( stageTextureChangeCounter >= stageTextureChangeTime ) {
-        stageTextureChangeCounter = 0;
-        currentBackTexture++;
-        currentBoatTexture++;
-    }
+    updateStage( delta );
 
     /*
     if ( IsKeyPressed( KEY_R ) ) {
