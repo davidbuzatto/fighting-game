@@ -1,3 +1,11 @@
+/**
+ * @file Utils.h
+ * @author Prof. Dr. David Buzatto
+ * @brief Utility functions for text rendering, font measurement, rectangle
+ *        intersection, animation serialization/deserialization and gamepad input.
+ *
+ * @copyright Copyright (c) 2026
+ */
 #pragma once
 
 #include "Types.h"

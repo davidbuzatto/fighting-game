@@ -1,3 +1,10 @@
+/**
+ * @file Animation.c
+ * @author Prof. Dr. David Buzatto
+ * @brief Animation frame management and playback implementation.
+ *
+ * @copyright Copyright (c) 2026
+ */
 #include <stdlib.h>
 
 #include "Animation.h"

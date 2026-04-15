@@ -1,3 +1,10 @@
+/**
+ * @file Projectile.h
+ * @author Prof. Dr. David Buzatto
+ * @brief Projectile lifecycle and rendering API.
+ *
+ * @copyright Copyright (c) 2026
+ */
 #pragma once
 
 #include "Types.h"

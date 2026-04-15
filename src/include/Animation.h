@@ -1,3 +1,10 @@
+/**
+ * @file Animation.h
+ * @author Prof. Dr. David Buzatto
+ * @brief Animation frame management and playback API.
+ *
+ * @copyright Copyright (c) 2026
+ */
 #pragma once
 
 #include "Types.h"

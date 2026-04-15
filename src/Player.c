@@ -4,16 +4,16 @@
  * @brief Anchor translation unit kept after the refactoring.
  *
  * All Player functionality has been split into smaller units:
- *   - PlayerPallete.c     : paleta de cores
- *   - PlayerAnimation.c   : utilitários de animação (getter, reset, flip, distance)
- *   - PlayerRender.c      : desenho (player, boxes, shadow, onion, projétil)
- *   - PlayerInput.c       : input buffer e reconhecimento de comandos
- *   - PlayerCollision.c   : resolução de contato player vs. oponente
- *   - PlayerInit.c        : create/destroy e inicialização de Ryu/Ken
+ *   - PlayerPallete.c     : color palette swap
+ *   - PlayerAnimation.c   : animation helpers (getter, reset, flip, distance)
+ *   - PlayerRender.c      : rendering (player, boxes, shadow, onion, projectile)
+ *   - PlayerInput.c       : input buffer and command recognition
+ *   - PlayerCollision.c   : player vs. opponent contact resolution
+ *   - PlayerInit.c        : create/destroy and Ryu/Ken initialization
  *   - PlayerFSM.c         : processInputPlayer + updatePlayer (FSM)
  *
- * Este arquivo existe apenas como âncora para minimizar alterações no
- * sistema de build (globbing de src).
+ * This file exists only as an anchor to minimize changes in the build
+ * system (src globbing).
  *
  * @copyright Copyright (c) 2026
  */

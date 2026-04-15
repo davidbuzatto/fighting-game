@@ -1,3 +1,10 @@
+/**
+ * @file Projetile.c
+ * @author Prof. Dr. David Buzatto
+ * @brief Projectile creation, setup, update and rendering implementation.
+ *
+ * @copyright Copyright (c) 2026
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>

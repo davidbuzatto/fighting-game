@@ -1,3 +1,11 @@
+/**
+ * @file Types.h
+ * @author Prof. Dr. David Buzatto
+ * @brief Core type definitions: enums, constants and structs shared across
+ *        the entire project.
+ *
+ * @copyright Copyright (c) 2026
+ */
 #pragma once
 
 #include "raylib/raylib.h"
