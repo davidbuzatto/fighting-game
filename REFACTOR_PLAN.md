@@ -39,7 +39,7 @@ Plano de refatoração incremental para quebrar `GameWorld.c` (2201 linhas) e `P
 | **P5** | `PlayerCollision.c` + `PlayerCollision.h` | `resolvePlayerOponnentContact`, `resolvePlayerOponnentProjectileContact` | Médio | ✅ |
 | ⚠️ | **LEMBRETE** | **Antes de começar o P6, avisar o usuário para trocar o modelo de Sonnet de volta para Opus.** O usuário está usando Sonnet a partir do passo 2 por ser tarefa mecânica; o P6 e P7 envolvem mais julgamento (breakout de função monolítica, FSM complexa). | — | — |
 | **P6** | `PlayerInit.c` + `PlayerInit.h` | `createPlayer`, `destroyPlayer`, `initializePlayerCommon` (quebrado em `setupPlayerAnimations`, `setupPlayerCommands`, `setupPlayerAttackDistances`, `setupPlayerAnimationMap`), `initializePlayerRyu`, `initializePlayerKen` | Médio | ⏳ |
-| **P7** | `PlayerFSM.c` + `PlayerFSM.h` | `processInputPlayer` + `updatePlayer` | **Alto** | ⬜ |
+| **P7** | `PlayerFSM.c` + `PlayerFSM.h` | `processInputPlayer` + `updatePlayer` | **Alto** | ✅ |
 
 Legenda: ⬜ pendente · ⏳ em andamento · ✅ testado e aprovado · ⚠️ testado com problemas
 
@@ -174,4 +174,46 @@ Lista provisória — ampliar à medida que cada passo encontrar os blocos.
 
 ---
 
-_Última atualização: P6 (PlayerInit) compilado, aguardando teste manual._
+### Fase P7 — PlayerFSM ✅
+- **Criado**: `src/PlayerFSM.c` (643 linhas) + `src/include/PlayerFSM.h`.
+- **Funções movidas para `PlayerFSM.c`** (agora públicas, declaradas em `PlayerFSM.h`):
+  - `processInputPlayer` — FSM principal: tratamento de vitória/derrota, falling/getting-up, special moves em progresso (spawn de projétil do Hadouken no frame 5), hitstun, blockstun, ataques em progresso, pulos (com jump-attacks), jump cooldown, recognição de commands (Hadouken/Shoryuken/Tatsumaki), basic attacks (com `*Close` triggers), movimento no chão, e update das animações idle/forward/backward/crouching.
+  - `updatePlayer` — física (posição, velocidade, gravidade), pushback friction em hit/block stun, atualização das animações `onHit`/`onBlock`, e `updateProjectile`.
+- **`TRACE_SPECIAL_MOVE`** (static const) movido junto com a função que o usa.
+- **Comentários "desligados" preservados literalmente**:
+  - `// TODO: needs to be generalized (in the future)` no bloco de reconhecimento de commands.
+  - Guard do spawn Hadouken (`if ( ( specialState == PLAYER_STATE_SPECIAL_LP_HADOUKEN || ... ) && player->projectile->active )`).
+  - Todos os comentários in-line do corpo da FSM.
+- **Includes de `PlayerFSM.c`**: `<stdbool.h>`, `<stddef.h>` (para `NULL`), `<math.h>` (para `fabs`), `raylib/raylib.h`, `Animation.h`, `Macros.h` (trace, `PUSHBACK_DECAY`), `PlayerAnimation.h`, `PlayerFSM.h`, `PlayerInput.h`, `Projectile.h`, `Types.h`, `Utils.h`.
+- **`Player.c` esvaziado**: agora contém apenas um cabeçalho doxygen descrevendo a decomposição + um `typedef int player_c_anchor_unit_t;` para evitar `ISO C forbids an empty translation unit [-Wpedantic]`. Passou de 641 → 22 linhas. Mantido como **arquivo-âncora** conforme o princípio (7) do plano, para minimizar alterações no build.
+- **`Player.h` esvaziado**: agora contém apenas cabeçalho doxygen + `#pragma once`. Mantido como âncora porque ainda é incluído por `EditorMode.c`, `GameCollision.c`, `GameWorld.c` e o próprio `Player.c`.
+- **Removido de `GameWorld.c`**: nada (apenas adicionado). `#include "PlayerFSM.h"` inserido após `PlayerAnimation.h`.
+- **Correções durante o build**:
+  1. `PlayerFSM.c` usava `NULL` — adicionado `#include <stddef.h>`.
+  2. `Player.c` tinha `src/*.c` num comentário, disparando `warning: '/*' within comment` — trocado por "globbing de src".
+  3. `Player.c` vazio disparava `error: ISO C forbids an empty translation unit` — adicionado `typedef` placeholder.
+- **Build**: `build.bat -cleanAndCompile` executado com sucesso (exit code 0), `fighting-game.exe` recriado.
+- **Testado e aprovado.**
+
+---
+
+## 🎉 Estado final da refatoração
+
+Todas as 13 fases executadas. Resumo dos tamanhos de arquivo:
+
+| Arquivo | Antes | Depois | Δ |
+|---------|------:|-------:|---:|
+| `GameWorld.c` | 2201 | ~ (ver estado atual) | — |
+| `Player.c` | 2304 | **22** (âncora) | −2282 |
+| `Player.h` | — | **11** (âncora) | — |
+
+Novos arquivos criados ao longo do processo:
+- **Player**: `PlayerPallete.{c,h}`, `PlayerAnimation.{c,h}`, `PlayerRender.{c,h}`, `PlayerInput.{c,h}`, `PlayerCollision.{c,h}`, `PlayerInit.{c,h}`, `PlayerFSM.{c,h}`.
+- **GameWorld**: `Hud.{c,h}`, `GameCamera.{c,h}`, `GameCollision.{c,h}`, `PlayerSelectMode.{c,h}`, `Stage.{c,h}`, `EditorMode.{c,h}`.
+
+Estado global file-scope migrou junto com as funções que o usam. Headers fine-grained (um `.h` por `.c`) implementados conforme Abordagem A. Nenhuma reescrita de lógica — apenas movimentação mecânica preservando comentários "desligados".
+
+### Próximo passo (fora deste plano)
+Conforme anotado na seção "Tarefas pós-refatoração": separar Ryu e Ken em unidades de compilação próprias (`CharacterRyu.c`, `CharacterKen.c`) para permitir adição de novos personagens sem tocar em código compartilhado.
+
+_Última atualização: **P7 (PlayerFSM) testado e aprovado em 2026-04-15. 🎉 Plano de refatoração 100% concluído — todas as 13 fases executadas, testadas e aprovadas.**_
