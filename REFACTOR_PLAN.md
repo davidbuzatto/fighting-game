@@ -34,8 +34,8 @@ Plano de refatoração incremental para quebrar `GameWorld.c` (2201 linhas) e `P
 | **P2** | `PlayerRender.c` + `PlayerRender.h` | `drawPlayer`, `drawPlayerAnimationFrame`, `drawPlayerAnimationFrameBoxes`, `drawPlayerShadow`, `drawPlayerAnimationFrameForShadow`, `drawPlayerInputBuffer`, `drawPlayerOnionLayers`, `drawOnHitPlayerAnimation`, `drawOnBlockPlayerAnimation`, `drawPlayerProjectile` | Baixo | ✅ |
 | **G2** | `PlayerSelectMode.c` + `PlayerSelectMode.h` | `drawGameWorldSelectingPlayers`, `updateGameWorldSelectingPlayers`, `getPlayerPalleteSelectingPlayers` + 14 vars de seleção + 3 matrizes const | Baixo | ✅ |
 | **G4** | `Stage.c` + `Stage.h` | Texturas stage/barco, timers de troca, `updateStage`, `drawStageBackground`, `drawStageForeground` | Baixo-Médio | ✅ |
-| **G1** | `EditorMode.c` + `EditorMode.h` | Toda a área do editor (dezenas de funções + 10 vars static) | Médio | ⏳ Aguardando teste |
-| **P4** | `PlayerInput.c` + `PlayerInput.h` | `processInputAndFeedInputBuffer`, `addInputToPlayerInputBuffer`, `peekAttackButton`, `checkCommandInputs` | Baixo-Médio | ⬜ |
+| **G1** | `EditorMode.c` + `EditorMode.h` | Toda a área do editor (dezenas de funções + 10 vars static) | Médio | ✅ |
+| **P4** | `PlayerInput.c` + `PlayerInput.h` | `processInputAndFeedInputBuffer`, `addInputToPlayerInputBuffer`, `peekAttackButton`, `checkCommandInputs` | Baixo-Médio | ⏳ Aguardando teste |
 | **P5** | `PlayerCollision.c` + `PlayerCollision.h` | `resolvePlayerOponnentContact`, `resolvePlayerOponnentProjectileContact` | Médio | ⬜ |
 | ⚠️ | **LEMBRETE** | **Antes de começar o P6, avisar o usuário para trocar o modelo de Sonnet de volta para Opus.** O usuário está usando Sonnet a partir do passo 2 por ser tarefa mecânica; o P6 e P7 envolvem mais julgamento (breakout de função monolítica, FSM complexa). | — | — |
 | **P6** | `PlayerInit.c` + `PlayerInit.h` | `createPlayer`, `destroyPlayer`, `initializePlayerCommon` (quebrado em `setupPlayerAnimations`, `setupPlayerCommands`, `setupPlayerAttackDistances`, `setupPlayerAnimationMap`), `initializePlayerRyu`, `initializePlayerKen` | Médio | ⬜ |
@@ -129,4 +129,14 @@ Lista provisória — ampliar à medida que cada passo encontrar os blocos.
 
 ---
 
-_Última atualização: fim da Fase G1 (EditorMode), aguardando teste. Próximo: Fase P4 (PlayerInput)._
+### Fase P4 — PlayerInput ⏳ Aguardando teste
+- **Criado**: `src/PlayerInput.c` + `src/include/PlayerInput.h`.
+- **Funções movidas** (removido `static`, agora públicas): `peekAttackButton`, `checkCommandInputs`, `processInputAndFeedInputBuffer`, `addInputToPlayerInputBuffer`.
+- **Removido de `Player.c`**: 4 forward declarations estáticas + 4 corpos de função (~158 linhas). `Player.c` truncado na linha 1765.
+- **Include adicionado em `Player.c`**: `#include "PlayerInput.h"`.
+- **Build**: compilado com sucesso (exit code 0).
+- **Teste**: aguardando.
+
+---
+
+_Última atualização: fim da Fase P4 (PlayerInput), aguardando teste. Próximo: Fase P5 (PlayerCollision)._
