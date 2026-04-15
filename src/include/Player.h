@@ -10,6 +10,3 @@ void initializePlayerKen( float x, float y, Player *p, PlayerStartSide startSide
 void destroyPlayer( Player *player );
 void processInputPlayer( Player *player, Player *opponent, float delta, int currentFrame, bool discardInput );
 void updatePlayer( Player *player, Player *opponent, Camera2D camera, float gravity, float delta );
-
-void resolvePlayerOponnentContact( Player *p, Player *o );
-void resolvePlayerOponnentProjectileContact( Player *p, Player *o );

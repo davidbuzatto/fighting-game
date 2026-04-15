@@ -35,8 +35,8 @@ Plano de refatoração incremental para quebrar `GameWorld.c` (2201 linhas) e `P
 | **G2** | `PlayerSelectMode.c` + `PlayerSelectMode.h` | `drawGameWorldSelectingPlayers`, `updateGameWorldSelectingPlayers`, `getPlayerPalleteSelectingPlayers` + 14 vars de seleção + 3 matrizes const | Baixo | ✅ |
 | **G4** | `Stage.c` + `Stage.h` | Texturas stage/barco, timers de troca, `updateStage`, `drawStageBackground`, `drawStageForeground` | Baixo-Médio | ✅ |
 | **G1** | `EditorMode.c` + `EditorMode.h` | Toda a área do editor (dezenas de funções + 10 vars static) | Médio | ✅ |
-| **P4** | `PlayerInput.c` + `PlayerInput.h` | `processInputAndFeedInputBuffer`, `addInputToPlayerInputBuffer`, `peekAttackButton`, `checkCommandInputs` | Baixo-Médio | ⏳ Aguardando teste |
-| **P5** | `PlayerCollision.c` + `PlayerCollision.h` | `resolvePlayerOponnentContact`, `resolvePlayerOponnentProjectileContact` | Médio | ⬜ |
+| **P4** | `PlayerInput.c` + `PlayerInput.h` | `processInputAndFeedInputBuffer`, `addInputToPlayerInputBuffer`, `peekAttackButton`, `checkCommandInputs` | Baixo-Médio | ✅ |
+| **P5** | `PlayerCollision.c` + `PlayerCollision.h` | `resolvePlayerOponnentContact`, `resolvePlayerOponnentProjectileContact` | Médio | ✅ |
 | ⚠️ | **LEMBRETE** | **Antes de começar o P6, avisar o usuário para trocar o modelo de Sonnet de volta para Opus.** O usuário está usando Sonnet a partir do passo 2 por ser tarefa mecânica; o P6 e P7 envolvem mais julgamento (breakout de função monolítica, FSM complexa). | — | — |
 | **P6** | `PlayerInit.c` + `PlayerInit.h` | `createPlayer`, `destroyPlayer`, `initializePlayerCommon` (quebrado em `setupPlayerAnimations`, `setupPlayerCommands`, `setupPlayerAttackDistances`, `setupPlayerAnimationMap`), `initializePlayerRyu`, `initializePlayerKen` | Médio | ⬜ |
 | **P7** | `PlayerFSM.c` + `PlayerFSM.h` | `processInputPlayer` + `updatePlayer` | **Alto** | ⬜ |
@@ -139,4 +139,22 @@ Lista provisória — ampliar à medida que cada passo encontrar os blocos.
 
 ---
 
-_Última atualização: fim da Fase P4 (PlayerInput), aguardando teste. Próximo: Fase P5 (PlayerCollision)._
+### Fase P5 — PlayerCollision ✅
+- **Criado**: `src/PlayerCollision.c` + `src/include/PlayerCollision.h`.
+- **Funções movidas**: `resolvePlayerOponnentContact`, `resolvePlayerOponnentProjectileContact`.
+- **Removido de `Player.h`**: 2 declarações das funções movidas.
+- **Removido de `Player.c`**: 2 corpos de função (~266 linhas). `Player.c` truncado na linha 1498.
+- **Include adicionado em `GameWorld.c`**: `#include "PlayerCollision.h"`.
+- **Testado e aprovado.**
+
+---
+
+## ⚠️ PRÓXIMA SESSÃO — LEIA ANTES DE COMEÇAR
+
+**Antes de iniciar qualquer trabalho na próxima sessão:**
+
+1. **Troque o modelo de Sonnet para Opus.** Os passos P6 e P7 envolvem mais julgamento arquitetural (quebra de função monolítica, FSM complexa) e devem ser feitos com Opus.
+2. O próximo passo é o **P6 — PlayerInit**: extrair `createPlayer`, `destroyPlayer`, `initializePlayerCommon` (quebrado em sub-funções), `initializePlayerRyu`, `initializePlayerKen` para `PlayerInit.c/.h`.
+3. `Player.c` atualmente tem **1498 linhas**. As funções a extrair ficam nas primeiras ~880 linhas.
+
+_Última atualização: fim da Fase P5 (PlayerCollision), testado e aprovado. Sessão encerrada — continuar amanhã a partir do P6._

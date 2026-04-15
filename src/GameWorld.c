@@ -20,6 +20,7 @@
 #include "GameCamera.h"
 #include "GameCollision.h"
 #include "GameWorld.h"
+#include "PlayerCollision.h"
 #include "Hud.h"
 #include "Macros.h"
 #include "ResourceManager.h"
