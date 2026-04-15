@@ -26,6 +26,7 @@
 #include "Player.h"
 #include "PlayerAnimation.h"
 #include "PlayerPallete.h"
+#include "PlayerRender.h"
 #include "Projectile.h"
 #include "Utils.h"
 

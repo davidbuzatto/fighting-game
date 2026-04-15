@@ -8,18 +8,8 @@ void initializePlayerRyu( float x, float y, Player *p, PlayerStartSide startSide
 void initializePlayerKen( float x, float y, Player *p, PlayerStartSide startSide, int gamepadId, DurationMode animationDurationMode, bool showBoxes, bool showDebugInfo );
 
 void destroyPlayer( Player *player );
-void drawPlayer( Player *player );
-void drawPlayerShadow( Player *player, float floorY, float shear, float scaleY );
-void drawPlayerInputBuffer( Player *player );
-void drawPlayerOnionLayers( Player *player, int xOffset );
-void drawPlayerAnimationFrame( Player *player, AnimationFrame *af, Vector2 offset, Color tint );
-void drawPlayerAnimationFrameForShadow( Player *player, AnimationFrame *af, Vector2 offset, Color tint, float floorY, float shear, float scaleY );
 void processInputPlayer( Player *player, Player *opponent, float delta, int currentFrame, bool discardInput );
 void updatePlayer( Player *player, Player *opponent, Camera2D camera, float gravity, float delta );
 
 void resolvePlayerOponnentContact( Player *p, Player *o );
 void resolvePlayerOponnentProjectileContact( Player *p, Player *o );
-void drawOnHitPlayerAnimation( Player *p );
-void drawOnBlockPlayerAnimation( Player *p );
-
-void drawPlayerProjectile( Player *p );
