@@ -39,6 +39,10 @@ static void initializePlayerCommon( float x, float y, Player *p, PlayerStartSide
     p->dim.x = 50;
     p->dim.y = 90;
 
+    // previous
+    //p->dim.x = 80;
+    //p->dim.y = 100;
+
     p->vel = (Vector2) { 0 };
     p->forwardSpeed = 150;
     p->backwardSpeed = 120;

@@ -290,6 +290,11 @@ void loadPlayerAnimationFrameBoxes( Player *p, const char *filename ) {
                 afb->collisionBox.y      = (float) json_object_get_number( collisionBoxObj, "y" );
                 afb->collisionBox.width  = (float) json_object_get_number( collisionBoxObj, "width" );
                 afb->collisionBox.height = (float) json_object_get_number( collisionBoxObj, "height" );
+                // correction offset for changes in dim.y (ex: 100 -> 90).
+                // uncomment, save JSON via editor Ctrl+S and comment again.
+                //if ( afb->collisionBox.width > 0 && afb->collisionBox.height > 0 ) {
+                //    afb->collisionBox.y -= 10; // 10: offset (ex: 100 -> 90)
+                //}
             }
 
             afb->hitboxCount = (int) json_object_get_number( boxesObj, "hitboxCount" );
@@ -303,6 +308,11 @@ void loadPlayerAnimationFrameBoxes( Player *p, const char *filename ) {
                     afb->hitboxes[i].y      = (float) json_object_get_number( rectObj, "y" );
                     afb->hitboxes[i].width  = (float) json_object_get_number( rectObj, "width" );
                     afb->hitboxes[i].height = (float) json_object_get_number( rectObj, "height" );
+                    // correction offset for changes in dim.y (ex: 100 -> 90).
+                    // uncomment, save JSON via editor Ctrl+S and comment again.
+                    //if ( afb->hitboxes[i].width > 0 && afb->hitboxes[i].height > 0 ) {
+                    //    afb->hitboxes[i].y -= 10; // 10: offset (ex: 100 -> 90)
+                    //}
                 }
             }
 
@@ -317,6 +327,11 @@ void loadPlayerAnimationFrameBoxes( Player *p, const char *filename ) {
                     afb->hurtboxes[i].y      = (float) json_object_get_number( rectObj, "y" );
                     afb->hurtboxes[i].width  = (float) json_object_get_number( rectObj, "width" );
                     afb->hurtboxes[i].height = (float) json_object_get_number( rectObj, "height" );
+                    // correction offset for changes in dim.y (ex: 100 -> 90).
+                    // uncomment, save JSON via editor Ctrl+S and comment again.
+                    //if ( afb->hurtboxes[i].width > 0 && afb->hurtboxes[i].height > 0 ) {
+                    //    afb->hurtboxes[i].y -= 10; // 10: offset (ex: 100 -> 90)
+                    //}
                 }
             }
 
