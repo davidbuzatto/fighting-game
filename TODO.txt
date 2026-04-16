@@ -5,7 +5,6 @@ Escolher cores diferentes na tela de seleção (mesmo personagem).
 Som derrota;
 Melhorar transições;
 Melhorar sons (mais sincronia);
-Deploy com wasm;
 Ajustar TODOS os frames com framedata? (https://wiki.supercombo.gg/w/Super_Street_Fighter_2_Turbo/Ryu)
 
 Hit/hurt boxes: https://doctorguile.github.io/ssf2st/
